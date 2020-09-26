@@ -1,0 +1,22 @@
+/* 
+	My styles
+*/
+.hidden {
+	display: none;
+}
+
+/* back to top button */
+#back-to-top {
+	position: fixed;
+	right: 20px;
+	bottom: 30px;
+	z-index: 99;
+}
+
+/* cookie banner */
+.cookie-consent {
+	opacity: 0.90;
+}
+.cookie-consent:hover {
+	opacity: 1;
+}

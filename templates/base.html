@@ -1,0 +1,64 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    
+    <!-- Material design icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/mystyles.css' %}">
+
+    <title>{% block title %}Webseite{% endblock title %}</title>
+</head>
+<body>
+    {% include "cookie-banner.html" %}
+    <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="material-icons">arrow_upward</i> Nach oben</button>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #00ffcc;">
+            <div class = "container">
+
+                <span class="navbar-brand mb-0 h1">
+                    {% block brand %}{% endblock brand %}
+                </span>
+
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <div class="navbar-nav">
+                        {% block nav-item %}
+                        {% endblock nav-item %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main role = "main">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class = "alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% block content  %}{% endblock content %}
+        </div>
+    </main>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    
+    <!-- bs-custom-file-input -->
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+
+    <script src="{% static 'js/my.js' %}"></script>
+</body>
+</html>

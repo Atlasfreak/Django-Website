@@ -7,7 +7,14 @@
 {% endblock nav-item %}
 
 {% block content %}
-    <div class = "content-sectiion">
+    <div class = "content-section">
+    {% if next %}
+        {% if user.is_authenticated %}
+            <div class="alert alert-warning">Du hast keinen Zugriff auf diese Seite. Bitte logge dich mit einem anderen Account ein.</div>
+        {% else %}
+            <div class="alert alert-danger">Bitte logge dich ein um diese Seite zu sehen.</div>
+        {% endif %}
+    {% endif %}
         <form method="POST">
             {% csrf_token %}
             <fieldset class = "form-group">

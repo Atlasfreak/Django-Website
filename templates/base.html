@@ -17,7 +17,7 @@
 
     <title>{% block title %}Webseite{% endblock title %}</title>
 </head>
-<body>
+<body class = "bg-light">
     {% include "cookie-banner.html" %}
     <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="material-icons">arrow_upward</i> Nach oben</button>
     <header>
@@ -38,7 +38,7 @@
         </nav>
     </header>
     <main role = "main">
-        <div class="container">
+        <div class="container rounded p-3 my-4 bg-white shadow-sm">
             {% if messages %}
                 {% for message in messages %}
                     <div class = "alert alert-{{ message.tags }}">
@@ -46,8 +46,9 @@
                     </div>
                 {% endfor %}
             {% endif %}
-            
-            {% block content  %}{% endblock content %}
+
+            {% block content  %}
+            {% endblock content %}
         </div>
     </main>
 

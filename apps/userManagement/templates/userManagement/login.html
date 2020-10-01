@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block title %}Anmelden{% endblock title %}
+
+{% block nav-item %}
+    <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
+{% endblock nav-item %}
+
+{% block content %}
+    <div class = "content-sectiion">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class = "form-group">
+                <legend class = "border-bottom mb-4">
+                    Bitte Melde dich an
+                </legend>
+                {{ form|crispy }}
+            </fieldset>
+            <div class = "form-group">
+                <button class = "btn btn-outline-info" type = "submit">
+                    Anmelden
+                </button>
+            </div>
+        </form>
+        <div class = "border-top pt-3">
+            <small class = "text-muted">
+                Du hast noch keinen Account? <a href = "{% url 'register' %}">Registrieren</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}
+

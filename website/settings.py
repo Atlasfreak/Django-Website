@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'apps.customUser.apps.CustomuserConfig',
+    'apps.userManagement.apps.UsermanagementConfig',
     'apps.main.apps.MainConfig',
     'crispy_forms',
     'widget_tweaks',
@@ -72,6 +74,8 @@ TEMPLATES = [
     },
 ]
 
+AUTH_USER_MODEL = 'customUser.SiteUser'
+
 WSGI_APPLICATION = 'website.wsgi.application'
 
 
@@ -95,13 +99,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 4,
+        },
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    # },
 ]
 
 
@@ -119,8 +126,16 @@ USE_L10N = True
 USE_TZ = True
 
 
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'login'
+
+LOGOUT_REDIRECT_URL = 'home'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+
+
 
 STATIC_URL = '/static/'
 

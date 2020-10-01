@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Abgemeldet{% endblock title %}
+
+{% block nav-item %}
+    <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
+{% endblock nav-item %}
+
+{% block content %}
+    <div class = "content-sectiion">
+        <div class = "border-top pt-3">
+            <small class = "text-muted">
+                <a href = "{% url 'login' %}">Anmelden</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}
+

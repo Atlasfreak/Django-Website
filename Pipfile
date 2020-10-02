@@ -9,6 +9,7 @@ verify_ssl = true
 django = "*"
 django-crispy-forms = "*"
 django-widget-tweaks = "*"
+django-precise-bbcode = "*"
 
 [requires]
 python_version = "3.8"

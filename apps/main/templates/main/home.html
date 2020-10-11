@@ -1,6 +1,14 @@
 {% extends "base.html" %}
+
+{% load static %}
+
+{% block sytlesheet %}
+<link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+{% endblock sytlesheet %}
+
 {% block title %}Home{% endblock %}
 {% block brand %}Home{% endblock brand %}
+
 {% block nav-item %}
     {% if user.is_authenticated %}
         <a href="{% url 'logout' %}" class="nav-link">Abmelden</a>
@@ -8,8 +16,23 @@
         <a href="{% url 'login' %}" class="nav-link">Anmelden</a>
     {% endif %}
 {% endblock nav-item %}
+
 {% block content %}
-<div class="">
-    <h1>Hello World</h1>
-</div>
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <label class="input-group-text" for = "date-time"><i class="material-icons">today</i></label>
+            </div>
+            <input class = "form-control" type="datetime" name="test" id="date-time" value = "{% now "d.m.Y H:i" %} ">
+        </div>
+        
+        <h1>Hello World</h1>
+        {% lorem 9 p random %}
 {% endblock content %}
+
+{% block javascript %}
+    <script src="{% static 'js/jquery.datetimepicker.full.min.js' %}"></script>
+    <script>
+    let date_time = $('#date-time');
+    date_time.datetimepicker({minDate: 0, format: 'd.m.Y H:i',});
+    </script>
+{% endblock javascript %}

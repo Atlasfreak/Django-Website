@@ -14,14 +14,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/mystyles.css' %}">
-
+    
+    {% block sytlesheet %}
+    {% endblock sytlesheet %}
     <title>{% block title %}Webseite{% endblock title %}</title>
 </head>
-<body class = "bg-light">
+<body class = "bg-light" {% block body-extra-context %}{% endblock body-extra-context %}>
     {% include "cookie-banner.html" %}
-    <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="material-icons">arrow_upward</i> Nach oben</button>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-light" style="background-color: #0099cc;">
+    <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="align-text-bottom material-icons">arrow_upward</i> Nach oben</button>
+    <header class = "sticky-top">
+        <nav class="navbar navbar-expand-sm navbar-dark" style="background: linear-gradient(85deg, rgb(19,109,109), rgb(33,33,33));">
             <div class = "container">
 
                 <span class="navbar-brand mb-0 h1">
@@ -30,6 +32,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <div class="ml-auto navbar-nav">
+                        {% if user.is_superuser %} <a class="nav-link" href="{%url 'admin:index' %}">Admin Panel</a> {% endif %}
                         {% block nav-item %}
                         {% endblock nav-item %}
                     </div>
@@ -38,15 +41,15 @@
         </nav>
     </header>
     <main role = "main">
+        {% if messages %}
+            {% for message in messages %}
+                <div class = "alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
         <div class="container rounded p-3 my-4 bg-white shadow-sm">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class = "alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-
             {% block content  %}
             {% endblock content %}
         </div>
@@ -61,5 +64,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
 
     <script src="{% static 'js/my.js' %}"></script>
+    {% block javascript %}
+    {% endblock javascript %}
 </body>
 </html>

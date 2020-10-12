@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block sytlesheet %}
-<link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery.datetimepicker.min.css' %}">
 {% endblock sytlesheet %}
 
 {% block title %}Home{% endblock %}
@@ -18,15 +18,16 @@
 {% endblock nav-item %}
 
 {% block content %}
+    <div class="rounded-lg p-3 bg-white shadow my-4 ">
         <div class="input-group">
             <div class="input-group-prepend">
                 <label class="input-group-text" for = "date-time"><i class="material-icons">today</i></label>
             </div>
             <input class = "form-control" type="datetime" name="test" id="date-time" value = "{% now "d.m.Y H:i" %} ">
         </div>
-        
         <h1>Hello World</h1>
         {% lorem 9 p random %}
+    </div>
 {% endblock content %}
 
 {% block javascript %}

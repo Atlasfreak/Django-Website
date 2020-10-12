@@ -31,7 +31,7 @@ function cookie_banner(){
     $(".cookie-consent-accept").click( function(){
         let max_age = (365*24*60*60);
         cookie_message = "accepted"
-        document.cookie = `cookie_consent=${encodeURIComponent(cookie_message)}; max-age=${max_age};`
+        document.cookie = `cookie_consent=${encodeURIComponent(cookie_message)}; max-age=${max_age}; path=/; samesite=lax`
         location.reload();
     });
 

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}{% endblock %}
+{% block body-extra-context %}
+    style = "height: device-height; background-image: url({% static 'img/background.png' %});  background-repeat: no-repeat;  background-size: cover;"
+{% endblock body-extra-context %}
+{% block brand %}{% endblock %}
+{% block nav-item %}
+    <a class="nav-link" href="{%url 'home' %}">Hauptseite</a>
+{% endblock nav-item %}
+{% block content %}
+    <div class="card my-4 shadow-sm">
+    {% block management_content %}{% endblock %}
+    </div>
+{% endblock content %}

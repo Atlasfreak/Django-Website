@@ -1,31 +1,32 @@
-{% extends "base.html" %}
+{% extends "userManagement/management_base.html" %}
 {% load crispy_forms_tags %}
-{% block title %}Registrieren - {{block.super}}{% endblock title %}
+{% block title %}Registrieren{% endblock title %}
+{% block brand %}Registrieren{% endblock %}
 {% block nav-item %}
+    {{ block.super }}
     <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
 {% endblock nav-item %}
 
-{% block content %}
-    <div class = "content-sectiion">
-        <form method="POST">
-            {% csrf_token %}
-            <fieldset class = "form-group">
-                <legend class = "border-bottom mb-4">
-                    Registrieren
-                </legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class = "form-group">
-                <button class = "btn btn-outline-info" type = "submit">
-                    Registrieren
-                </button>
+{% block management_content %}
+    <form method="POST">
+        {% csrf_token %}
+        <fieldset class = "form-group">
+            <legend class = "border-bottom mb-4 card-header">
+                Registrieren
+            </legend>
+            <div class="card-body">
+            {{ form|crispy }}
+            <button class = "btn btn-outline-info" type = "submit">
+                Registrieren
+            </button>
             </div>
-        </form>
-        <div class = "border-top pt-3">
-            <small class = "text-muted">
-                Du hast schon einen Account? <a href = "{%url 'login' %}">Amelden</a>
-            </small>
-        </div>
+        </fieldset>
+        
+    </form>
+    <div class = "border-top card-footer">
+        <small class = "text-muted">
+            Du hast schon einen Account? <a href = "{%url 'login' %}">Amelden</a>
+        </small>
     </div>
-{% endblock content %}
+{% endblock management_content %}
 

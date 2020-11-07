@@ -25,7 +25,7 @@ SECRET_KEY = 'kjua*i%is72#)qb4yk+#jb7@hqd#75bac%wqcoy^qg+vtrl@)d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'apps.customUser.apps.CustomuserConfig',
     'apps.userManagement.apps.UsermanagementConfig',
     'apps.main.apps.MainConfig',
+    'apps.polls.apps.PollsConfig',
     'crispy_forms',
     'widget_tweaks',
     'django.contrib.admin',

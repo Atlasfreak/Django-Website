@@ -1,0 +1,14 @@
+from django.urls import path, include
+from .views import *
+
+
+app_name = 'polls'
+urlpatterns = [
+    path('', index, name = 'index'),
+    path('create/', create, name = 'create'),
+    path('<token>/', include([
+        path('vote/', vote, name = 'create'),
+        path('results/', results, name = 'results'),
+        path('edit/', edit, name = 'edit'),
+    ]))
+]

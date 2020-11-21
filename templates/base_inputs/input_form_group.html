@@ -1,0 +1,5 @@
+{% load widget_tweaks %}
+<div class="form-group">
+    {{ field.label_tag }}
+    {% include 'base_inputs/input_field.html' with field=field field_with_filters=field_with_filters %}
+</div>

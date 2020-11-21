@@ -38,8 +38,6 @@ function cookie_banner(){
 }
 
 $(document).ready(function() {
-    bsCustomFileInput.init()
-
     //back to top button
     back_to_top();
 

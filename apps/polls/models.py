@@ -12,39 +12,57 @@ class Poll (models.Model):
     start_date = models.DateTimeField(verbose_name = 'Startdatum')
     end_date = models.DateTimeField(verbose_name = 'Enddatum')
     title = models.CharField(max_length = 150, verbose_name = 'Titel')
-    token = models.CharField('token für url', max_length = 32)
+    info_text = models.CharField('Beschreibung', max_length=2048)
+    token = models.CharField('Token für url', max_length = 32)
     multiple_votes = models.BooleanField('Mehrmals Abstimmen')
 
     class Meta:
-        verbose_name = "Poll"
-        verbose_name_plural = "Polls"
+        verbose_name = 'Poll'
+        verbose_name_plural = 'Polls'
 
     def __str__(self):
         return f'{self.title}'
 
 
-class Question (models.Model):
-    poll = models.ForeignKey(Poll, on_delete = models.CASCADE, related_name = 'question', verbose_name = 'zugehörige Umfrage')
-    text = models.CharField(max_length = 128, verbose_name = 'Fragetext')
-    required = models.BooleanField(verbose_name = 'benötigt', default = False)
+class QuestionType(models.Model):
 
-    TEXTFIELD = 'TF'
-    DATEFIELD = 'DF'
-    CHECKBOX = 'CB'
-    RADIO = 'RD'
-
-    TYPE_CHOICES = [
-        (TEXTFIELD, 'textarea'),
-        (DATEFIELD, 'date'),
-        (CHECKBOX, 'checkbox'),
-        (RADIO, 'radio')
-    ]
-
-    type = models.CharField('Fragetyp', max_length = 150, choices = TYPE_CHOICES)
+    html_tag = models.CharField('HTML Tag', max_length=10)
+    verbose_name = models.CharField('Lesbarer Name', max_length=50)
 
     class Meta:
-        verbose_name = "Question"
-        verbose_name_plural = "Questions"
+        verbose_name = 'QuestionType'
+        verbose_name_plural = 'QuestionTypes'
+
+    def __str__(self):
+        return f'{self.verbose_name} - {self.html_tag}'
+
+
+class Question (models.Model):
+    poll = models.ForeignKey(Poll, on_delete = models.CASCADE, related_name = 'question', verbose_name = 'zugehörige Umfrage')
+    text = models.CharField(max_length = 128, verbose_name = 'Frage')
+    required = models.BooleanField(verbose_name = 'benötigt', default = False)
+
+    # LITTLETEXT = 'text'
+    # TEXT = 'textarea'
+    # DATEFIELD = 'date'
+    # CHECKBOX = 'checkbox'
+    # RADIO = 'radio'
+    # SELECT = 'select'
+
+    # TYPE_CHOICES = [
+    #     (TEXT, 'Langer Text'),
+    #     (LITTLETEXT, 'Kurzer Text'),
+    #     (DATEFIELD, 'Datum'),
+    #     (CHECKBOX, 'Mehrfachauswahl'),
+    #     (RADIO, 'Einzelauswahl'),
+    #     (SELECT, 'Dropdown'),
+    # ]
+
+    type = models.ForeignKey(QuestionType, verbose_name='Fragetyp', on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Question'
+        verbose_name_plural = 'Questions'
 
     def __str__(self):
         return f'{self.text}'
@@ -52,40 +70,39 @@ class Question (models.Model):
 
 class Choice (models.Model):
     question = models.ForeignKey(Question, on_delete = models.CASCADE, related_name = 'choices', verbose_name = 'zugehörige Frage')
-    text = models.CharField(max_length = 256, verbose_name = 'Auswahltext')
-    help_text = models.CharField(verbose_name = 'Eingabe Hilfe Text', max_length= 128)
+    text = models.CharField(max_length = 128, verbose_name = 'Option')
 
     class Meta:
-        verbose_name = "Choice"
-        verbose_name_plural = "Choices"
+        verbose_name = 'Choice'
+        verbose_name_plural = 'Choices'
 
     def __str__(self):
         return f'{self.text}'
 
 
 class Submission(models.Model):
-    user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE)
-    poll = models.ForeignKey(Poll, verbose_name='Umfrage', on_delete=models.CASCADE)
-    ip_adress = models.GenericIPAddressField('IP-Adresse der Einreichung', protocol="both", unpack_ipv4=False)
-    submission_date = models.DateTimeField('Einsendedatum', auto_now=True, auto_now_add=False)
+    user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE, related_name = 'submission')
+    poll = models.ForeignKey(Poll, verbose_name='Umfrage', on_delete=models.CASCADE, related_name = 'submission')
+    ip_adress = models.GenericIPAddressField('IP-Adresse der Einreichung', protocol='both', unpack_ipv4=False)
+    submission_date = models.DateTimeField('Einsendedatum', auto_now=False, auto_now_add=True)
 
     class Meta:
-        verbose_name = "Submission"
-        verbose_name_plural = "Submissions"
+        verbose_name = 'Submission'
+        verbose_name_plural = 'Submissions'
 
     def __str__(self):
         return f'{self.user}'
 
 
 class Answer (models.Model):
-    submission = models.ForeignKey(SiteUser, verbose_name='', on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, verbose_name='Frage', on_delete=models.CASCADE)
-    choice = models.ForeignKey(Choice, verbose_name='Antwortkey', on_delete=models.CASCADE, related_name = 'answers')
+    submission = models.ForeignKey(SiteUser, verbose_name='Einsendung', on_delete=models.CASCADE, related_name = 'answer')
+    question = models.ForeignKey(Question, verbose_name='Frage', on_delete=models.CASCADE, related_name = 'answer')
+    choice = models.ForeignKey(Choice, verbose_name='Antwortkey', on_delete=models.CASCADE, related_name = 'answer')
     value = models.CharField('Antwortwert', max_length=2048)
 
     class Meta:
-        verbose_name = "Answer"
-        verbose_name_plural = "Answers"
+        verbose_name = 'Answer'
+        verbose_name_plural = 'Answers'
 
     def __str__(self):
         return f'{self.value}'

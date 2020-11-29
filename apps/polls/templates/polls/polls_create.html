@@ -1,0 +1,118 @@
+{% extends 'polls/polls_base.html' %}
+{% load widget_tweaks %}
+{% load polls_tags %}
+{% load static %}
+
+{% block sytlesheet %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock sytlesheet %}
+
+{% block title %}{{ block.super }}Erstellen{% endblock %}
+
+{% block content %}
+    <div class = "content-sectiion">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="card shadow mt-4">
+                <fieldset>
+                    
+                    <legend class = "card-header">
+                        Umfrage Erstellen
+                    </legend>
+                    
+                    <div class="card-body">
+                        
+                        {% with field=poll_form.title %}
+                            {% include "base_inputs/input_form_group.html" with field=field field_with_filters=field %}
+                        {% endwith %}
+                        
+                        {% with field=poll_form.start_date %}
+                            <div id="date-time-div">
+                                {% include "base_inputs/input_group.html" with field=field icon='today' field_with_filters=field|set_data:"input" %}
+                            </div>
+                        {% endwith %}
+                        
+                        {% with field=poll_form.end_date %}
+                            <div id="date-time-div">
+                                {% include "base_inputs/input_group.html" with field=field icon='today' field_with_filters=field|set_data:"input" %}
+                            </div>
+                        {% endwith %}
+                        
+                        {% with field=poll_form.info_text %}
+                            {% include "base_inputs/input_form_group.html" with field=field field_with_filters=field %}
+                        {% endwith %}
+                        
+                        <div class="custom-control custom-switch form-group">
+                            {% render_field poll_form.multiple_votes class+="custom-control-input" %}
+                            <label for="{{ poll_form.multiple_votes.id_for_label }}" class="custom-control-label">{{ poll_form.multiple_votes.label }}</label>
+                        </div>
+                    
+                    </div>
+                
+                </fieldset>
+            </div>
+            
+            <fieldset>
+                
+                {{ question_formset.management_form }}
+                {% for question_form in question_formset %}
+                    {% include 'polls/include/question.html' with question_form=question_form choice_formset=choice_formset_list|index:forloop.counter0 %}
+                {% endfor %}
+                <div class="form-group">
+                    <button class="btn btn-success add_more" type="button" id="{{question_formset.prefix}}"><i class="align-bottom material-icons">add</i>Frage hinzufügen</button>
+                </div>
+                <div hidden="" id="{{question_formset.prefix}}-empty">
+                    {% include 'polls/include/question.html' with question_form=question_formset.empty_form choice_formset=empty_choice_formset %}
+                </div>
+            </fieldset>
+            <hr>
+            <div class = "form-group">
+                <button class = "btn btn-outline-success" type = "submit">
+                    Erstellen
+                </button>
+            </div>
+        </form>
+    </div>
+
+{% endblock content %}
+
+{% block javascript %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/minMaxTimePlugin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+    <script>
+    $(document).ready(function() {
+        flatpickr('#date-time-div', {
+            enableTime: true,
+            altInput: true,
+            time_24hr: true,
+            allowInput: true,
+            wrap: true,
+            locale: "de",
+            minDate: "today",
+            defaultDate: "{% now 'Y-m-d H:i' %}",
+            dateFormat: "Y-m-d H:i",
+            altFormat: "D j. F Y H:i",
+            plugins: [
+                new minMaxTimePlugin({
+                    table: {
+                        "{% now 'Y-m-d' %}": {
+                            minTime: "{% now 'H:i' %}",
+                        }
+                    }
+                })
+            ]
+        });
+    });
+    </script>
+    <script src="{% static 'js/polls/polls.js' %}"></script>
+    <script>
+    $('.add_more').click(function(){
+        addForm(this);
+        $('.add_more').click(function(){
+        addForm(this);
+        });
+    });
+    </script>
+{% endblock javascript %}

@@ -12,7 +12,7 @@ class Poll (models.Model):
     start_date = models.DateTimeField(verbose_name = 'Startdatum')
     end_date = models.DateTimeField(verbose_name = 'Enddatum')
     title = models.CharField(max_length = 150, verbose_name = 'Titel')
-    info_text = models.CharField('Beschreibung', max_length=2048)
+    info_text = models.CharField(verbose_name = 'Beschreibung', max_length=2048)
     token = models.CharField('Token für url', max_length = 32)
     multiple_votes = models.BooleanField('Mehrmals Abstimmen')
 
@@ -26,7 +26,7 @@ class Poll (models.Model):
 
 class QuestionType(models.Model):
 
-    html_tag = models.CharField('HTML Tag', max_length=10)
+    html_input_type = models.CharField('HTML Input Typ', max_length=10)
     verbose_name = models.CharField('Lesbarer Name', max_length=50)
 
     class Meta:
@@ -34,13 +34,13 @@ class QuestionType(models.Model):
         verbose_name_plural = 'QuestionTypes'
 
     def __str__(self):
-        return f'{self.verbose_name} - {self.html_tag}'
+        return f'{self.verbose_name}'
 
 
 class Question (models.Model):
     poll = models.ForeignKey(Poll, on_delete = models.CASCADE, related_name = 'question', verbose_name = 'zugehörige Umfrage')
     text = models.CharField(max_length = 128, verbose_name = 'Frage')
-    required = models.BooleanField(verbose_name = 'benötigt', default = False)
+    required = models.BooleanField(verbose_name = 'erforderlich', default = False)
 
     # LITTLETEXT = 'text'
     # TEXT = 'textarea'

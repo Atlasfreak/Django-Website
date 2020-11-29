@@ -1,0 +1,68 @@
+{% load widget_tweaks %}
+
+<div class="card shadow my-4">
+    
+    <div class="card-header">
+        <div class="row my-0">
+            
+            <div class="col">
+                {% include "base_inputs/input_field.html" with field=question_form.text field_with_filters=question_form.text %}
+            </div>
+            
+            <div class="row col-auto">
+                <label for="{{question_form.type.id_for_label}}" class = "col-auto col-form-label">{{question_form.type.label}}</label>
+                <div class="col-auto">
+                    {% include "base_inputs/input_field.html" with field=question_form.type field_with_filters=question_form.type|add_class:"custom-select" %}
+                </div>
+            </div>
+        
+        </div>
+    </div>
+    
+    {{choice_formset.management_form}}
+    
+    <div class="card-body" id="options">
+        
+        {% for choice_form in choice_formset %}
+            <div class="form-row">
+                <div class="form-group col">
+                    {% include "base_inputs/input_field.html" with field=choice_form.text field_with_filters=choice_form.text %}
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-danger" type = "button" title="Feld entfernen"><i class="align-bottom material-icons">clear</i></button>
+                </div>
+            </div>
+        {% endfor %}
+        
+        <button class="btn btn-success add_more" type="button" id="{{choice_formset.prefix}}"><i class="align-bottom material-icons">add</i>Option hinzufügen</button>
+        
+        <div hidden="" id="{{choice_formset.prefix}}-empty">
+            <div class="form-row">
+                <div class="form-group col">
+                    {% include "base_inputs/input_field.html" with field=choice_formset.empty_form.text field_with_filters=choice_formset.empty_form.text %}
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-danger" type = "button" title="Feld entfernen"><i class="align-bottom material-icons">clear</i></button>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    
+    <div class="card-footer">
+        <div class="row">
+            
+            <div class="col">
+                <div class="custom-control custom-switch">
+                    {% include "base_inputs/input_field.html" with field=question_form.required field_with_filters=question_form.required|attr:"class:custom-control-input" %}
+                    <label for="{{question_form.required.id_for_label}}" class="custom-control-label">{{question_form.required.label}}</label>
+                </div>
+            </div>
+            
+            <div class="col-auto">
+                <button class="btn btn-danger"><i class="align-bottom material-icons">clear</i>Frage löschen</button>
+            </div>
+        
+        </div>
+    </div>
+</div>

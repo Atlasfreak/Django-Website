@@ -19,9 +19,11 @@
     {% endblock sytlesheet %}
     <title>{% block title %}Webseite{% endblock title %}</title>
 </head>
+
 <body class = "bg-light" {% block body-extra-context %}{% endblock body-extra-context %}>
     {% include "cookie-banner.html" %}
     <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="align-bottom material-icons">arrow_upward</i> Nach oben</button>
+    
     <header class = "sticky-top">
         <nav class="navbar navbar-expand-sm navbar-light" style="background: #00c9cf;">
             <div class = "container">
@@ -37,13 +39,22 @@
                                <i class="align-bottom material-icons" title="Admin Panel">security</i>
                             </a>
                         {% endif %}
+
                         {% block nav-item %}
+
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'logout' %}" class="nav-link">Abmelden</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="nav-link">Anmelden</a>
+                            {% endif %}
+
                         {% endblock nav-item %}
                     </div>
                 </div>
             </div>
         </nav>
     </header>
+    
     <main role = "main">
         {% if messages %}
         <div class="container my-3">

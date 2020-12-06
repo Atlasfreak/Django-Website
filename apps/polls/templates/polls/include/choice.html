@@ -1,0 +1,9 @@
+{% load widget_tweaks %}
+<div class="form-row">
+    <div class="form-group col">
+        {% include "base_inputs/input_field.html" with field=field field_with_filters=field %}
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-danger remove_form" type = "button" title="Feld entfernen" id="{{choice_formset.prefix}}" data-target=".card-body"><i class="align-bottom material-icons">clear</i></button>
+    </div>
+</div>

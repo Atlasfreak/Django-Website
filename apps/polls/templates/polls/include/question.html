@@ -1,6 +1,6 @@
 {% load widget_tweaks %}
 
-<div class="card shadow my-4">
+<div class="card shadow mb-4">
     
     <div class="card-header">
         <div class="row my-0">
@@ -21,32 +21,27 @@
     
     {{choice_formset.management_form}}
     
-    <div class="card-body" id="options">
-        
-        {% for choice_form in choice_formset %}
-            <div class="form-row">
-                <div class="form-group col">
-                    {% include "base_inputs/input_field.html" with field=choice_form.text field_with_filters=choice_form.text %}
+    <div class="card-body">
+        <div id="options">
+            {% for choice_form in choice_formset %}
+                <div class="form-row">
+                    <div class="form-group col">
+                        {% include "base_inputs/input_field.html" with field=choice_form.text field_with_filters=choice_form.text %}
+                    </div>
+                    {% if forloop.counter0 > 0 %}
+                    <div class="col-auto">
+                        <button class="btn btn-danger remove_form" type = "button" title="Feld entfernen" id="{{choice_formset.prefix}}" data-target=".card-body"><i class="align-bottom material-icons">clear</i></button>
+                    </div>
+                    {% endif %}
                 </div>
-                <div class="col-auto">
-                    <button class="btn btn-danger" type = "button" title="Feld entfernen"><i class="align-bottom material-icons">clear</i></button>
-                </div>
-            </div>
-        {% endfor %}
-        
-        <button class="btn btn-success add_more" type="button" id="{{choice_formset.prefix}}"><i class="align-bottom material-icons">add</i>Option hinzufügen</button>
-        
-        <div hidden="" id="{{choice_formset.prefix}}-empty">
-            <div class="form-row">
-                <div class="form-group col">
-                    {% include "base_inputs/input_field.html" with field=choice_formset.empty_form.text field_with_filters=choice_formset.empty_form.text %}
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-danger" type = "button" title="Feld entfernen"><i class="align-bottom material-icons">clear</i></button>
-                </div>
+            {% endfor %}
+            
+            <button class="btn btn-success add_form" type="button" id="{{choice_formset.prefix}}"><i class="align-bottom material-icons">add</i>Option hinzufügen</button>
+            
+            <div hidden="" id="{{choice_formset.prefix}}-empty">
+                {% include "polls/include/choice.html" with field=choice_formset.empty_form.text choice_formset=choice_formset %}
             </div>
         </div>
-    
     </div>
     
     <div class="card-footer">
@@ -60,7 +55,7 @@
             </div>
             
             <div class="col-auto">
-                <button class="btn btn-danger"><i class="align-bottom material-icons">clear</i>Frage löschen</button>
+                <button class="btn btn-danger remove_form" type="button" id="{{question_formset.prefix}}" data-target="fieldset"><i class="align-bottom material-icons">clear</i>Frage löschen</button>
             </div>
         
         </div>

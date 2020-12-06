@@ -11,9 +11,9 @@
 
 {% block content %}
     <div class = "content-sectiion">
-        <form method="POST">
+        <form method="POST" autocomplete="off">
             {% csrf_token %}
-            <div class="card shadow mt-4">
+            <div class="card shadow my-4">
                 <fieldset>
                     
                     <legend class = "card-header">
@@ -52,28 +52,27 @@
                 </fieldset>
             </div>
             
-            <fieldset>
-                
+            <fieldset id="questions">
+
                 {{ question_formset.management_form }}
                 {% for question_form in question_formset %}
-                    {% include 'polls/include/question.html' with question_form=question_form choice_formset=choice_formset_list|index:forloop.counter0 %}
+                    {% include 'polls/include/question.html' with question_form=question_form question_formset=question_formset choice_formset=choice_formset_list|index:forloop.counter0 %}
                 {% endfor %}
-                <div class="form-group">
-                    <button class="btn btn-success add_more" type="button" id="{{question_formset.prefix}}"><i class="align-bottom material-icons">add</i>Frage hinzufügen</button>
-                </div>
+                
+                <button class="btn btn-success add_form" type="button" id="{{question_formset.prefix}}"><i class="align-bottom material-icons">add</i>Frage hinzufügen</button>
+                
                 <div hidden="" id="{{question_formset.prefix}}-empty">
                     {% include 'polls/include/question.html' with question_form=question_formset.empty_form choice_formset=empty_choice_formset %}
                 </div>
             </fieldset>
             <hr>
-            <div class = "form-group">
+            <div class="form-group">
                 <button class = "btn btn-outline-success" type = "submit">
                     Erstellen
                 </button>
             </div>
         </form>
     </div>
-
 {% endblock content %}
 
 {% block javascript %}
@@ -108,11 +107,20 @@
     </script>
     <script src="{% static 'js/polls/polls.js' %}"></script>
     <script>
-    $('.add_more').click(function(){
+    $('.custom-select').each(function(){
+        changeAvailableOptions(this, '.card', '#options', {{options_deactivated}}, 'Dieser Fragetyp lässt keine Auswahlmöglichkeiten zu.');
+    });
+
+    $('form').on('click', '.add_form', function(){
         addForm(this);
-        $('.add_more').click(function(){
-        addForm(this);
-        });
+    });
+
+    $('form').on('click', '.remove_form', function(){
+        removeForm(this);
+    });
+
+    $('form').on('change', '.custom-select', function(){
+        changeAvailableOptions(this, '.card', '#options', {{options_deactivated}}, 'Dieser Fragetyp lässt keine Auswahlmöglichkeiten zu.')
     });
     </script>
 {% endblock javascript %}

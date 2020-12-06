@@ -10,15 +10,12 @@
 {% block brand %}Home{% endblock brand %}
 
 {% block nav-item %}
-    {% if user.is_authenticated %}
-        <a href="{% url 'logout' %}" class="nav-link">Abmelden</a>
-    {% else %}
-        <a href="{% url 'login' %}" class="nav-link">Anmelden</a>
-    {% endif %}
+    {{ block.super }}
+    <a href="{% url 'polls:create' %}" class="nav-link">Umfrage erstellen</a>
 {% endblock nav-item %}
 
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4 ">
+    <div class="rounded-lg p-3 bg-white shadow my-4">
         <div class="input-group" id="date-time-div">
             <div class="input-group-prepend">
                 <label class="input-group-text" for = "date-time" data-toggle><i class="material-icons">today</i></label>

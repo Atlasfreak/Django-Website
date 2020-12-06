@@ -1,8 +1,9 @@
-from django.db.models.fields import CharField
-from apps.customUser.validators import UnicodeFullNameValidator
 from django.db import models
+from django.utils.module_loading import import_string
 
 from apps.customUser.models import SiteUser
+
+from .validators import FormWidgetValidator
 
 # Create your models here.
 
@@ -25,13 +26,26 @@ class Poll (models.Model):
 
 
 class QuestionType(models.Model):
+    form_widget_validator = FormWidgetValidator()
 
     html_input_type = models.CharField('HTML Input Typ', max_length=10)
     verbose_name = models.CharField('Lesbarer Name', max_length=50)
+    enable_choices = models.BooleanField('Optionen verfügbar', default=True)
+    form_widget = models.CharField(
+        'Django Form Widget Klassen Pfad',
+        max_length=255,
+        help_text='Vollständiger Pfad zu einem Widget z.B. "django.forms.widgets.TextInput".',
+        validators=[form_widget_validator],
+        )
 
     class Meta:
         verbose_name = 'QuestionType'
         verbose_name_plural = 'QuestionTypes'
+
+    def get_widget_class(self):
+        widget_path = self.form_widget
+        widget = import_string(widget_path)
+        return widget
 
     def __str__(self):
         return f'{self.verbose_name}'
@@ -41,22 +55,6 @@ class Question (models.Model):
     poll = models.ForeignKey(Poll, on_delete = models.CASCADE, related_name = 'question', verbose_name = 'zugehörige Umfrage')
     text = models.CharField(max_length = 128, verbose_name = 'Frage')
     required = models.BooleanField(verbose_name = 'erforderlich', default = False)
-
-    # LITTLETEXT = 'text'
-    # TEXT = 'textarea'
-    # DATEFIELD = 'date'
-    # CHECKBOX = 'checkbox'
-    # RADIO = 'radio'
-    # SELECT = 'select'
-
-    # TYPE_CHOICES = [
-    #     (TEXT, 'Langer Text'),
-    #     (LITTLETEXT, 'Kurzer Text'),
-    #     (DATEFIELD, 'Datum'),
-    #     (CHECKBOX, 'Mehrfachauswahl'),
-    #     (RADIO, 'Einzelauswahl'),
-    #     (SELECT, 'Dropdown'),
-    # ]
 
     type = models.ForeignKey(QuestionType, verbose_name='Fragetyp', on_delete=models.CASCADE)
 
@@ -91,7 +89,7 @@ class Submission(models.Model):
         verbose_name_plural = 'Submissions'
 
     def __str__(self):
-        return f'{self.user}'
+        return f'{self.user}-{self.poll}'
 
 
 class Answer (models.Model):

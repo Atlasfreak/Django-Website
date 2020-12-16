@@ -38,13 +38,13 @@
                         
                         {% with field=poll_form.start_date %}
                             <div id="date-time-div">
-                                {% include "base_inputs/input_group.html" with field=field icon='today' field_with_filters=field|set_data:"input" %}
+                                {% include "base_inputs/input_group.html" with field=field prepend_text='<i class="far fa-calendar-alt fa-lg"></i>' field_with_filters=field|set_data:"input" %}
                             </div>
                         {% endwith %}
                         
                         {% with field=poll_form.end_date %}
                             <div id="date-time-div">
-                                {% include "base_inputs/input_group.html" with field=field icon='today' field_with_filters=field|set_data:"input" %}
+                                {% include "base_inputs/input_group.html" with field=field prepend_text='<i class="far fa-calendar-alt fa-lg"></i>' field_with_filters=field|set_data:"input" %}
                             </div>
                         {% endwith %}
                         
@@ -69,7 +69,7 @@
                     {% include 'polls/include/question.html' with question_form=question_form question_formset=question_formset choice_formset=choice_formset_list|index:forloop.counter0 %}
                 {% endfor %}
                 
-                <button class="btn btn-success add_form" type="button" id="{{question_formset.prefix}}"><i class="align-bottom material-icons">add</i>Frage hinzufügen</button>
+                <button class="btn btn-success add_form" type="button" id="{{question_formset.prefix}}"><i class="fas fa-plus"></i> Frage hinzufügen</button>
                 
                 <div hidden="" id="{{question_formset.prefix}}-empty">
                     {% include 'polls/include/question.html' with question_form=question_formset.empty_form choice_formset=empty_choice_formset %}

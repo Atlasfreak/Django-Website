@@ -32,7 +32,7 @@
                 {% endif %}
             {% endfor %}
             
-            <button class="btn btn-success add_form" type="button" id="{{choice_formset.prefix}}"><i class="align-bottom material-icons">add</i>Option hinzufügen</button>
+            <button class="btn btn-success add_form" type="button" id="{{choice_formset.prefix}}"><i class="fas fa-plus"></i> Option hinzufügen</button>
             
             <div hidden="" id="{{choice_formset.prefix}}-empty">
                 {% include "polls/include/choice.html" with field=choice_formset.empty_form.text field_with_filters=choice_formset.empty_form.text prefix=choice_formset.prefix condition=True form=choice_formset.empty_form %}
@@ -51,7 +51,7 @@
             </div>
             
             <div class="col-auto">
-                <button class="btn btn-danger remove_form" type="button" id="{{question_formset.prefix}}" data-target="fieldset"><i class="align-bottom material-icons">clear</i>Frage löschen</button>
+                <button class="btn btn-danger remove_form" type="button" id="{{question_formset.prefix}}" data-target="fieldset"><i class="fas fa-minus"></i> Frage löschen</button>
             </div>
         
         </div>

@@ -4,7 +4,7 @@
     {{ field.label_tag }}
     <div class="input-group {% if field.errors %}is-invalid{% endif %}">
         <div class="input-group-prepend">
-            <label class="input-group-text" for = "{{ field.id_for_label }}" data-toggle><i class="material-icons">{{icon}}</i></label>
+            <label class="input-group-text" for = "{{ field.id_for_label }}" data-toggle>{{prepend_text}}</label>
         </div>
         {{ field_with_filters|add_class:"form-control"|add_error_class:"is-invalid" }}
     </div>

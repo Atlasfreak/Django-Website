@@ -49,9 +49,9 @@ class UserAdmin(admin.ModelAdmin):
     search_fields = ('username', 'email')
     ordering = ('username',)
     filter_horizontal = ('groups', 'user_permissions',)
-    actions = ['change_active_action','make_admin_action',]
+    actions = ['activate_action', 'deactivate_action', 'make_admin_action',]
 
-    def change_active_action(self, request, queryset):
+    def activate_action(self, request, queryset):
         rows_updated = queryset.update(is_active = True)
         if rows_updated == 1:
             message_part = '1 Benutzer wurde'
@@ -59,7 +59,17 @@ class UserAdmin(admin.ModelAdmin):
             message_part = f'{rows_updated} Benutzer wurden'
         self.message_user(request, f'{message_part} aktiviert.')
 
-    change_active_action.short_description = 'Ausgewählte Benutzer aktivieren' 
+    activate_action.short_description = 'Ausgewählte Benutzer aktivieren' 
+
+    def deactivate_action(self, request, queryset):
+        rows_updated = queryset.update(is_active = False)
+        if rows_updated == 1:
+            message_part = '1 Benutzer wurde'
+        else:
+            message_part = f'{rows_updated} Benutzer wurden'
+        self.message_user(request, f'{message_part} deaktiviert.')
+
+    deactivate_action.short_description = 'Ausgewählte Benutzer deaktivieren' 
 
     def make_admin_action(self, request, queryset):
         rows_updated = queryset.update(is_staff = True, is_superuser = True)

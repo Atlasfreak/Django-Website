@@ -1,5 +1,13 @@
+from datetime import timedelta
+
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.module_loading import import_string
+from django.core.validators import MinValueValidator
+from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.urls import reverse
+from django.utils import timezone
 
 from apps.customUser.models import SiteUser
 
@@ -8,18 +16,33 @@ from .validators import FormWidgetValidator
 # Create your models here.
 
 class Poll (models.Model):
+    general_date_validator = MinValueValidator((timezone.now() - timedelta(minutes=30.0)), message=_('The date lies in the past.'))
+
     creator = models.ForeignKey(SiteUser, on_delete = models.CASCADE, related_name = 'polls', verbose_name = 'Ersteller')
     creation_date = models.DateTimeField(auto_now_add = True, verbose_name = 'Erstellungsdatum')
     start_date = models.DateTimeField(verbose_name = 'Startdatum')
-    end_date = models.DateTimeField(verbose_name = 'Enddatum')
+    end_date = models.DateTimeField(verbose_name = 'Enddatum', validators=[general_date_validator])
     title = models.CharField(max_length = 150, verbose_name = 'Titel')
     info_text = models.CharField(verbose_name = 'Beschreibung', max_length=2048)
-    token = models.CharField('Token für url', max_length = 32)
+    token = models.CharField('Token für url', max_length = 32, unique=True)
     multiple_votes = models.BooleanField('Mehrmals Abstimmen')
 
     class Meta:
         verbose_name = 'Poll'
         verbose_name_plural = 'Polls'
+
+    def clean(self):
+        if self.start_date > self.end_date:
+            raise ValidationError({
+                            'end_date': _('End date is before start date.'),
+                            'start_date': _('Start date is after end date.'),
+            }, code = 'invalid')
+        
+        if self.end_date - self.start_date < timedelta(days=1):
+            raise ValidationError({'end_date':_('End date is less than one day after start date.')}, code = 'invalid')
+
+    def get_absolute_url(self):
+        return reverse('polls:vote', kwargs={'token': self.token})
 
     def __str__(self):
         return f'{self.title}'

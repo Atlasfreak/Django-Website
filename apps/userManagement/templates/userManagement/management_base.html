@@ -11,6 +11,9 @@
     <a class="nav-link" href="{%url 'home' %}">Hauptseite</a>
 {% endblock nav-item %}
 {% block content %}
+    <div class="my-3">
+        {% block management_alerts %}{% endblock %}
+    </div>
     <div class="card my-4 shadow-sm">
     {% block management_content %}{% endblock %}
     </div>

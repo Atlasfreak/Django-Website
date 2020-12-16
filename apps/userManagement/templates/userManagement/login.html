@@ -8,7 +8,7 @@
     <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
 {% endblock nav-item %}
 
-{% block management_content %}
+{% block management_alerts %}
     {% if next %}
         {% if user.is_authenticated %}
             <div class="alert alert-warning">Du hast keinen Zugriff auf diese Seite. Bitte logge dich mit einem anderen Account ein.</div>
@@ -16,6 +16,9 @@
             <div class="alert alert-danger">Bitte logge dich ein um diese Seite zu sehen.</div>
         {% endif %}
     {% endif %}
+{% endblock management_alerts %}
+
+{% block management_content %}
     <form method="POST">
         {% csrf_token %}
         <legend class = "card-header">

@@ -148,4 +148,11 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+# Crispy forms config
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Custom message tags
+
+from django.contrib.messages import constants as message_constants
+MESSAGE_TAGS = {message_constants.ERROR: 'danger'}

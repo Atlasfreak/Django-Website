@@ -7,7 +7,7 @@ urlpatterns = [
     path('', index, name = 'index'),
     path('create/', create, name = 'create'),
     path('<token>/', include([
-        path('vote/', vote, name = 'create'),
+        path('vote/', vote, name = 'vote'),
         path('results/', results, name = 'results'),
         path('edit/', edit, name = 'edit'),
     ]))

@@ -1,0 +1,7 @@
+{% if  from.non_field_errors %}
+    {% for err in  from.non_field_errors %}
+        <div class="invalid-feedback">
+            <strong>{{ err }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}

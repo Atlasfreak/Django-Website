@@ -11,6 +11,16 @@
 
 {% block content %}
     <div class = "content-sectiion">
+        {% if poll_form.non_field_errors %}
+            {% for err in poll_form.non_field_errors %}
+                <div class = "my-1 alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ err }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
         <form method="POST" autocomplete="off">
             {% csrf_token %}
             <div class="card shadow my-4">

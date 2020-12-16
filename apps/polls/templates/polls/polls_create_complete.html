@@ -1,0 +1,11 @@
+{% extends 'polls/polls_base.html' %}
+{% block title %}{{ block.super }}Erstellt{% endblock %}
+{% block content %}
+    <div class="rounded-lg p-3 bg-white shadow my-4">
+        <p>Die Umfrage wurde erfolgreich erstellt.</p>
+        <p>Sie ist unter diesem Link erreichbar <b>(Achtung kopiere dir diesen Link er wird dir nicht wieder angezeigt!)</b>:</p>
+        <p>
+            <a href="{{poll.get_absolute_url}}">{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}</a>
+        </p>
+    </div>
+{% endblock content %}

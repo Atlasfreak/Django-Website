@@ -1,0 +1,28 @@
+{% extends 'polls/polls_base.html' %}
+{% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
+{% block content %}
+<ul>
+    <li>{{poll.title}}</li>
+    <li>{% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</li>
+    <li>{{poll.info_text}}</li>
+    <li>{{poll.creation_date}}</li>
+    <li>{{poll.start_date}}</li>
+    <li>{{poll.end_date}}</li>
+    <ul>
+        {% for question in poll.question.all %}
+            <li>{{question.text}}</li>
+            <ul>
+                <li>{{question.required}}</li>
+                <li>{{question.type.verbose_name}}</li>
+                {% if question.type.enable_choices %}
+                    {% for choice in question.choices.all %}
+                    <ul>
+                        <li>{{choice.text}}</li>
+                    </ul>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        {% endfor %}
+    </ul>
+</ul>
+{% endblock content %}

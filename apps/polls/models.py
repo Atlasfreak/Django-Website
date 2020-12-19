@@ -12,7 +12,7 @@ from django.utils import timezone
 
 from apps.customUser.models import SiteUser
 
-from .validators import FormWidgetValidator
+from .validators import FormWidgetValidator, FormFieldValidator
 
 # Create your models here.
 
@@ -57,6 +57,7 @@ class Poll (models.Model):
 
 class QuestionType(models.Model):
     form_widget_validator = FormWidgetValidator()
+    form_field_validator = FormFieldValidator()
 
     html_input_type = models.CharField('HTML Input Typ', max_length=10)
     verbose_name = models.CharField('Lesbarer Name', max_length=50)
@@ -66,6 +67,14 @@ class QuestionType(models.Model):
         max_length=255,
         help_text='Vollständiger Pfad zu einem Widget z.B. "django.forms.widgets.TextInput".',
         validators=[form_widget_validator],
+        blank=True,
+        )
+    form_field = models.CharField(
+        'Django Form Field Klassen Pfad',
+        max_length=255,
+        help_text='Vollständiger Pfad zu einem Field z.B. "django.forms.fields.CharField".',
+        validators=[form_field_validator],
+        default='django.forms.fields.CharField',
         )
 
     class Meta:
@@ -82,7 +91,7 @@ class QuestionType(models.Model):
 
 
 class Question (models.Model):
-    poll = models.ForeignKey(Poll, on_delete = models.CASCADE, related_name = 'question', verbose_name = 'zugehörige Umfrage')
+    poll = models.ForeignKey(Poll, on_delete = models.CASCADE, related_name = 'questions', verbose_name = 'zugehörige Umfrage')
     text = models.CharField(max_length = 128, verbose_name = 'Frage')
     required = models.BooleanField(verbose_name = 'erforderlich', default = False)
 
@@ -109,8 +118,8 @@ class Choice (models.Model):
 
 
 class Submission(models.Model):
-    user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE, related_name = 'submission')
-    poll = models.ForeignKey(Poll, verbose_name='Umfrage', on_delete=models.CASCADE, related_name = 'submission')
+    user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE, related_name = 'submissions')
+    poll = models.ForeignKey(Poll, verbose_name='Umfrage', on_delete=models.CASCADE, related_name = 'submissions')
     ip_adress = models.GenericIPAddressField('IP-Adresse der Einreichung', protocol='both', unpack_ipv4=False)
     submission_date = models.DateTimeField('Einsendedatum', auto_now=False, auto_now_add=True)
 
@@ -123,9 +132,9 @@ class Submission(models.Model):
 
 
 class Answer (models.Model):
-    submission = models.ForeignKey(SiteUser, verbose_name='Einsendung', on_delete=models.CASCADE, related_name = 'answer')
-    question = models.ForeignKey(Question, verbose_name='Frage', on_delete=models.CASCADE, related_name = 'answer')
-    choice = models.ForeignKey(Choice, verbose_name='Antwortkey', on_delete=models.CASCADE, related_name = 'answer')
+    submission = models.ForeignKey(SiteUser, verbose_name='Einsendung', on_delete=models.CASCADE, related_name = 'answers')
+    question = models.ForeignKey(Question, verbose_name='Frage', on_delete=models.CASCADE, related_name = 'answers')
+    choices = models.ManyToManyField(Choice, verbose_name='Antwortkey', related_name = 'answers',)
     value = models.CharField('Antwortwert', max_length=2048)
 
     class Meta:

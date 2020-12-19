@@ -49,3 +49,8 @@ class ModuleValidator:
 class FormWidgetValidator(ModuleValidator):
     valid_module_paths = ['django.forms.widgets', '.widgets']
     message = _('Please enter a valid django form widget.')
+
+
+class FormFieldValidator(ModuleValidator):
+    valid_module_paths = ['django.forms.fields', '.fields', 'django.forms.models']
+    message = _('Please enter a valid django form field.')

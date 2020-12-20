@@ -56,10 +56,27 @@ class Poll (models.Model):
 
 
 class QuestionType(models.Model):
+    '''
+    Describes the different types of Questions and declares their represantation in forms when a poll is answered.
+
+    Variable details:
+
+        -   verbose_name is a human_readable name that is displayed when creating a new poll.
+
+        -   enable_choices specifys wether there should be choices available to this type,
+            for example when the user should be able to select from a range of choices.
+            If choices are enabled at least one choice needs to be given to a question.
+
+        -   form_widget is the django form widget to use, if blank it is the default for the field.
+
+        -   form_field is the django form field to use.
+
+    If you want to implement a field were you can specify different parameters for the field,
+    remeber to change the code of the AnswerForm to actually use them.
+    '''
     form_widget_validator = FormWidgetValidator()
     form_field_validator = FormFieldValidator()
 
-    html_input_type = models.CharField('HTML Input Typ', max_length=10)
     verbose_name = models.CharField('Lesbarer Name', max_length=50)
     enable_choices = models.BooleanField('Optionen verfügbar', default=True)
     form_widget = models.CharField(
@@ -85,6 +102,16 @@ class QuestionType(models.Model):
         widget_path = self.form_widget
         widget = import_string(widget_path)
         return widget
+
+    def get_field_class(self):
+        field_path = self.form_field
+        field = import_string(field_path)
+        return field
+
+    def get_field_with_widget(self):
+        field = self.get_field_class()
+        field.widget = self.get_widget_class() if self.form_widget else field.widget
+        return field
 
     def __str__(self):
         return f'{self.verbose_name}'
@@ -118,10 +145,10 @@ class Choice (models.Model):
 
 
 class Submission(models.Model):
-    user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE, related_name = 'submissions')
+    user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE, related_name = 'submissions', blank=True, null=True)
     poll = models.ForeignKey(Poll, verbose_name='Umfrage', on_delete=models.CASCADE, related_name = 'submissions')
     ip_adress = models.GenericIPAddressField('IP-Adresse der Einreichung', protocol='both', unpack_ipv4=False)
-    submission_date = models.DateTimeField('Einsendedatum', auto_now=False, auto_now_add=True)
+    submission_date = models.DateTimeField('Einsendedatum', auto_now=True, auto_now_add=False)
 
     class Meta:
         verbose_name = 'Submission'
@@ -135,7 +162,7 @@ class Answer (models.Model):
     submission = models.ForeignKey(SiteUser, verbose_name='Einsendung', on_delete=models.CASCADE, related_name = 'answers')
     question = models.ForeignKey(Question, verbose_name='Frage', on_delete=models.CASCADE, related_name = 'answers')
     choices = models.ManyToManyField(Choice, verbose_name='Antwortkey', related_name = 'answers',)
-    value = models.CharField('Antwortwert', max_length=2048)
+    value = models.CharField('Antwortwert', max_length=2048, blank=True)
 
     class Meta:
         verbose_name = 'Answer'

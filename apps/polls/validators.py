@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.deconstruct import deconstructible
 
 from importlib import import_module
+from importlib import resources
 
 @deconstructible
 class ModuleValidator:
@@ -47,10 +48,10 @@ class ModuleValidator:
 
 
 class FormWidgetValidator(ModuleValidator):
-    valid_module_paths = ['django.forms.widgets', '.widgets']
+    valid_module_paths = ['django.forms.widgets', f'{__package__}.widgets']
     message = _('Please enter a valid django form widget.')
 
 
 class FormFieldValidator(ModuleValidator):
-    valid_module_paths = ['django.forms.fields', '.fields', 'django.forms.models']
+    valid_module_paths = ['django.forms.fields', f'{__package__}.fields', 'django.forms.models']
     message = _('Please enter a valid django form field.')

@@ -10,5 +10,29 @@ class PollCreationForm(forms.ModelForm):
         fields = ('title', 'start_date', 'end_date', 'info_text', 'multiple_votes')
         widgets = {'info_text': forms.Textarea()}
 
-class AnswerForm(forms.ModelForm):
-    pass
+
+def get_AnswerModelForm(question):
+    class AnswerForm(forms.ModelForm):
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            
+            field_class = question.type.get_field_with_widget()
+
+            params = {'label': question.text, 'required': question.required}
+            if hasattr(field_class, 'queryset'):
+                params['queryset'] = question.choices.all()
+            field = field_class(**params)
+            if question.type.enable_choices:
+                self.fields['choices'] = field
+            else:
+                self.fields['value'] = field
+
+        class Meta:
+            model = Answer
+            if question.type.enable_choices:
+                fields = ('choices',)
+                
+            else:
+                fields = ('value',)
+
+    return AnswerForm

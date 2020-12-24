@@ -1,28 +1,30 @@
 {% extends 'polls/polls_base.html' %}
+{% load crispy_forms_tags %}
 {% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
 {% block content %}
-<ul>
-    <li>{{poll.title}}</li>
-    <li>{% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</li>
-    <li>{{poll.info_text}}</li>
-    <li>{{poll.creation_date}}</li>
-    <li>{{poll.start_date}}</li>
-    <li>{{poll.end_date}}</li>
-    <ul>
-        {% for question in poll.question.all %}
-            <li>{{question.text}}</li>
-            <ul>
-                <li>{{question.required}}</li>
-                <li>{{question.type.verbose_name}}</li>
-                {% if question.type.enable_choices %}
-                    {% for choice in question.choices.all %}
-                    <ul>
-                        <li>{{choice.text}}</li>
-                    </ul>
-                    {% endfor %}
-                {% endif %}
-            </ul>
+<div class="rounded-lg p-3 bg-white shadow my-4">
+    <div class="d-flex">
+    <div class="h1">{{poll.title}}</div>
+    <div class="ml-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
+    </div>
+    <hr>
+    <section class = "mt-3">
+        <p class="text-break">{{poll.info_text|urlize}}</p>
+    </section>
+</div>
+<div class="rounded-lg p-3 bg-white shadow my-4">
+    <form method="POST">
+        {% csrf_token %}
+        {{formset.management_form}}
+        {% for form in formset %}
+            {{form|crispy}}
+            <hr>
         {% endfor %}
-    </ul>
-</ul>
+        <div class="form-group">
+            <button class = "btn btn-outline-success" type = "submit">
+                Einsenden
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock content %}

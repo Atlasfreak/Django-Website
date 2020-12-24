@@ -4,7 +4,7 @@ from .views import *
 
 app_name = 'polls'
 urlpatterns = [
-    path('', index, name = 'index'),
+    path('', index_view, name = 'index'),
     path('create/', create, name = 'create'),
     path('<token>/', include([
         path('vote/', vote, name = 'vote'),

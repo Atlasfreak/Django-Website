@@ -38,6 +38,17 @@ class Poll (models.Model):
         verbose_name = 'Poll'
         verbose_name_plural = 'Polls'
 
+    def published_in_future(self):
+        now = timezone.now()
+        return now < self.start_date
+
+    def ended(self):
+        now = timezone.now()
+        return now > self.end_date
+
+    def is_published(self):
+        return not(self.ended() and self.published_in_future())
+
     def clean(self):
         if self.start_date > self.end_date:
             raise ValidationError({
@@ -108,8 +119,10 @@ class QuestionType(models.Model):
         field = import_string(field_path)
         return field
 
-    def get_field_with_widget(self):
-        field = self.get_field_class()
+    def get_field_with_widget(self, **params):
+        base_field = self.get_field_class()
+        # Create a new field class so I do not override the widget for all fields of that type
+        field = type('Poll' + base_field.__name__, (base_field,), {**params})
         field.widget = self.get_widget_class() if self.form_widget else field.widget
         return field
 
@@ -147,7 +160,7 @@ class Choice (models.Model):
 class Submission(models.Model):
     user = models.ForeignKey(SiteUser, verbose_name='Nutzer', on_delete=models.CASCADE, related_name = 'submissions', blank=True, null=True)
     poll = models.ForeignKey(Poll, verbose_name='Umfrage', on_delete=models.CASCADE, related_name = 'submissions')
-    ip_adress = models.GenericIPAddressField('IP-Adresse der Einreichung', protocol='both', unpack_ipv4=False)
+    ip_adress = models.GenericIPAddressField('IP-Adresse der Einreichung', protocol='both', unpack_ipv4=False, blank=True, null=True)
     submission_date = models.DateTimeField('Einsendedatum', auto_now=True, auto_now_add=False)
 
     class Meta:
@@ -159,7 +172,7 @@ class Submission(models.Model):
 
 
 class Answer (models.Model):
-    submission = models.ForeignKey(SiteUser, verbose_name='Einsendung', on_delete=models.CASCADE, related_name = 'answers')
+    submission = models.ForeignKey(Submission, verbose_name='Einsendung', on_delete=models.CASCADE, related_name = 'answers')
     question = models.ForeignKey(Question, verbose_name='Frage', on_delete=models.CASCADE, related_name = 'answers')
     choices = models.ManyToManyField(Choice, verbose_name='Antwortkey', related_name = 'answers',)
     value = models.CharField('Antwortwert', max_length=2048, blank=True)

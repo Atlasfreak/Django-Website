@@ -1,6 +1,11 @@
 {% extends 'polls/polls_base.html' %}
 {% load crispy_forms_tags %}
+{% block sytlesheet %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock sytlesheet %}
+
 {% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
+{% block brand %}{{poll.title}}{% endblock %}
 {% block content %}
 <div class="rounded-lg p-3 bg-white shadow my-4">
     <div class="d-flex">
@@ -28,3 +33,20 @@
     </form>
 </div>
 {% endblock content %}
+{% block javascript %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+    <script>
+        date_input = $('.dateinput')
+        date_input.flatpickr({
+            altInput: true,
+            time_24hr: true,
+            allowInput: true,
+            locale: "de",
+            defaultDate: "{% now 'Y-m-d' %}",
+            dateFormat: "Y-m-d",
+            altFormat: "D j. F Y",
+        });
+    </script>
+
+{% endblock javascript %}

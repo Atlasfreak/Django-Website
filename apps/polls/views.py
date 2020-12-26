@@ -1,13 +1,11 @@
-import secrets
-
 from django.contrib import messages
-from django.forms.models import modelformset_factory
 from django.shortcuts import redirect, render
-from django.forms import inlineformset_factory
+from django.forms import inlineformset_factory, formset_factory
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _
 
 from .forms import *
+from .formset import AnswerModelFormset
 from .models import *
 # Create your views here.
 
@@ -18,14 +16,12 @@ def index_view(request):
 def create(request):
     QuestionInlineFormset = inlineformset_factory(Poll, Question, fields = ('text', 'type', 'required',), max_num = 100, can_delete = False, extra = 1,)
     
-    choice_formset_list = []
+    
     ChoiceInlineFormset = inlineformset_factory(Question, Choice, fields = ('text',), max_num = 100, min_num=1, extra = 0, can_delete = False,)
 
-    poll_form = PollCreationForm(prefix='poll')
-
-    question_formset = QuestionInlineFormset(prefix='question')
-
     options_deactivated = list(QuestionType.objects.filter(enable_choices = False).values_list('id', flat=True))
+
+    choice_formset_list = []
 
     if request.method == 'POST':
         
@@ -66,6 +62,10 @@ def create(request):
                     prefix = f'{form.prefix}-choice'
                     data_choice_formset = ChoiceInlineFormset(request.POST, prefix=prefix)
                     choice_formset_list.append(data_choice_formset)
+    else:
+        poll_form = PollCreationForm(prefix='poll')
+
+        question_formset = QuestionInlineFormset(prefix='question')
 
     if choice_formset_list == []:
         for form in question_formset:
@@ -85,51 +85,53 @@ def create(request):
 
 def vote(request, token):
     poll = Poll.objects.get(token=token)
-    
+    ip_adress = request.META.get('REMOTE_ADDR')
+
     if not poll.is_published():
         message = 'Diese Umfrage ist nicht öffentlich.'
         if poll.ended():
             message = 'Diese Umfrage ist beendet.'
         elif poll.published_in_future():
             message = 'Diese Umfrage hat noch nicht gestartet.'
-        return render(request, 'polls/poll_error.html', context={'message': message})
+        return render(request, 'polls/polls_error.html', context={'message': message})
     
+    if not poll.multiple_votes and (request.session.get('has_voted', False) or Submission.objects.filter(ip_adress=ip_adress)):
+        message = 'Du hast für diese Umfrage bereits abgestimmt!'
+        return render(request, 'polls/polls_error.html', context={'message': message})
+
     questions = poll.questions.all()
 
     question_list = list(questions)
 
-    Formset = modelformset_factory(Answer, fields=('value',), extra=len(question_list))
-    real_formset = Formset(queryset=Answer.objects.none())
-    
-    for i in range(len(real_formset)):
-        init_form = real_formset.forms[i]
-        replace_form = get_AnswerModelForm(question_list[i])(prefix=init_form.prefix)
-        real_formset.forms[i] = replace_form
+    Formset = formset_factory(get_AnswerModelForm, formset=AnswerModelFormset, extra=questions.count())
+    Formset.model = Answer
+    formset_params = {'form_kwargs': {'questions': question_list}}
 
     if request.method == 'POST':
-        real_formset = Formset(request.POST)
-        
-        for i in range(len(real_formset)):
-            init_form = real_formset.forms[i]
-            replace_form = get_AnswerModelForm(question_list[i])(prefix=init_form.prefix, data=init_form.data)
-            real_formset.forms[i] = replace_form
+        real_formset = Formset(request.POST, **formset_params)
         
         if real_formset.is_valid():
             instances = real_formset.save(commit=False)
-            submission, created = Submission.objects.get_or_create(user=request.user, poll=poll)
-            for form in real_formset.forms:
-                print(form.prefix, form.cleaned_data)
+            user = request.user
+
+            submission_params = {}
             if not poll.multiple_votes:
-                submission.ip_adress = request.META.get('REMOTE_ADDR')
+                submission_params['ip_adress'] = ip_adress
                 request.session['has_voted'] = True
+
+            if user.is_authenticated:
+                submission_params['user'] = user
+            
+            submission, created = Submission.objects.get_or_create(poll=poll, **submission_params)
             for instance in instances:
                 instance.submission = submission
                 instance.question = question_list[instances.index(instance)]
                 instance.save()
             real_formset.save_m2m()
-        else:
-            print(real_formset.non_form_errors)
-            print(real_formset.errors)
+            messages.success(request, 'Du hast erfolgreich abgestimmt!')
+            return redirect('home')
+    else:
+        real_formset = Formset(queryset=Answer.objects.none(), **formset_params)
 
     context = {
         'poll': poll,

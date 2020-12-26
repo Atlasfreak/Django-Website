@@ -11,7 +11,7 @@ class PollCreationForm(forms.ModelForm):
         widgets = {'info_text': forms.Textarea()}
 
 
-def get_AnswerModelForm(question):
+def get_AnswerModelForm(self, question, **kwargs):
     class AnswerForm(forms.ModelForm):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
@@ -35,4 +35,4 @@ def get_AnswerModelForm(question):
             else:
                 fields = ('value',)
 
-    return AnswerForm
+    return AnswerForm(**kwargs)

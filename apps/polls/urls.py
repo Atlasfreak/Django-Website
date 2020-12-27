@@ -10,5 +10,6 @@ urlpatterns = [
         path('vote/', vote, name = 'vote'),
         path('results/', results, name = 'results'),
         path('edit/', edit, name = 'edit'),
+        path('csv', get_csv, name = 'csv')
     ]))
 ]

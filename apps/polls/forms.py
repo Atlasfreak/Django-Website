@@ -26,6 +26,7 @@ def get_AnswerModelForm(self, question, **kwargs):
                 self.fields['choices'] = field
             else:
                 self.fields['value'] = field
+            self.instance.question = question
 
         class Meta:
             model = Answer

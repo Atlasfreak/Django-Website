@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.forms import inlineformset_factory, formset_factory
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,8 @@ from .forms import *
 from .formset import AnswerModelFormset
 from .models import *
 # Create your views here.
+
+error_template_name = 'polls/polls_error.html'
 
 def index_view(request):
     pass
@@ -93,23 +96,23 @@ def vote(request, token):
             message = 'Diese Umfrage ist beendet.'
         elif poll.published_in_future():
             message = 'Diese Umfrage hat noch nicht gestartet.'
-        return render(request, 'polls/polls_error.html', context={'message': message})
+        return render(request, error_template_name, context={'message': message})
     
-    if not poll.multiple_votes and (request.session.get('has_voted', False) or Submission.objects.filter(ip_adress=ip_adress)):
+    if not poll.multiple_votes and (request.session.get(f'has_voted_{poll.id}', False) or Submission.objects.filter(ip_adress=ip_adress, poll=poll)):
         message = 'Du hast für diese Umfrage bereits abgestimmt!'
-        return render(request, 'polls/polls_error.html', context={'message': message})
+        return render(request, error_template_name, context={'message': message})
 
     questions = poll.questions.all()
 
     question_list = list(questions)
 
-    Formset = formset_factory(get_AnswerModelForm, formset=AnswerModelFormset, extra=questions.count())
+    Formset = formset_factory(get_AnswerModelForm, formset=AnswerModelFormset,extra=0, min_num=questions.count())
     Formset.model = Answer
     formset_params = {'form_kwargs': {'questions': question_list}}
 
     if request.method == 'POST':
         real_formset = Formset(request.POST, **formset_params)
-        
+
         if real_formset.is_valid():
             instances = real_formset.save(commit=False)
             user = request.user
@@ -117,15 +120,14 @@ def vote(request, token):
             submission_params = {}
             if not poll.multiple_votes:
                 submission_params['ip_adress'] = ip_adress
-                request.session['has_voted'] = True
+                request.session[f'has_voted_{poll.id}'] = True
 
             if user.is_authenticated:
                 submission_params['user'] = user
             
-            submission, created = Submission.objects.get_or_create(poll=poll, **submission_params)
+            submission = Submission.objects.create(poll=poll, **submission_params)
             for instance in instances:
                 instance.submission = submission
-                instance.question = question_list[instances.index(instance)]
                 instance.save()
             real_formset.save_m2m()
             messages.success(request, 'Du hast erfolgreich abgestimmt!')
@@ -139,8 +141,32 @@ def vote(request, token):
     }
     return render(request, 'polls/polls_vote.html', context)
 
+def check_creator(request, poll):
+    return request.user == poll.creator
+
+@login_required
 def results(request, token):
-    pass
+    poll = Poll.objects.get(token=token)
+    if not check_creator(request, poll):
+        message = 'Du bist nicht der Ersteller dieser Umfrage'
+        return render(request, error_template_name, context = {'message': message})
+    context = {
+        'poll': poll
+    }
+    return render(request, 'polls/polls_results.html', context)
+
+@login_required
+def get_csv(request, token):
+    poll = Poll.objects.get(token=token)
+    if not check_creator(request, poll):
+        message = 'Du bist nicht der Ersteller dieser Umfrage'
+        return render(request, error_template_name, context = {'message': message})
+
+    response = HttpResponse(content_type='text/csv')
+    return response
 
 def edit(request, token):
-    pass
+    poll = Poll.objects.get(token=token)
+    if not check_creator(request, poll):
+        message = 'Du bist nicht der Ersteller dieser Umfrage'
+        return render(request, error_template_name, context = {'message': message})

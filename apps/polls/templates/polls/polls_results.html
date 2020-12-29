@@ -15,16 +15,63 @@
             <p class="text-break">{{poll.info_text|urlize|linebreaks}}</p>
         </section>
         <hr>
-        <div class="questions">
-            {% for chart in chart_list %}
-                <div class="chart-{{chart.id}}-container mb-4" style="position: relative">
-                    <canvas id="chart-{{chart.id}}"></canvas>
+        <div class="accordion my-4" id="questions">
+            {% for question in poll.questions.all %}
+                <div class="card">
+                    <div class="card-header" id="heading{{question.id}}">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{{question.id}}" aria-expanded="false" aria-controls="collapse{{question.id}}">
+                                {{question.text}}
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapse{{question.id}}" class="collapse" aria-labelledby="heading{{question.id}}" data-parent="#questions">
+                        <div class="card-body">
+                            {% if question.type.enable_choices %}
+                                <div class="chart-{{question.id}}-container mb-4" style="position: relative">
+                                    <canvas id="chart-{{question.id}}"></canvas>
+                                </div>
+                            {% endif %}
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="thead-light">
+                                        <tr>
+                                            {% if question.type.enable_choices %}
+                                                <th scope="col">Auswahlmöglichkeit</th>
+                                                <th scope="col">Anzahl der Stimmen</th>
+                                            {% else %}
+                                                <th scope="col">Einsendedatum</th>
+                                                <th scope="col">Antwort</th>
+                                            {% endif %}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if question.type.enable_choices %}
+                                            {% for choice in question.choices.all %}
+                                            <tr>
+                                                <th scope="row">{{choice.text}}</th>
+                                                <td>{{choice.answers.all.count}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for answer in question.answers.all %}
+                                            <tr>
+                                                <th scope="row">{{answer.submission.submission_date}}</th>
+                                                <td class="text-break">{{answer.value}}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             {% endfor %}
         </div>
         <button class="text-toggle btn btn-outline-info" type="button" data-toggle="collapse" data-target="#results-table" aria-expanded="false" aria-controls="results-table">
-            <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i> Ergebnisse anzeigen</span>
-            <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i> Ergebnisse verstecken</span>
+            <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i> Rohdaten anzeigen</span>
+            <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i> Rohdaten verstecken</span>
         </button>
         <div class="collapse mt-3" id="results-table">
             <div class="table-responsive">

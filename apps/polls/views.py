@@ -150,8 +150,24 @@ def results(request, token):
     if not check_creator(request, poll):
         message = 'Du bist nicht der Ersteller dieser Umfrage'
         return render(request, error_template_name, context = {'message': message})
+    questions = poll.questions.all()
+
+    chart_list = []
+    for question in questions:
+        if question.type.enable_choices:
+            chart_dict = {}
+            chart_dict['title'] = question.text
+            chart_dict['id'] = question.id
+            chart_dict['data'] = []
+            chart_dict['labels'] = []
+            for choice in question.choices.all():
+                chart_dict['labels'].append(choice.text)
+                chart_dict['data'].append(choice.answers.count())
+            chart_list.append(chart_dict)
+
     context = {
-        'poll': poll
+        'poll': poll,
+        'chart_list': chart_list,
     }
     return render(request, 'polls/polls_results.html', context)
 

@@ -1,6 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.utils.module_loading import import_string
+from django.utils.html import escape
 
 from .models import Poll, Question, Choice, Answer, Submission
 
@@ -18,7 +19,7 @@ def get_AnswerModelForm(self, question, **kwargs):
             
             field_class = question.type.get_field_with_widget()
 
-            params = {'label': question.text, 'required': question.required}
+            params = {'label': escape(question.text), 'required': question.required}
             if hasattr(field_class, 'queryset'):
                 params['queryset'] = question.choices.all()
             field = field_class(**params)

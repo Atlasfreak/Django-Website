@@ -5,7 +5,6 @@
 {% block brand %}{{poll.title}} - Ergebnisse{% endblock %}
 {% block content %}
     <div class="rounded-lg p-3 bg-white shadow my-4">
-        <p><a href={% url 'polls:csv' token=poll.token %} target="_blank">CSV herunterladen</a></p>
         <div class="d-flex">
             <div class="h1">{{poll.title}}</div>
             <div class="ml-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
@@ -15,14 +14,17 @@
             <p class="text-break">{{poll.info_text|urlize|linebreaks}}</p>
         </section>
         <hr>
+        <p><a class="btn btn-info" href={% url 'polls:csv' token=poll.token %} target="_blank" role="button"><i class="fas fa-file-download"></i> CSV herunterladen</a></p>
         <div class="accordion my-4" id="questions">
             {% for question in poll.questions.all %}
                 <div class="card">
-                    <div class="card-header" id="heading{{question.id}}">
+                    <div class="card-header position-relative" id="heading{{question.id}}">
                         <h2 class="mb-0">
-                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse{{question.id}}" aria-expanded="false" aria-controls="collapse{{question.id}}">
+                            <a class="text-toggle text-decoration-none btn btn-link stretched-link d-flex" role="button" data-toggle="collapse" data-target="#collapse{{question.id}}" aria-expanded="false" aria-controls="collapse{{question.id}}">
                                 {{question.text}}
-                            </button>
+                                <span class = "ml-auto text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
+                                <span class = "ml-auto text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
+                            </a>
                         </h2>
                     </div>
                     <div id="collapse{{question.id}}" class="collapse" aria-labelledby="heading{{question.id}}" data-parent="#questions">
@@ -70,8 +72,11 @@
             {% endfor %}
         </div>
         <button class="text-toggle btn btn-outline-info" type="button" data-toggle="collapse" data-target="#results-table" aria-expanded="false" aria-controls="results-table">
-            <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i> Rohdaten anzeigen</span>
-            <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i> Rohdaten verstecken</span>
+            <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
+            <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
+            Rohdaten
+            <span class = "text-collapsed">anzeigen</span>
+            <span class = "text-expanded">verstecken</span>
         </button>
         <div class="collapse mt-3" id="results-table">
             <div class="table-responsive">
@@ -89,7 +94,7 @@
                             <tr>
                                 <th scope="row">{{submission.submission_date}}</th>
                                 {% for question in poll.questions.all %}
-                                    <td>
+                                    <td class="text-break">
                                         {% for answer in question.answers.all %}
                                             {% if answer.submission == submission %}
                                                 {% if question.type.enable_choices %}

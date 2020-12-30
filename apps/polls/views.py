@@ -1,3 +1,7 @@
+from apps.polls.decorators import is_creator
+import csv
+import textwrap
+
 from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -141,15 +145,11 @@ def vote(request, token):
     }
     return render(request, 'polls/polls_vote.html', context)
 
-def check_creator(request, poll):
-    return request.user == poll.creator
-
 @login_required
+@is_creator
 def results(request, token):
     poll = Poll.objects.get(token=token)
-    if not check_creator(request, poll):
-        message = 'Du bist nicht der Ersteller dieser Umfrage'
-        return render(request, error_template_name, context = {'message': message})
+
     questions = poll.questions.all()
 
     chart_list = []
@@ -172,17 +172,39 @@ def results(request, token):
     return render(request, 'polls/polls_results.html', context)
 
 @login_required
+@is_creator
 def get_csv(request, token):
     poll = Poll.objects.get(token=token)
-    if not check_creator(request, poll):
-        message = 'Du bist nicht der Ersteller dieser Umfrage'
-        return render(request, error_template_name, context = {'message': message})
 
     response = HttpResponse(content_type='text/csv')
+    filename = poll.title.replace(' ', '_')
+    response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
+    
+    fieldnames = ['Einsendedatum',]
+    for question in poll.questions.all():
+        fieldnames.append(question.text)
+    
+    writer = csv.DictWriter(response, fieldnames=fieldnames)
+    
+    writer.writeheader()
+    for submission in poll.submissions.all():
+        write_dict = {}
+        write_dict['Einsendedatum'] = submission.submission_date.strftime('%d.%m.%Y %H:%M:%S')
+        for answer in submission.answers.all():
+            answer_text = ''
+            if answer.question.type.enable_choices:
+                choice_list = []
+                for choice in answer.choices.all():
+                    choice_list.append(choice.text)
+                answer_text = '; '.join(choice_list)
+            else:
+                answer_text = answer.value
+            write_dict[answer.question.text] = textwrap.fill(answer_text, width=100)
+        writer.writerow(write_dict)
+
     return response
 
+@login_required
+@is_creator
 def edit(request, token):
     poll = Poll.objects.get(token=token)
-    if not check_creator(request, poll):
-        message = 'Du bist nicht der Ersteller dieser Umfrage'
-        return render(request, error_template_name, context = {'message': message})

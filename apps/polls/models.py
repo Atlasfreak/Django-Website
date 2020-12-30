@@ -13,6 +13,7 @@ from django.utils import timezone
 from apps.customUser.models import SiteUser
 
 from .validators import FormWidgetValidator, FormFieldValidator
+from .managers import PollManager
 
 # Create your models here.
 
@@ -34,6 +35,8 @@ class Poll (models.Model):
     token = models.CharField('Token für url', max_length = 32, unique=True, default=get_default_token)
     multiple_votes = models.BooleanField('Mehrmals Abstimmen')
 
+    objects = PollManager()
+
     class Meta:
         verbose_name = 'Poll'
         verbose_name_plural = 'Polls'
@@ -47,7 +50,7 @@ class Poll (models.Model):
         return now > self.end_date
 
     def is_published(self):
-        return not(self.ended() and self.published_in_future())
+        return not(self.ended() or self.published_in_future())
 
     def clean(self):
         if self.start_date > self.end_date:

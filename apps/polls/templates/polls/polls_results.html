@@ -1,5 +1,6 @@
 {% extends 'polls/polls_base.html' %}
 {% load static %}
+{% load polls_tags %}
 
 {% block title %}{{poll.title}} - Ergebnisse{% endblock %}
 {% block brand %}{{poll.title}} - Ergebnisse{% endblock %}
@@ -11,7 +12,7 @@
         </div>
         <hr>
         <section class = "mt-3">
-            <p class="text-break">{{poll.info_text|urlize|linebreaks}}</p>
+            <p class="text-break">{{poll.info_text|urlize|linebreaksbr}}</p>
         </section>
         <hr>
         <p><a class="btn btn-info" href={% url 'polls:csv' token=poll.token %} target="_blank" role="button"><i class="fas fa-file-download"></i> CSV herunterladen</a></p>
@@ -51,7 +52,7 @@
                                         {% if question.type.enable_choices %}
                                             {% for choice in question.choices.all %}
                                             <tr>
-                                                <th scope="row">{{choice.text}}</th>
+                                                <th scope="row">{{choice.text|charwrap:40|linebreaksbr}}</th>
                                                 <td>{{choice.answers.all.count}}</td>
                                             </tr>
                                             {% endfor %}
@@ -59,7 +60,7 @@
                                             {% for answer in question.answers.all %}
                                             <tr>
                                                 <th scope="row">{{answer.submission.submission_date}}</th>
-                                                <td class="text-break">{{answer.value}}</td>
+                                                <td nowrap><div class="text-break">{{answer.value|charwrap:70|linebreaksbr}}</div></td>
                                             </tr>
                                             {% endfor %}
                                         {% endif %}
@@ -85,7 +86,7 @@
                         <tr>
                             <th scope="col">Einsendedatum</th>
                             {% for question in poll.questions.all %}
-                                <th scope="col">{{question.text}}</th>
+                                <th scope="col" nowrap>{{question.text|charwrap:40|linebreaksbr}}</th>
                             {% endfor %}
                         </tr>
                     </thead>
@@ -94,15 +95,15 @@
                             <tr>
                                 <th scope="row">{{submission.submission_date}}</th>
                                 {% for question in poll.questions.all %}
-                                    <td class="text-break">
+                                    <td nowrap>
                                         {% for answer in question.answers.all %}
                                             {% if answer.submission == submission %}
                                                 {% if question.type.enable_choices %}
                                                     {% for choice in answer.choices.all %}
-                                                        {{choice.text}}
+                                                        {{choice.text|charwrap:40|linebreaksbr}}
                                                     {% endfor %}
                                                 {% else %}
-                                                    {{answer.value}}
+                                                    {{answer.value|charwrap:40|linebreaksbr}}
                                                 {% endif %}
                                             {% endif %}
                                         {% endfor %}

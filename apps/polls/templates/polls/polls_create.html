@@ -56,6 +56,12 @@
                             {% render_field poll_form.multiple_votes class+="custom-control-input" %}
                             <label for="{{ poll_form.multiple_votes.id_for_label }}" class="custom-control-label">{{ poll_form.multiple_votes.label }}</label>
                         </div>
+
+                        <div class="custom-control custom-switch form-group">
+                            {% render_field poll_form.is_public class+="custom-control-input" %}
+                            <label for="{{ poll_form.is_public.id_for_label }}" class="custom-control-label">{{ poll_form.is_public.label }}</label>
+                        </div>
+
                     
                     </div>
                 

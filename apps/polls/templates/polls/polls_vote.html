@@ -1,5 +1,10 @@
 {% extends 'polls/polls_base.html' %}
 {% load crispy_forms_tags %}
+
+{% block meta %}
+    <meta name="description" content="{{poll.info_text}}">
+    <meta name="title" content="{{poll.title}}">
+{% endblock meta %}
 {% block sytlesheet %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock sytlesheet %}

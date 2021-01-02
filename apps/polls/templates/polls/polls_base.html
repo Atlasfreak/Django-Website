@@ -1,12 +1,15 @@
 {% extends 'base.html' %}
-
+{% block meta %}{% endblock %}
 {% block stylesheet %}{% endblock %}
 
 {% block title %}
 Umfragen - 
 {% endblock title %}
 {% block brand %} Umfragen {% endblock %}
-{% block nav-item %}{{ block.super }}{% endblock %}
+{% block nav-item %}
+<a href="{% url 'polls:index' %}" class="nav-link">Übersicht</a>
+{{ block.super }}
+{% endblock %}
 
 {% block content %}
 {% endblock content %}

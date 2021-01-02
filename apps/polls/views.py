@@ -1,4 +1,3 @@
-from apps.polls.decorators import is_creator
 import csv
 import textwrap
 
@@ -9,20 +8,28 @@ from django.forms import inlineformset_factory, formset_factory
 from django.contrib.auth.decorators import login_required
 from django.utils.translation import gettext_lazy as _
 
+from .decorators import is_creator
 from .forms import *
 from .formset import AnswerModelFormset
 from .models import *
 # Create your views here.
 
-error_template_name = 'polls/polls_error.html'
-
 def index_view(request):
-    pass
+    user = request.user
+    user_polls = []
+    if user.is_authenticated:
+        user_polls = Poll.objects.filter(creator=user).order_by('-start_date')
+    all_polls = Poll.objects.are_published().filter(is_public=True).order_by('-start_date')
+    
+    context = {
+        'user_polls': user_polls,
+        'all_polls': all_polls,
+    }
+    return render(request, 'polls/polls_index.html', context)
 
 @login_required
 def create(request):
-    QuestionInlineFormset = inlineformset_factory(Poll, Question, fields = ('text', 'type', 'required',), max_num = 100, can_delete = False, extra = 1,)
-    
+    QuestionInlineFormset = inlineformset_factory(Poll, Question, fields = ('text', 'type', 'required',), max_num = 100, min_num=1, can_delete = False, extra = 0,)
     
     ChoiceInlineFormset = inlineformset_factory(Question, Choice, fields = ('text',), max_num = 100, min_num=1, extra = 0, can_delete = False,)
 
@@ -100,11 +107,18 @@ def vote(request, token):
             message = 'Diese Umfrage ist beendet.'
         elif poll.published_in_future():
             message = 'Diese Umfrage hat noch nicht gestartet.'
-        return render(request, error_template_name, context={'message': message})
+        messages.error(request, message)
+        return redirect('polls:index')
     
-    if not poll.multiple_votes and (request.session.get(f'has_voted_{poll.id}', False) or Submission.objects.filter(ip_adress=ip_adress, poll=poll)):
+    has_voted = False
+    if (cookie := request.session.get('has_voted', False)):
+        if cookie.get(poll.id, False):
+            has_voted = True
+
+    if not poll.multiple_votes and (has_voted or Submission.objects.filter(ip_adress=ip_adress, poll=poll).exists()):
         message = 'Du hast für diese Umfrage bereits abgestimmt!'
-        return render(request, error_template_name, context={'message': message})
+        messages.error(request, message)
+        return redirect('polls:index')
 
     questions = poll.questions.all()
 
@@ -124,7 +138,13 @@ def vote(request, token):
             submission_params = {}
             if not poll.multiple_votes:
                 submission_params['ip_adress'] = ip_adress
-                request.session[f'has_voted_{poll.id}'] = True
+                
+                cookie = request.session.get('has_voted', False)
+                if not cookie:
+                    request.session['has_voted'] = {}
+                    cookie = request.session['has_voted']
+                
+                cookie[poll.id] = True
 
             if user.is_authenticated:
                 submission_params['user'] = user
@@ -135,7 +155,7 @@ def vote(request, token):
                 instance.save()
             real_formset.save_m2m()
             messages.success(request, 'Du hast erfolgreich abgestimmt!')
-            return redirect('home')
+            return redirect('polls:index')
     else:
         real_formset = Formset(queryset=Answer.objects.none(), **formset_params)
 
@@ -206,5 +226,13 @@ def get_csv(request, token):
 
 @login_required
 @is_creator
+def delete(request, token):
+    Poll.objects.get(token=token).delete()
+    messages.success(request, 'Die Umfrage wurde erfolgreich gelöscht!')
+    return redirect('polls:index')
+
+@login_required
+@is_creator
 def edit(request, token):
+    return redirect('polls:index')
     poll = Poll.objects.get(token=token)

@@ -13,5 +13,6 @@ urlpatterns = [
             path('csv/', get_csv, name = 'csv'),
         ])),
         path('edit/', edit, name = 'edit'),
+        path('delete/', delete, name = 'delete')
     ]))
 ]

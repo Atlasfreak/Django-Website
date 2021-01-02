@@ -3,7 +3,7 @@ from django.contrib import messages
 
 from .models import Poll
 
-def is_creator(function=None, error_template_name=None, redirect_url='home'):
+def is_creator(function=None, error_template_name=None, redirect_url='polls:index'):
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs):
             poll = Poll.objects.get(token=kwargs['token'])

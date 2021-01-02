@@ -34,6 +34,7 @@ class Poll (models.Model):
     info_text = models.CharField(verbose_name = 'Beschreibung', max_length=2048)
     token = models.CharField('Token für url', max_length = 32, unique=True, default=get_default_token)
     multiple_votes = models.BooleanField('Mehrmals Abstimmen')
+    is_public = models.BooleanField('Öffentlich zugänglich')
 
     objects = PollManager()
 
@@ -64,6 +65,9 @@ class Poll (models.Model):
 
     def get_absolute_url(self):
         return reverse('polls:vote', kwargs={'token': self.token})
+
+    def get_results_url(self):
+        return reverse('polls:results', kwargs={'token': self.token})
 
     def __str__(self):
         return f'{self.title}'

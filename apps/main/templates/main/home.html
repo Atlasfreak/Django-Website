@@ -3,7 +3,6 @@
 {% load static %}
 
 {% block sytlesheet %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock sytlesheet %}
 
 {% block title %}Home{% endblock %}
@@ -11,48 +10,20 @@
 
 {% block nav-item %}
     {{ block.super }}
-    <a href="{% url 'polls:create' %}" class="nav-link">Umfrage erstellen</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'polls:index' %}" class="nav-link">Umfragen</a>
+
+    {% endif %}
 {% endblock nav-item %}
 
 {% block content %}
     <div class="rounded-lg p-3 bg-white shadow my-4">
-        <div class="input-group" id="date-time-div">
-            <div class="input-group-prepend">
-                <label class="input-group-text" for = "date-time" data-toggle><i class="material-icons">today</i></label>
-            </div>
-            <input class = "form-control" type="datetime" name="test" id="date-time" data-input>
-        </div>
-        <h1>Hello World</h1>
+        <h1>Willkommen auf meiner Webseite!</h1>
+        <p>Hier findest du aktuell nicht viel aber das wird sich vielleicht bald ändern.</p>
+        <p>Es folgt etwas zufälliger Text um die Seite zu füllen ;D</p>
         {% lorem 7 p random %}
     </div>
 {% endblock content %}
 
 {% block javascript %}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/minMaxTimePlugin.js"></script>
-    <script>
-    let date_time = $('#date-time-div');
-    date_time.flatpickr({
-        enableTime: true,
-        altInput: true,
-        time_24hr: true,
-        allowInput: true,
-        wrap: true,
-        locale: "de",
-        minDate: "today",
-        defaultDate: "{% now 'Y-m-d H:i' %}",
-        dateFormat: "Y-m-d H:i",
-        altFormat: "D j. F Y H:i",
-        plugins: [
-            new minMaxTimePlugin({
-                table: {
-                    "{% now 'Y-m-d' %}": {
-                        minTime: "{% now 'H:i' %}",
-                    }
-                }
-            })
-        ]
-    });
-    </script>
 {% endblock javascript %}

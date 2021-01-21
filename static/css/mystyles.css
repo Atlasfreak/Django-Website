@@ -31,3 +31,7 @@
 .footer {
 	background-color: #f0f0f0bb;
 }
+
+.form-control[readonly] {
+	background-color: #ffffff;
+}

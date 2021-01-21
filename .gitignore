@@ -1,4 +1,4 @@
-visual_studio.code-workspace
+*.code-workspace
 
 # Created by https://www.gitignore.io/api/django,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=django,visualstudiocode

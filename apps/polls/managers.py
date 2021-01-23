@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class PollManager(models.Manager):
     def are_published(self):
         now = timezone.now()

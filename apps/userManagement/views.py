@@ -11,16 +11,17 @@ from django.views.decorators.csrf import csrf_protect
 
 from apps.customUser.forms import UserCreationForm
 
+
 def register(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            username = form.cleaned_data.get('username')
+            username = form.cleaned_data.get("username")
 
-            messages.success(request, f'Account für {username} erstellt!')
-            return redirect('login')
+            messages.success(request, f"Account für {username} erstellt!")
+            return redirect("login")
     else:
         form = UserCreationForm()
-    context = {'form': form}
-    return render(request, 'userManagement/register.html', context)
+    context = {"form": form}
+    return render(request, "userManagement/register.html", context)

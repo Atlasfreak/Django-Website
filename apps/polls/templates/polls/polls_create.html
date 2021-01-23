@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 {% endblock sytlesheet %}
 
-{% block title %}{{ block.super }}Erstellen{% endblock %}
+{% block title %}{{ block.super }} Erstellen{% endblock %}
 {% block brand %}Umfrage erstellen{% endblock %}
 {% block content %}
     <div class = "content-sectiion">
@@ -25,33 +25,33 @@
             {% csrf_token %}
             <div class="card shadow my-4">
                 <fieldset>
-                    
+
                     <legend class = "card-header">
                         Umfrage Erstellen
                     </legend>
-                    
+
                     <div class="card-body">
-                        
+
                         {% with field=poll_form.title %}
                             {% include "base_inputs/input_form_group.html" with field=field field_with_filters=field %}
                         {% endwith %}
-                        
+
                         {% with field=poll_form.start_date %}
                             <div id="date-time-div">
                                 {% include "base_inputs/input_group.html" with field=field prepend_text='<i class="far fa-calendar-alt fa-lg"></i>' field_with_filters=field|set_data:"input" %}
                             </div>
                         {% endwith %}
-                        
+
                         {% with field=poll_form.end_date %}
                             <div id="date-time-div">
                                 {% include "base_inputs/input_group.html" with field=field prepend_text='<i class="far fa-calendar-alt fa-lg"></i>' field_with_filters=field|set_data:"input" %}
                             </div>
                         {% endwith %}
-                        
+
                         {% with field=poll_form.info_text %}
                             {% include "base_inputs/input_form_group.html" with field=field field_with_filters=field %}
                         {% endwith %}
-                        
+
                         <div class="custom-control custom-switch form-group">
                             {% render_field poll_form.multiple_votes class+="custom-control-input" %}
                             <label for="{{ poll_form.multiple_votes.id_for_label }}" class="custom-control-label">{{ poll_form.multiple_votes.label }}</label>
@@ -62,21 +62,21 @@
                             <label for="{{ poll_form.is_public.id_for_label }}" class="custom-control-label">{{ poll_form.is_public.label }}</label>
                         </div>
 
-                    
+
                     </div>
-                
+
                 </fieldset>
             </div>
-            
+
             <fieldset id="questions">
 
                 {{ question_formset.management_form }}
                 {% for question_form in question_formset %}
                     {% include 'polls/include/question.html' with question_form=question_form question_formset=question_formset choice_formset=choice_formset_list|index:forloop.counter0 %}
                 {% endfor %}
-                
+
                 <button class="btn btn-success add_form" type="button" id="{{question_formset.prefix}}"><i class="fas fa-plus"></i> Frage hinzufügen</button>
-                
+
                 <div hidden="" id="{{question_formset.prefix}}-empty">
                     {% include 'polls/include/question.html' with question_form=question_formset.empty_form choice_formset=empty_choice_formset %}
                 </div>

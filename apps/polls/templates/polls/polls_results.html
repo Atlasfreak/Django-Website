@@ -126,14 +126,6 @@
     <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
 
-    <script src="{% static 'js/polls/utils/colorGenerator.js' %}"></script>
-    <script src="{% static 'js/polls/results.js' %}"></script>
-    <script>
-        function beforePrintHandler () {
-            for (var id in Chart.instances) {
-                Chart.instances[id].resize();
-            }
-        }
-        window.addEventListener("beforeprint", beforePrintHandler());
-    </script>
+    <script src="{% static 'polls/js/utils/colorGenerator.js' %}" type="text/javascript"></script>
+    <script src="{% static 'polls/js/results.js' %}" type="text/javascript"></script>
 {% endblock javascript %}

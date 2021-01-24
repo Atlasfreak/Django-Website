@@ -28,7 +28,7 @@ function createChart(chartId, chartDict, colorScale, colorRangeInfo, chartType) 
 
     return myChart;
 }
-$(document).ready(function() {
+$(document).ready(function () {
     const chart_list = JSON.parse($('#chart_list').text());
     const colorScale = d3.interpolateRainbow; //https://github.com/d3/d3-scale-chromatic/blob/master/README.md
 
@@ -38,8 +38,14 @@ $(document).ready(function() {
         useEndAsStart: false,
     };
 
-    for (let i = 0, len = chart_list.length; i<len; i++) {
+    for (let i = 0, len = chart_list.length; i < len; i++) {
         const chartDict = chart_list[i];
         const chart = createChart(chartDict.id, chartDict, colorScale, colorRangeInfo, 'doughnut');
     }
+    function beforePrintHandler() {
+        for (var id in Chart.instances) {
+            Chart.instances[id].resize();
+        }
+    }
+    window.addEventListener("beforeprint", beforePrintHandler());
 });

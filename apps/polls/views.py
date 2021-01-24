@@ -1,11 +1,14 @@
 import csv
+import datetime
 import textwrap
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory, inlineformset_factory
 from django.http import HttpResponse
+from django.http.request import HttpRequest
 from django.shortcuts import redirect, render
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from .decorators import is_creator
@@ -14,9 +17,11 @@ from .formset import AnswerModelFormset
 from .models import *
 
 # Create your views here.
+COOKIE_KEY = "voted_{id}"
+SESSION_COOKIE_KEY = "has_voted"
 
 
-def index_view(request):
+def index_view(request: HttpRequest):
     user = request.user
     user_polls = []
     if user.is_authenticated:
@@ -33,7 +38,7 @@ def index_view(request):
 
 
 @login_required
-def create(request):
+def create(request: HttpRequest):
     QuestionInlineFormset = inlineformset_factory(
         Poll,
         Question,
@@ -131,9 +136,10 @@ def create(request):
     return render(request, "polls/polls_create.html", context)
 
 
-def vote(request, token):
+def vote(request: HttpRequest, token):
     poll = Poll.objects.get(token=token)
     ip_adress = request.META.get("REMOTE_ADDR")
+    cookie_salt = poll.start_date.strftime("%d.%m%m.%Y %H:%M:%S:%f %z %Z %j")
 
     if not poll.is_published():
         message = "Diese Umfrage ist nicht öffentlich."
@@ -144,10 +150,16 @@ def vote(request, token):
         messages.error(request, message)
         return redirect("polls:index")
 
-    has_voted = False
-    if (cookie := request.session.get("has_voted", False)) :
-        if cookie.get(poll.id, False):
-            has_voted = True
+    session_cookie = request.session.get(SESSION_COOKIE_KEY, False)
+    cookie = request.get_signed_cookie(
+        COOKIE_KEY.format(id=poll.id), False, salt=cookie_salt
+    )
+    if session_cookie:
+        has_voted = bool(
+            cookie.get(poll.id, False) and session_cookie.get(poll.id, False)
+        )
+    else:
+        has_voted = False
 
     if not poll.multiple_votes and (
         has_voted or Submission.objects.filter(ip_adress=ip_adress, poll=poll).exists()
@@ -177,15 +189,17 @@ def vote(request, token):
             user = request.user
 
             submission_params = {}
+            cookie_params = {}
+
             if not poll.multiple_votes:
                 submission_params["ip_adress"] = ip_adress
 
-                cookie = request.session.get("has_voted", False)
-                if not cookie:
-                    request.session["has_voted"] = {}
-                    cookie = request.session["has_voted"]
+                if not session_cookie:
+                    request.session[SESSION_COOKIE_KEY] = {}
+                    session_cookie = request.session[SESSION_COOKIE_KEY]
 
-                cookie[poll.id] = True
+                cookie_params = {"key": COOKIE_KEY.format(id=poll.id), "value": True}
+                session_cookie[poll.id] = True
 
             if user.is_authenticated:
                 submission_params["user"] = user
@@ -195,8 +209,16 @@ def vote(request, token):
                 instance.submission = submission
                 instance.save()
             real_formset.save_m2m()
+
             messages.success(request, "Du hast erfolgreich abgestimmt!")
-            return redirect("polls:index")
+
+            response = redirect("polls:index")
+            if cookie_params:
+                expires_time = timezone.now() + datetime.timedelta(366 * 2)
+                response.set_signed_cookie(
+                    **cookie_params, expires=expires_time, salt=cookie_salt
+                )
+            return response
     else:
         real_formset = Formset(queryset=Answer.objects.none(), **formset_params)
 
@@ -209,7 +231,7 @@ def vote(request, token):
 
 @login_required
 @is_creator
-def results(request, token):
+def results(request: HttpRequest, token):
     poll = Poll.objects.get(token=token)
 
     questions = poll.questions.all()
@@ -236,7 +258,7 @@ def results(request, token):
 
 @login_required
 @is_creator
-def get_csv(request, token):
+def get_csv(request: HttpRequest, token):
     poll = Poll.objects.get(token=token)
 
     response = HttpResponse(content_type="text/csv")
@@ -274,7 +296,7 @@ def get_csv(request, token):
 
 @login_required
 @is_creator
-def delete(request, token):
+def delete(request: HttpRequest, token):
     Poll.objects.get(token=token).delete()
     messages.success(request, "Die Umfrage wurde erfolgreich gelöscht!")
     return redirect("polls:index")
@@ -282,6 +304,6 @@ def delete(request, token):
 
 @login_required
 @is_creator
-def edit(request, token):
+def edit(request: HttpRequest, token):
     return redirect("polls:index")
     poll = Poll.objects.get(token=token)

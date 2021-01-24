@@ -22,15 +22,7 @@ def get_default_token():
     return secrets.token_urlsafe(7)
 
 
-def get_past_date():
-    return timezone.now() - timedelta(minutes=30.0)
-
-
 class Poll(models.Model):
-    general_date_validator = MinValueValidator(
-        (get_past_date), message=_("The date lies in the past.")
-    )
-
     creator = models.ForeignKey(
         SiteUser,
         on_delete=models.CASCADE,
@@ -42,7 +34,7 @@ class Poll(models.Model):
     )
     start_date = models.DateTimeField(verbose_name="Startdatum")
     end_date = models.DateTimeField(
-        verbose_name="Enddatum", validators=[general_date_validator]
+        verbose_name="Enddatum",
     )
     title = models.CharField(max_length=150, verbose_name="Titel")
     info_text = models.CharField(verbose_name="Beschreibung", max_length=2048)

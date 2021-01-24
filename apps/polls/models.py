@@ -1,25 +1,38 @@
 import secrets
 from datetime import timedelta
 
+from django import forms
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.module_loading import import_string
-from django.core.validators import MinValueValidator
-from django.utils.translation import gettext_lazy as _
-from django.conf import settings
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.module_loading import import_string
+from django.utils.translation import gettext_lazy as _
 
 from apps.customUser.models import SiteUser
 
-from .validators import FormWidgetValidator, FormFieldValidator
 from .managers import PollManager
+from .validators import FormFieldValidator, FormWidgetValidator
 
 # Create your models here.
+__all__ = [
+    "Poll",
+    "QuestionTypeParam",
+    "QuestionType",
+    "Question",
+    "Choice",
+    "Submission",
+    "Answer",
+]
 
 
 def get_default_token():
     return secrets.token_urlsafe(7)
+
+
+def get_past_date():
+    # Stays here until squashed migration is applied
+    return
 
 
 class Poll(models.Model):
@@ -85,6 +98,62 @@ class Poll(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+
+class QuestionTypeParam(models.Model):
+    TYPE_STRING = "str"
+    TYPE_INT = "int"
+    TYPE_FLOAT = "float"
+    TYPE_BOOL = "bool"
+
+    CONVERTER_KEY = "converter"
+    FIELD_KEY = "field"
+
+    TYPE_CHOICES = [
+        (TYPE_INT, "Integer"),
+        (TYPE_STRING, "String"),
+        (TYPE_BOOL, "Boolean"),
+        (TYPE_FLOAT, "Decimal"),
+    ]
+
+    STRING_TO_FUNCTION = {
+        TYPE_STRING: {CONVERTER_KEY: str, FIELD_KEY: forms.CharField},
+        TYPE_INT: {CONVERTER_KEY: int, FIELD_KEY: forms.IntegerField},
+        TYPE_BOOL: {CONVERTER_KEY: bool, FIELD_KEY: forms.BooleanField},
+        TYPE_FLOAT: {CONVERTER_KEY: float, FIELD_KEY: forms.DecimalField},
+    }
+
+    name = models.CharField(_("Parameter Name"), max_length=128)
+    verbose_name = models.CharField(
+        _("Lesbarer Name, wird dem Nutzer angezeigt"), max_length=50
+    )
+    question_type = models.ManyToManyField(
+        "QuestionType",
+        verbose_name=_("Zugehöriger Frage Typ"),
+        related_name="params",
+    )
+    default = models.CharField(_("Standradwert"), max_length=128)
+
+    val_type = models.CharField(
+        _("Typ der Eingabewerte"),
+        max_length=128,
+        choices=TYPE_CHOICES,
+    )
+
+    class Meta:
+        verbose_name = _("QuestionTypeParam")
+        verbose_name_plural = _("QuestionTypeParams")
+
+    def __str__(self):
+        return self.verbose_name
+
+    def get_converter(self):
+        converter = self.STRING_TO_FUNCTION[self.val_type][self.CONVERTER_KEY]
+        return converter
+
+    def get_field(self):
+        field = self.STRING_TO_FUNCTION[self.val_type][self.FIELD_KEY]
+        return field
 
 
 class QuestionType(models.Model):
@@ -161,10 +230,10 @@ class Question(models.Model):
     )
     text = models.CharField(max_length=128, verbose_name="Frage")
     required = models.BooleanField(verbose_name="erforderlich", default=False)
-
     type = models.ForeignKey(
         QuestionType, verbose_name="Fragetyp", on_delete=models.CASCADE
     )
+    extra_params = models.JSONField("Extra Parameter für Frage", blank=True, null=True)
 
     class Meta:
         verbose_name = "Question"

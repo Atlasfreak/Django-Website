@@ -9,6 +9,8 @@ verify_ssl = true
 django = {extras = ["argon2"],version = "*"}
 django-crispy-forms = "*"
 django-widget-tweaks = "*"
+ipython = "*"
+django-extensions = "*"
 
 [requires]
 python_version = "3.9"

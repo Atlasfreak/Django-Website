@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "apps.polls.apps.PollsConfig",
     "crispy_forms",
     "widget_tweaks",
+    "django_extensions",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -144,6 +145,8 @@ LOGOUT_REDIRECT_URL = "home"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static_files")
 
 STATIC_URL = "/static/"
 

@@ -94,5 +94,5 @@ class QuestionTypeParamAdmin(admin.ModelAdmin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "poll", "ip_adress", "submission_date")
+    list_display = ("user", "poll", "ip_adress", "submission_date")
     list_filter = ("user", "poll", "submission_date")

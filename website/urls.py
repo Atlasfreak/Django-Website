@@ -23,6 +23,7 @@ from apps.main import views as main_views
 from apps.userManagement import views as user_views
 
 urlpatterns = [
+    path("admin/doc/", include("django.contrib.admindocs.urls")),
     path("admin/", admin.site.urls),
     path("", main_views.home, name="home"),
     path(

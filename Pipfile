@@ -11,6 +11,7 @@ django-crispy-forms = "*"
 django-widget-tweaks = "*"
 ipython = "*"
 django-extensions = "*"
+docutils = "*"
 
 [requires]
 python_version = "3.9"

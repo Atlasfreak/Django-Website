@@ -3,7 +3,7 @@ function addForm(btn) {
     let form_id = button.attr('id');
     let form_total = parseInt($('#id_' + form_id + '-TOTAL_FORMS').val());
     let max_forms = parseInt($('#id_' + form_id + '-MAX_NUM_FORMS').val());
-    
+
     if (form_total < max_forms) {
         let regex = new RegExp(form_id + '-__prefix__', 'g');
         button.before($('#' + form_id + '-empty').html().replaceAll(regex, form_id + '-' + form_total));
@@ -31,8 +31,8 @@ function removeForm(btn) {
     if (form_total > min_forms) {
         button.parentsUntil(data_target).remove();
         let children = btn_parent.children();
-
-        for (let i=0, len=children.length; i<len; i++) {
+        console.log(children)
+        for (let i = 0, len = children.length; i < len; i++) {
             let regex = new RegExp(form_id + '-\\d+-', 'g');
             let replacement = form_id + '-' + i + '-';
             let replace = $(children.get(i)).html().replaceAll(regex, replacement);

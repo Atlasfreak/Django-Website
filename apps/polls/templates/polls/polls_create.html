@@ -68,17 +68,19 @@
                 </fieldset>
             </div>
 
-            <fieldset id="questions">
+            <fieldset>
 
                 {{ question_formset.management_form }}
-                {% for question_form in question_formset %}
-                    {% include 'polls/include/question.html' with question_form=question_form question_formset=question_formset choice_formset=choice_formset_list|index:forloop.counter0 %}
-                {% endfor %}
+                <div id="questions">
+                    {% for question_form in question_formset %}
+                        {% include 'polls/include/question.html' with question_form=question_form question_formset=question_formset choice_formset=choice_formset_list|index:forloop.counter0 %}
+                    {% endfor %}
 
-                <button class="btn btn-success add_form" type="button" id="{{question_formset.prefix}}"><i class="fas fa-plus"></i> Frage hinzufügen</button>
+                    <button class="btn btn-success add_form" type="button" id="{{question_formset.prefix}}"><i class="fas fa-plus"></i> Frage hinzufügen</button>
 
-                <div hidden="" id="{{question_formset.prefix}}-empty">
-                    {% include 'polls/include/question.html' with question_form=question_formset.empty_form choice_formset=empty_choice_formset %}
+                    <div hidden="" id="{{question_formset.prefix}}-empty">
+                        {% include 'polls/include/question.html' with question_form=question_formset.empty_form choice_formset=empty_choice_formset %}
+                    </div>
                 </div>
             </fieldset>
             <hr>

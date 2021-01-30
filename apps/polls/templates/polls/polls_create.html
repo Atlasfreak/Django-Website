@@ -1,5 +1,6 @@
 {% extends 'polls/polls_base.html' %}
 {% load widget_tweaks %}
+{% load crispy_forms_tags %}
 {% load polls_tags %}
 {% load static %}
 
@@ -90,6 +91,11 @@
                 </button>
             </div>
         </form>
+        <div id="question_type_params" hidden>
+        {% for q_type_param_form in type_param_forms %}
+            {{q_type_param_form|crispy}}
+        {% endfor %}
+        </div>
     </div>
 {% endblock content %}
 
@@ -122,22 +128,7 @@
         });
     });
     </script>
+    {{options_deactivated|json_script:"options_deactivated"}}
+    {{type_param_ids_to_forms|json_script:"param_ids_to_forms"}}
     <script src="{% static 'polls/js/create.js' %}" type="text/javascript"></script>
-    <script>
-    $('.custom-select').each(function(){
-        changeAvailableOptions(this, '.card', '#options', {{options_deactivated}}, 'Dieser Fragetyp lässt keine Auswahlmöglichkeiten zu.');
-    });
-
-    $('form').on('click', '.add_form', function(){
-        addForm(this);
-    });
-
-    $('form').on('click', '.remove_form', function(){
-        removeForm(this);
-    });
-
-    $('form').on('change', '.custom-select', function(){
-        changeAvailableOptions(this, '.card', '#options', {{options_deactivated}}, 'Dieser Fragetyp lässt keine Auswahlmöglichkeiten zu.')
-    });
-    </script>
 {% endblock javascript %}

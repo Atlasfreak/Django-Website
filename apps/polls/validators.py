@@ -1,5 +1,6 @@
 from importlib import import_module, resources
 
+from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext_lazy as _
@@ -66,3 +67,25 @@ class FormFieldValidator(ModuleValidator):
         "django.forms.models",
     ]
     message = _("Please enter a valid django form field.")
+
+
+class MaxNumberValidator(validators.MaxValueValidator):
+    """Validates that no more than a given amount of options are selected."""
+
+    message = _("Please do not select more than %(limit_value)s options.")
+    code = "max_number"
+
+    def clean(self, value: list):
+        print(value)
+        return len(value)
+
+
+class MinNumberValidator(validators.MinValueValidator):
+    """Validates that at least a given amount of options are selected."""
+
+    message = _("Please select at least %(limit_value)s options.")
+    code = "min_number"
+
+    def clean(self, value: list):
+        print(value)
+        return len(value)

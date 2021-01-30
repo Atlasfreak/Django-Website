@@ -1,3 +1,5 @@
+import inspect
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.html import escape
@@ -41,8 +43,12 @@ class QuestionTypeParamCreateForm(forms.ModelForm):
 
         for type in question_types:
             field = type.get_field_class()
+            params = inspect.signature(field).parameters
+            param_count = len(params)
+            if params.get("kwargs", False):
+                param_count -= 1
 
-            if not hasattr(field(), attribute):
+            if not hasattr(field(*[None] * param_count), attribute):
                 raise ValidationError(
                     _("%(field)s does not have attribute: %(attribute)s."),
                     params={"field": type, "attribute": attribute},

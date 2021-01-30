@@ -160,7 +160,7 @@ class QuestionTypeParam(models.Model):
         converter = self.get_converter()
         param_dict["converter"] = converter
         param_dict["field"] = self.get_field()
-        param_dict["default"] = converter(self.default)
+        param_dict["default"] = converter(self.default) if self.default else None
         param_dict["name"] = self.name
         return param_dict
 

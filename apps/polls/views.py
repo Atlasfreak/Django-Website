@@ -2,6 +2,7 @@ import csv
 import datetime
 import textwrap
 
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory, inlineformset_factory
@@ -37,6 +38,57 @@ def index_view(request: HttpRequest):
     return render(request, "polls/polls_index.html", context)
 
 
+def _construct_choice_formset(
+    q_form: forms.Form, c_formset: forms.BaseFormSet, data=None, **kwargs
+):
+    prefix = f"{q_form.prefix}-choice"
+    choice_formset = c_formset(data, prefix=prefix, **kwargs)
+    return choice_formset
+
+
+def _construct_choice_formset_list(
+    q_formset: forms.BaseInlineFormSet, base_c_formset: forms.BaseFormSet, **kwargs
+):
+    valid = True
+    c_formset_list = []
+    for form in q_formset:
+        formset_args = [form, base_c_formset]
+        formset_kwargs = {}
+
+        if kwargs.get("data", False):
+            formset_kwargs["data"] = kwargs["data"]
+
+        if hasattr(form, "cleaned_data"):
+            if form.cleaned_data["type"].enable_choices:
+                form_saved = form.save(commit=False)
+                formset_kwargs["instance"] = form_saved
+
+        c_formset = _construct_choice_formset(*formset_args, **formset_kwargs)
+        valid &= c_formset.is_valid() if formset_kwargs.get("instance", False) else True
+        c_formset_list.append(c_formset)
+    return (c_formset_list, valid)
+
+
+def _add_extra_params_to_question(
+    request: HttpRequest, q_formset: forms.BaseInlineFormSet
+):
+    errors = []
+    for form in q_formset:
+        params = form.cleaned_data["type"].params.all()
+        extra_params = {}
+        for param in params:
+            param_form = get_QuestionTypeParamForm(
+                param, replace=form.prefix, **{"data": request.POST}
+            )
+            if param_form.is_valid():
+                extra_params.update(param_form.cleaned_data)
+            else:
+                errors.append(param_form.errors)
+        if form.is_valid():
+            form.instance.extra_params = extra_params
+    return q_formset, errors
+
+
 @login_required
 def create(request: HttpRequest):
     QuestionInlineFormset = inlineformset_factory(
@@ -62,10 +114,17 @@ def create(request: HttpRequest):
         extra=0,
         can_delete=False,
     )
-
+    question_types = QuestionType.objects.all()
     options_deactivated = list(
-        QuestionType.objects.filter(enable_choices=False).values_list("id", flat=True)
+        question_types.filter(enable_choices=False).values_list("id", flat=True)
     )
+
+    type_params = QuestionTypeParam.objects.all()
+    type_param_forms = []
+
+    for type_param in type_params:
+        type_param_form = get_QuestionTypeParamForm(type_param)
+        type_param_forms.append(type_param_form)
 
     choice_formset_list = []
 
@@ -74,56 +133,46 @@ def create(request: HttpRequest):
         poll_form = PollCreationForm(request.POST, prefix="poll")
         question_formset = QuestionInlineFormset(request.POST, prefix="question")
 
-        if poll_form.is_valid():
+        if poll_form.is_valid() and question_formset.is_valid():
             poll = poll_form.save(commit=False)
             poll.creator = request.user
             question_formset.instance = poll
+            question_formset, param_errors = _add_extra_params_to_question(
+                request, question_formset
+            )
+            choice_formset_list, choices_valid = _construct_choice_formset_list(
+                question_formset, ChoiceInlineFormset, data=request.POST
+            )
 
-            if question_formset.is_valid():
-                choices_valid = True
-                for form in question_formset:
-                    prefix = f"{form.prefix}-choice"
-                    choice_formset = ChoiceInlineFormset(prefix=prefix)
-                    if form.cleaned_data:
-                        if form.cleaned_data["type"].enable_choices:
-                            form_saved = form.save(commit=False)
-                            data_choice_formset = ChoiceInlineFormset(
-                                request.POST, prefix=prefix, instance=form_saved
-                            )
-
-                            choices_valid &= data_choice_formset.is_valid()
-                            choice_formset = data_choice_formset
-
-                    choice_formset_list.append(choice_formset)
-
-                if choices_valid:
-                    poll.save()
-                    question_formset.save()
-                    for formset in choice_formset_list:
-                        formset.save()
-                    context = {
-                        "poll": poll,
-                    }
-                    return render(request, "polls/polls_create_complete.html", context)
+            if choices_valid and not param_errors:
+                poll.save()
+                question_formset.save()
+                for formset in choice_formset_list:
+                    formset.save()
+                context = {
+                    "poll": poll,
+                }
+                return render(request, "polls/polls_create_complete.html", context)
             else:
-                for form in question_formset:
-                    prefix = f"{form.prefix}-choice"
-                    data_choice_formset = ChoiceInlineFormset(
-                        request.POST, prefix=prefix
-                    )
-                    choice_formset_list.append(data_choice_formset)
+                if param_errors:
+                    messages.error(request, "".join(param_errors))
+        else:
+            choice_formset_list = _construct_choice_formset_list(
+                question_formset, ChoiceInlineFormset, data=request.POST
+            )[0]
     else:
         poll_form = PollCreationForm(prefix="poll")
 
         question_formset = QuestionInlineFormset(prefix="question")
 
-    if choice_formset_list == []:
-        for form in question_formset:
-            prefix = f"{form.prefix}-choice"
-            choice_formset_list.append(ChoiceInlineFormset(prefix=prefix))
+    if not choice_formset_list:
+        choice_formset_list = _construct_choice_formset_list(
+            question_formset,
+            ChoiceInlineFormset,
+        )[0]
 
-    empty_choice_formset = ChoiceInlineFormset(
-        prefix=f"{question_formset.empty_form.prefix}-choice"
+    empty_choice_formset = _construct_choice_formset(
+        question_formset.empty_form, ChoiceInlineFormset
     )
 
     context = {
@@ -132,6 +181,8 @@ def create(request: HttpRequest):
         "choice_formset_list": choice_formset_list,
         "empty_choice_formset": empty_choice_formset,
         "options_deactivated": options_deactivated,
+        "type_param_forms": type_param_forms,
+        "type_param_ids_to_forms": QuestionType.objects.get_ids_to_params(),
     }
     return render(request, "polls/polls_create.html", context)
 
@@ -216,7 +267,10 @@ def vote(request: HttpRequest, token):
             if cookie_params:
                 expires_time = timezone.now() + datetime.timedelta(366 * 2)
                 response.set_signed_cookie(
-                    **cookie_params, expires=expires_time, salt=cookie_salt
+                    **cookie_params,
+                    expires=expires_time,
+                    salt=cookie_salt,
+                    samesite="lax",
                 )
             return response
     else:

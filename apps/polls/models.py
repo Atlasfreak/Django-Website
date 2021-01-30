@@ -11,7 +11,7 @@ from django.utils.translation import gettext_lazy as _
 
 from apps.customUser.models import SiteUser
 
-from .managers import PollManager
+from .managers import PollManager, QuestionTypeManager
 from .validators import FormFieldValidator, FormWidgetValidator
 
 # Create your models here.
@@ -132,7 +132,7 @@ class QuestionTypeParam(models.Model):
         verbose_name=_("Zugehöriger Frage Typ"),
         related_name="params",
     )
-    default = models.CharField(_("Standradwert"), max_length=128)
+    default = models.CharField(_("Standardwert"), max_length=128, blank=True, null=True)
 
     val_type = models.CharField(
         _("Typ der Eingabewerte"),
@@ -152,13 +152,22 @@ class QuestionTypeParam(models.Model):
         return converter
 
     def get_field(self):
-        field = self.STRING_TO_FUNCTION[self.val_type][self.FIELD_KEY]
+        field: forms.Field = self.STRING_TO_FUNCTION[self.val_type][self.FIELD_KEY]
         return field
+
+    def get_param_dict(self):
+        param_dict = {}
+        converter = self.get_converter()
+        param_dict["converter"] = converter
+        param_dict["field"] = self.get_field()
+        param_dict["default"] = converter(self.default)
+        param_dict["name"] = self.name
+        return param_dict
 
 
 class QuestionType(models.Model):
     """
-    Describes the different types of Questions and declares their represantation in forms when a poll is answered.
+    Describes the different types of :model:`polls.Question` and declares their represantation in forms when a poll is answered.
 
     Variable details:
 
@@ -196,26 +205,37 @@ class QuestionType(models.Model):
         default="django.forms.fields.CharField",
     )
 
+    objects = QuestionTypeManager()
+
     class Meta:
         verbose_name = "QuestionType"
         verbose_name_plural = "QuestionTypes"
 
     def get_widget_class(self):
         widget_path = self.form_widget
-        widget = import_string(widget_path)
+        widget: forms.Widget = import_string(widget_path)
         return widget
 
     def get_field_class(self):
         field_path = self.form_field
-        field = import_string(field_path)
+        field: forms.Field = import_string(field_path)
         return field
 
     def get_field_with_widget(self, **params):
         base_field = self.get_field_class()
         # Create a new field class so I do not override the widget for all fields of that type
-        field = type("Poll" + base_field.__name__, (base_field,), {**params})
+        field: forms.Field = type(
+            "Poll" + base_field.__name__, (base_field,), {**params}
+        )
         field.widget = self.get_widget_class() if self.form_widget else field.widget
         return field
+
+    def get_id_to_param(self):
+        id = self.pk
+        params = list(self.params.values_list("name", flat=True))
+        if not params:
+            return {}
+        return {id: params}
 
     def __str__(self):
         return f"{self.verbose_name}"

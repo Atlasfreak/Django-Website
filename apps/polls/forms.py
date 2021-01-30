@@ -43,9 +43,9 @@ class QuestionTypeParamCreateForm(forms.ModelForm):
 
         for type in question_types:
             field = type.get_field_class()
-            params = inspect.signature(field).parameters
+            params = inspect.getfullargspec(field).args
             param_count = len(params)
-            if params.get("kwargs", False):
+            if "self" in params:
                 param_count -= 1
 
             if not hasattr(field(*[None] * param_count), attribute):

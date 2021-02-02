@@ -11,21 +11,28 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import json
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+with open(
+    "website/Django-Website-config.json"  # replace this with the path to your config file. I would recommend putting it into a diffrent directory!
+) as config_file:
+    config = json.load(config_file)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "kjua*i%is72#)qb4yk+#jb7@hqd#75bac%wqcoy^qg+vtrl@)d"
+SECRET_KEY = config.get("SECRET_KEY")
+# "kjua*i%is72#)qb4yk+#jb7@hqd#75bac%wqcoy^qg+vtrl@)d"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.get("DEBUG", False)
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = config.get("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -92,12 +99,12 @@ WSGI_APPLICATION = "website.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
+DEFAULT_DB = {
+    "ENGINE": "django.db.backends.sqlite3",
+    "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
 }
+
+DATABASES = {"default": config.get("DATABASE", DEFAULT_DB)}
 
 
 # Password validation
@@ -164,3 +171,16 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 from django.contrib.messages import constants as message_constants
 
 MESSAGE_TAGS = {message_constants.ERROR: "danger"}
+
+# E-Mail settings
+# Use "python -m smtpd -n -c DebuggingServer localhost:1025" for development
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = config.get("EMAIL_HOST", "localhost")
+EMAIL_PORT = config.get("EMAIL_PORT", 25)
+
+EMAIL_HOST_USER = config.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = config.get("EMAIL_HOST_PASSWORD", "")
+
+EMAIL_USE_TLS = config.get("EMAIL_USE_TLS", True)

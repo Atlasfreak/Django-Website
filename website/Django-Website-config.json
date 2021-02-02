@@ -1,0 +1,9 @@
+{
+    "SECRET_KEY": "kjua*i%is72#)qb4yk+#jb7@hqd#75bac%wqcoy^qg+vtrl@)d",
+    "DEBUG": true,
+    "ALLOWED_HOSTS": [
+        "*"
+    ],
+    "EMAIL_PORT": 1025,
+    "EMAIL_HOST_USER": "root"
+}

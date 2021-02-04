@@ -35,9 +35,12 @@
             </div>
         </div>
     </form>
-    <div class = "border-top card-footer">
+    <div class = "d-flex border-top card-footer">
         <small class = "text-muted">
             Du hast noch keinen Account? <a href = "{% url 'register' %}">Registrieren</a>
+        </small>
+        <small class = "ml-auto text-muted">
+            Du hast dein <a href="{% url 'password_reset' %}">Passwort vergessen?</a>
         </small>
     </div>
 {% endblock management_content %}

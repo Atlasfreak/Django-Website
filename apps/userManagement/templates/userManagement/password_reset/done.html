@@ -1,0 +1,16 @@
+{% extends 'userManagement/management_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{title}}{% endblock title %}
+{% block brand %}{{title}}{% endblock %}
+{% block nav-item %}
+    {{ block.super }}
+    <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
+    <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
+{% endblock nav-item %}
+
+{% block management_content %}
+    <div class="card-body">
+        Dir wurde eine E-Mail geschickt mit der du dein Passwort zurücksetzen kannst.
+    </div>
+{% endblock management_content %}

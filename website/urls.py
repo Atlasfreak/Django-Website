@@ -38,6 +38,48 @@ urlpatterns = [
     ),
     path("register/", user_views.register, name="register"),
     path("polls/", include("apps.polls.urls")),
+    path(
+        "password/",
+        include(
+            [
+                path(
+                    "reset/",
+                    include(
+                        [
+                            path(
+                                "",
+                                auth_views.PasswordResetView.as_view(
+                                    template_name="userManagement/password_reset/reset.html"
+                                ),
+                                name="password_reset",
+                            ),
+                            path(
+                                "done/",
+                                auth_views.PasswordResetDoneView.as_view(
+                                    template_name="userManagement/password_reset/done.html"
+                                ),
+                                name="password_reset_done",
+                            ),
+                            path(
+                                "confirm/<uidb64>/<token>/",
+                                auth_views.PasswordResetConfirmView.as_view(
+                                    template_name="userManagement/password_reset/confirm.html"
+                                ),
+                                name="password_reset_confirm",
+                            ),
+                            path(
+                                "complete/",
+                                auth_views.PasswordResetCompleteView.as_view(
+                                    template_name="userManagement/password_reset/complete.html"
+                                ),
+                                name="password_reset_complete",
+                            ),
+                        ]
+                    ),
+                ),
+            ]
+        ),
+    ),
 ]
 
 if settings.DEBUG:

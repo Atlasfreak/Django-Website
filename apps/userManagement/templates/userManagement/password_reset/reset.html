@@ -1,0 +1,30 @@
+{% extends 'userManagement/management_base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{title}}{% endblock title %}
+{% block brand %}{{title}}{% endblock %}
+{% block nav-item %}
+    {{ block.super }}
+    <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
+    <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
+{% endblock nav-item %}
+
+{% block management_content %}
+    <form method="POST">
+        {% csrf_token %}
+        <legend class = "card-header">
+            Passwort zurücksetzen
+        </legend>
+        <div class="card-body">
+            <fieldset class = "form-group">
+                {{ form|crispy }}
+            </fieldset>
+            <div class = "form-group">
+                <button class = "btn btn-info" type = "submit">
+                    Anfordern
+                </button>
+            </div>
+        </div>
+    </form>
+{% endblock management_content %}
+

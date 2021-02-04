@@ -180,7 +180,9 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = config.get("EMAIL_HOST", "localhost")
 EMAIL_PORT = config.get("EMAIL_PORT", 25)
 
-EMAIL_HOST_USER = config.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_USER = config.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config.get("EMAIL_HOST_PASSWORD", "")
 
 EMAIL_USE_TLS = config.get("EMAIL_USE_TLS", True)
+DEFAULT_FROM_EMAIL = config.get("DEFAULT_FROM_EMAIL", "noreply@localhost")
+SERVER_EMAIL = config.get("SERVER_EMAIL", "root@localhost")

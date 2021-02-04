@@ -1,0 +1,7 @@
+user-agent: *
+dissallow: /admin
+dissallow: /polls/
+dissallow: /passwords
+dissallow: /login
+dissallow: /register
+allow: /polls/*vote

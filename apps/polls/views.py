@@ -276,9 +276,11 @@ def vote(request: HttpRequest, token):
     else:
         real_formset = Formset(queryset=Answer.objects.none(), **formset_params)
 
+    helper = AnswerFormHelper()
     context = {
         "poll": poll,
         "formset": real_formset,
+        "helper": helper,
     }
     return render(request, "polls/polls_vote.html", context)
 

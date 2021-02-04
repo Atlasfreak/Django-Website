@@ -76,7 +76,6 @@ class MaxNumberValidator(validators.MaxValueValidator):
     code = "max_number"
 
     def clean(self, value: list):
-        print(value)
         return len(value)
 
 
@@ -87,5 +86,4 @@ class MinNumberValidator(validators.MinValueValidator):
     code = "min_number"
 
     def clean(self, value: list):
-        print(value)
         return len(value)

@@ -28,7 +28,7 @@
             {% csrf_token %}
             {{formset.management_form}}
             {% for form in formset %}
-                {{form|crispy}}
+                {% crispy form helper %}
                 <hr>
             {% endfor %}
             <div class="form-group">

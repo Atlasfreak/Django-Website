@@ -1,5 +1,6 @@
 import inspect
 
+from crispy_forms.helper import FormHelper
 from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.html import escape
@@ -103,3 +104,10 @@ def get_AnswerModelForm(self, question: Question, **kwargs):
                 fields = ("value",)
 
     return AnswerForm(**kwargs)
+
+
+class AnswerFormHelper(FormHelper):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.form_tag = False
+        self.html5_required = True

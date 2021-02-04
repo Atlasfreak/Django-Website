@@ -5,6 +5,8 @@ from .validators import MaxNumberValidator, MinNumberValidator
 
 class ModelListChoiceField(ModelChoiceField):
     def to_python(self, value):
+        if not value:
+            return list()
         return list(super().to_python(value))
 
 

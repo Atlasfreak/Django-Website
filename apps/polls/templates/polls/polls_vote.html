@@ -2,8 +2,10 @@
 {% load crispy_forms_tags %}
 
 {% block meta %}
-    <meta name="description" content="{{poll.info_text}}">
-    <meta name="title" content="{{poll.title}}">
+    <meta name="description" property="og:description" content="{{poll.info_text|striptags|truncatewords:20}}" />
+    <meta name="title" property="og:title" content="{{poll.title|truncatewords:5}}" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}" />
 {% endblock meta %}
 {% block sytlesheet %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" type="text/css">

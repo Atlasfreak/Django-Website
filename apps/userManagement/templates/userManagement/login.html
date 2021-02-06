@@ -3,10 +3,10 @@
 
 {% block title %}Anmelden{% endblock title %}
 {% block brand %}Anmelden{% endblock %}
-{% block nav-item %}
+{% block nav_item %}
     {{ block.super }}
     <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
-{% endblock nav-item %}
+{% endblock nav_item %}
 
 {% block management_alerts %}
     {% if next %}

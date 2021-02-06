@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,16 +36,16 @@
     <title>{% block title %}Webseite{% endblock title %}</title>
 </head>
 
-<body class = "d-flex flex-column min-vh-100 ministry-teams" {% block body-extra-context %}style="background: #faf7f2;"{% endblock body-extra-context %}>
+<body class = "d-flex flex-column min-vh-100 ministry-teams" {% block body_extra_context %}style="background: #faf7f2;"{% endblock %}>
     {% include "cookie-banner.html" %}
     <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="fas fa-angle-up fa-lg"></i> Nach oben</button>
 
     <header class = "sticky-top">
         <nav class="navbar navbar-expand-sm navbar-light shadow" style="background: #75d3df;">
             <div class = "container">
-                <span class="navbar-brand mb-0 h1">
+                <a class="navbar-brand mb-0 h1" href="{% block brand_url %}{% url 'home' %}{% endblock %}">
                     {% block brand %}{% endblock brand %}
-                </span>
+                </a>
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -54,7 +54,7 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <div class="ml-auto navbar-nav">
 
-                        {% block nav-item %}
+                        {% block nav_item %}
 
                             {% if user.is_authenticated %}
                                 <a href="{% url 'logout' %}" class="nav-link"><i class="fas fa-sign-out-alt fa-lg"></i> Abmelden</a>
@@ -62,7 +62,7 @@
                                 <a href="{% url 'login' %}" class="nav-link"><i class="fas fa-sign-in-alt fa-lg"></i> Anmelden</a>
                             {% endif %}
 
-                        {% endblock nav-item %}
+                        {% endblock nav_item %}
                         {% if user.is_superuser %}
                             <a class="nav-link" href="{%url 'admin:index' %}" aria-label = "Admin Panel">
                                 <i class="fas fa-tools fa-lg"></i> Admin Panel

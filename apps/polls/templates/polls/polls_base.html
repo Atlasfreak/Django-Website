@@ -5,11 +5,13 @@
 {% block title %}
 Umfragen -
 {% endblock title %}
-{% block brand %} Umfragen {% endblock %}
-{% block nav-item %}
+{% block brand_url %}{% url 'polls:index' %}{% endblock %}
+{% block brand %}Umfragen{% endblock %}
+{% block nav_item %}
+<a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
 <a href="{% url 'polls:index' %}" class="nav-link">Übersicht</a>
 {{ block.super }}
-{% endblock %}
+{% endblock nav_item %}
 
 {% block content %}
 {% endblock content %}

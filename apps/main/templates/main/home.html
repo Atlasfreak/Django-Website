@@ -8,13 +8,13 @@
 {% block title %}Home{% endblock %}
 {% block brand %}Home{% endblock brand %}
 
-{% block nav-item %}
-    {{ block.super }}
+{% block nav_item %}
     {% if user.is_authenticated %}
     <a href="{% url 'polls:index' %}" class="nav-link">Umfragen</a>
 
     {% endif %}
-{% endblock nav-item %}
+    {{ block.super }}
+{% endblock nav_item %}
 
 {% block content %}
     <div class="rounded-lg p-3 bg-white shadow my-4">

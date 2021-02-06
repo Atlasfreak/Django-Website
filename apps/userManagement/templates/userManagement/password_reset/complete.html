@@ -1,13 +1,17 @@
 {% extends 'userManagement/management_base.html' %}
 {% load crispy_forms_tags %}
 
+{% block meta %}
+    <meta http-equiv="refresh" content="30; url={% url 'home' %}">
+{% endblock meta %}
+
 {% block title %}{{title}}{% endblock title %}
 {% block brand %}{{title}}{% endblock %}
-{% block nav-item %}
+{% block nav_item %}
     {{ block.super }}
     <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
     <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
-{% endblock nav-item %}
+{% endblock nav_item %}
 
 {% block management_content %}
     <div class="card-body">

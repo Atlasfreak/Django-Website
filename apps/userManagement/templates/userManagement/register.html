@@ -2,10 +2,10 @@
 {% load crispy_forms_tags %}
 {% block title %}Registrieren{% endblock title %}
 {% block brand %}Registrieren{% endblock %}
-{% block nav-item %}
+{% block nav_item %}
     {{ block.super }}
     <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
-{% endblock nav-item %}
+{% endblock nav_item %}
 
 {% block management_content %}
     <form method="POST">

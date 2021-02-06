@@ -1,4 +1,7 @@
 {% extends 'polls/polls_base.html' %}
+{% block meta %}
+    <meta http-equiv="refresh" content="30; url={% url 'polls:index' %}">
+{% endblock meta %}
 {% block title %}{{ block.super }} Erstellt{% endblock %}
 {% block content %}
     <div class="rounded-lg p-3 bg-white shadow my-4">

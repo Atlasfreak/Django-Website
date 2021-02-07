@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}Interner Fehler{% endblock %}
+{% block brand %}Interner Fehler{% endblock %}
 {% block content %}
     <div class="card my-4 shadow-sm">
-        <div class="card-header">
-            500 server error
+        <div class="card-header h2">
+            <b>500 server error</b>
         </div>
         <div class="card-body">
             <p>Es gab einen Fehler beim bearbeiten deiner Anfrage, wir bitten dies zu entschuldigen.</p>
+            Probieren Sie eine der folgenden Lösungen:
             <ul>
                 <li>Versuche die Seite neuzuladen und die Anfrage erneut zu senden.</li>
                 <li>Sollte das Problem weiterhin bestehen nehme mit uns Kontakt auf.</li>

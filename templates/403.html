@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
 {% block title %}Fehlende Berechtigungen{% endblock %}
+{% block brand %}Fehlende Berechtigungen{% endblock %}
 {% block content %}
     <div class="card my-4 shadow-sm">
-        <div class="card-header">
-            403 HTTP Forbidden
+        <div class="card-header h2">
+            <b>403 HTTP Forbidden</b>
         </div>
         <div class="card-body">
             <p>Du hast keine Berechtigungen diese Seite zu sehen.</p>
+            Probieren Sie eine der folgenden Lösungen:
             <ul>
                 <li>Bitte überprüfe ob du angemeldet bist.</li>
                 <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>

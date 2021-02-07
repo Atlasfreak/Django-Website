@@ -2,10 +2,15 @@
 
 {% block title %}Fehlerhafte Anfrage{% endblock %}
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4">
-        <h1>400 bad request</h1>
-        <p>Deine Anfrage enthält Fehler und kann daher nicht bearbeitet werden.</p>
-        <hr>
-        <a href="{% url 'home' %}">Zur Startseite</a>
+    <div class="card my-4 shadow-sm">
+        <div class="card-header">
+            400 bad request
+        </div>
+        <div class="card-body">
+            <p>Deine Anfrage enthält Fehler und kann daher nicht bearbeitet werden.</p>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'home' %}">Zur Startseite</a>
+        </div>
     </div>
 {% endblock content %}

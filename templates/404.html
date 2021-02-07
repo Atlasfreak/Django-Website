@@ -2,13 +2,18 @@
 
 {% block title %}Seite nicht vorhanden{% endblock %}
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4">
-        <h1>404 Page not found</h1>
-        <p>Die gesuchte Seite konnte nicht gefunden werden.</p>
-        <li>
-            <ul>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</ul>
-        </li>
-        <hr>
-        <a href="{% url 'home' %}">Zur Startseite</a>
+    <div class="card my-4 shadow-sm">
+        <div class="card-header">
+            404 Page not found
+        </div>
+        <div class="card-body">
+            <p>Die gesuchte Seite konnte nicht gefunden werden.</p>
+            <ul>
+                <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'home' %}">Zur Startseite</a>
+        </div>
     </div>
 {% endblock content %}

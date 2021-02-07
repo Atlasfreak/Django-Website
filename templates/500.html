@@ -2,14 +2,19 @@
 
 {% block title %}Interner Fehler{% endblock %}
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4">
-        <h1>500 server error</h1>
-        <p>Es gab einen Fehler beim bearbeiten deiner Anfrage, wir bitten dies zu entschuldigen.</p>
-        <li>
-            <ul>Versuche die Seite neuzuladen und die Anfrage erneut zu senden.</ul>
-            <ul>Sollte das Problem weiterhin bestehen nehme mit uns Kontakt auf.</ul>
-        </li>
-        <hr>
-        <a href="{% url 'home' %}">Zur Startseite</a>
+    <div class="card my-4 shadow-sm">
+        <div class="card-header">
+            500 server error
+        </div>
+        <div class="card-body">
+            <p>Es gab einen Fehler beim bearbeiten deiner Anfrage, wir bitten dies zu entschuldigen.</p>
+            <ul>
+                <li>Versuche die Seite neuzuladen und die Anfrage erneut zu senden.</li>
+                <li>Sollte das Problem weiterhin bestehen nehme mit uns Kontakt auf.</li>
+            </ul>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'home' %}">Zur Startseite</a>
+        </div>
     </div>
 {% endblock content %}

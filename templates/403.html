@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Fehlende Berechtigungen{% endblock %}
+{% block content %}
+    <div class="rounded-lg p-3 bg-white shadow my-4">
+        <h1>403 HTTP Forbidden</h1>
+        <p>Du hast keine Berechtigungen diese Seite zu sehen.</p>
+        <li>
+            <ul>Bitte überprüfe ob du angemeldet bist.</ul>
+            <ul>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</ul>
+        </li>
+        <hr>
+        <a href="{% url 'home' %}">Zur Startseite</a>
+    </div>
+{% endblock content %}

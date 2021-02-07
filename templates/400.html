@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Fehlerhafte Anfrage{% endblock %}
+{% block content %}
+    <div class="rounded-lg p-3 bg-white shadow my-4">
+        <h1>400 bad request</h1>
+        <p>Deine Anfrage enthält Fehler und kann daher nicht bearbeitet werden.</p>
+        <hr>
+        <a href="{% url 'home' %}">Zur Startseite</a>
+    </div>
+{% endblock content %}

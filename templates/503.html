@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Wartung{% endblock %}
+{% block banrd_url %}{% endblock %}
+{% block brand %}Wartung{% endblock %}
+{% block content %}
+    <div class="card my-4 shadow-sm">
+        <div class="card-header h2">
+            <b>Wartung</b>
+        </div>
+        <div class="card-body">
+            <p>Der Server befindet sich im Warungsmodus.</p>
+            <p>Vorraussichtliches Ende: {{expected_end|date:"j. F Y H:i"}} </p>
+        </div>
+        <div class="card-footer">
+        </div>
+    </div>
+{% endblock content %}

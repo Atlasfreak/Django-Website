@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "apps.userManagement.apps.UsermanagementConfig",
     "apps.main.apps.MainConfig",
     "apps.polls.apps.PollsConfig",
+    "apps.siteManagement.apps.SitemanagementConfig",
     "crispy_forms",
     "widget_tweaks",
     "django_extensions",
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "apps.siteManagement.middleware.MaintenanceMiddleware",
 ]
 
 ROOT_URLCONF = "website.urls"

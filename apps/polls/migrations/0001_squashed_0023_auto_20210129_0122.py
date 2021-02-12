@@ -9,8 +9,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('polls', '0001_initial'), ('polls', '0002_auto_20201125_1656'), ('polls', '0003_auto_20201125_1658'), ('polls', '0004_auto_20201205_1814'), ('polls', '0005_auto_20201205_1815'), ('polls', '0006_auto_20201205_1815'), ('polls', '0007_auto_20201205_2314'), ('polls', '0008_auto_20201207_2345'), ('polls', '0009_auto_20201214_0049'), ('polls', '0010_auto_20201216_1631'), ('polls', '0011_auto_20201216_1638'), ('polls', '0012_auto_20201217_2116'), ('polls', '0013_auto_20201219_0037'), ('polls', '0014_auto_20201219_0329'), ('polls', '0015_auto_20201219_0335'), ('polls', '0016_auto_20201220_1959'), ('polls', '0017_auto_20201221_2035'), ('polls', '0018_auto_20201221_2046'), ('polls', '0019_poll_is_public'), ('polls', '0020_auto_20210124_0435'), ('polls', '0021_questiontypeparam'), ('polls', '0022_question_extra_params'), ('polls', '0023_auto_20210129_0122')]
-
     initial = True
 
     dependencies = [

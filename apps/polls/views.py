@@ -46,8 +46,16 @@ def _construct_choice_formset(
     return choice_formset
 
 
+def _get_question_type(form: forms.ModelForm):
+    if hasattr(form, "cleaned_data") and (
+        q_type := form.cleaned_data.get("type", False)
+    ):
+        return q_type
+    return None
+
+
 def _construct_choice_formset_list(
-    q_formset: forms.BaseInlineFormSet, base_c_formset: forms.BaseFormSet, **kwargs
+    q_formset: forms.BaseInlineFormSet, base_c_formset: forms.BaseFormSet, data=None
 ):
     valid = True
     c_formset_list = []
@@ -55,17 +63,19 @@ def _construct_choice_formset_list(
         formset_args = [form, base_c_formset]
         formset_kwargs = {}
 
-        if kwargs.get("data", False):
-            formset_kwargs["data"] = kwargs["data"]
+        if data:
+            formset_kwargs["data"] = data
 
-        if hasattr(form, "cleaned_data"):
-            if form.cleaned_data["type"].enable_choices:
-                form_saved = form.save(commit=False)
-                formset_kwargs["instance"] = form_saved
+        q_type = _get_question_type(form)
+
+        if q_type and q_type.enable_choices:
+            form_saved = form.save(commit=False)
+            formset_kwargs["instance"] = form_saved
 
         c_formset = _construct_choice_formset(*formset_args, **formset_kwargs)
         valid &= c_formset.is_valid() if formset_kwargs.get("instance", False) else True
         c_formset_list.append(c_formset)
+
     return (c_formset_list, valid)
 
 
@@ -74,7 +84,10 @@ def _add_extra_params_to_question(
 ):
     errors = []
     for form in q_formset:
-        params = form.cleaned_data["type"].params.all()
+        q_type = _get_question_type(form)
+        if not q_type:
+            continue
+        params = q_type.params.all()
         extra_params = {}
         for param in params:
             param_form = get_QuestionTypeParamForm(
@@ -148,7 +161,8 @@ def create(request: HttpRequest):
                 poll.save()
                 question_formset.save()
                 for formset in choice_formset_list:
-                    formset.save()
+                    if formset.instance.pk:
+                        formset.save()
                 context = {
                     "poll": poll,
                 }

@@ -86,8 +86,8 @@ function changeAvailableOptions(origin, parent, options_id, values, message) {
     let options = target.parents(parent).find(options_id);
 
     changeAvailableParams(target, options, val)
-    if (values.includes(val)) {
-        options.hide(0);
+    if (values.includes(val) || isNaN(val)) {
+        options.attr("hidden", true);
         if (!options.prevAll(html_tag + '.' + class_name).length) {
             options.before('<' + html_tag + ' class="' + class_name + '">' + message + '</' + html_tag + '>')
         }
@@ -95,7 +95,7 @@ function changeAvailableOptions(origin, parent, options_id, values, message) {
         if (options.prevAll(html_tag + '.' + class_name)) {
             options.prevAll(html_tag + '.' + class_name).remove();
         }
-        options.show(0);
+        options.removeAttr("hidden");
     }
 }
 

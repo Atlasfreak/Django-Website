@@ -23,7 +23,7 @@
 
     <div class="card-body {% if choice_formset.non_field_errors %}border border-danger{% endif %}">
         {% include "polls/include/non_field_errors.html" with form=choice_formset %}
-        <div id="options">
+        <div id="options" hidden="">
             {% for choice_form in choice_formset %}
                 {% if forloop.counter0 > 0 %}
                     {% include "polls/include/choice.html" with field=choice_form.text field_with_filters=choice_form.text prefix=choice_formset.prefix condition=True form=choice_form %}

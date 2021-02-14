@@ -7,7 +7,9 @@ class ModelListChoiceField(ModelChoiceField):
     def to_python(self, value):
         if not value:
             return list()
-        return list(super().to_python(value))
+        return [
+            super().to_python(value),
+        ]
 
 
 class ModelLimitMultipleChoiceField(ModelMultipleChoiceField):

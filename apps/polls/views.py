@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory, inlineformset_factory
 from django.http import HttpResponse
 from django.http.request import HttpRequest
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -201,8 +201,26 @@ def create(request: HttpRequest):
     return render(request, "polls/polls_create.html", context)
 
 
-def vote(request: HttpRequest, token):
-    poll = Poll.objects.get(token=token)
+def get_poll_from_token(token: str):
+    """
+    get_poll_from_token
+    Returns the poll with the specified token.
+    Also gets the questions for the poll.
+
+    Args:
+        token (str): The token of the poll
+
+    Returns:
+        poll: Poll Object
+        questions: List of Question objects for the Poll
+    """
+    poll = get_object_or_404(Poll.objects.all(), token=token)
+    questions = poll.questions.all()
+    return poll, questions
+
+
+def vote(request: HttpRequest, token: str):
+    poll, questions = get_poll_from_token(token)
     ip_adress = request.META.get("REMOTE_ADDR")
     cookie_salt = poll.start_date.strftime("%d.%m%m.%Y %H:%M:%S:%f %z %Z %j")
 
@@ -219,10 +237,8 @@ def vote(request: HttpRequest, token):
     cookie = request.get_signed_cookie(
         COOKIE_KEY.format(id=poll.id), False, salt=cookie_salt
     )
-    if session_cookie:
-        has_voted = bool(
-            cookie.get(poll.id, False) and session_cookie.get(poll.id, False)
-        )
+    if session_cookie and cookie:
+        has_voted = bool(cookie and session_cookie.get(poll.id, False))
     else:
         has_voted = False
 
@@ -232,8 +248,6 @@ def vote(request: HttpRequest, token):
         message = "Du hast für diese Umfrage bereits abgestimmt!"
         messages.error(request, message)
         return redirect("polls:index")
-
-    questions = poll.questions.all()
 
     question_list = list(questions)
 
@@ -301,10 +315,8 @@ def vote(request: HttpRequest, token):
 
 @login_required
 @is_creator
-def results(request: HttpRequest, token):
-    poll = Poll.objects.get(token=token)
-
-    questions = poll.questions.all()
+def results(request: HttpRequest, token: str):
+    poll, questions = get_poll_from_token(token)
 
     chart_list = []
     for question in questions:
@@ -328,8 +340,8 @@ def results(request: HttpRequest, token):
 
 @login_required
 @is_creator
-def get_csv(request: HttpRequest, token):
-    poll = Poll.objects.get(token=token)
+def get_csv(request: HttpRequest, token: str):
+    poll, questions = get_poll_from_token(token)
 
     response = HttpResponse(content_type="text/csv")
     filename = poll.title.replace(" ", "_")
@@ -338,7 +350,7 @@ def get_csv(request: HttpRequest, token):
     fieldnames = [
         "Einsendedatum",
     ]
-    for question in poll.questions.all():
+    for question in questions:
         fieldnames.append(question.text)
 
     writer = csv.DictWriter(response, fieldnames=fieldnames)
@@ -366,14 +378,14 @@ def get_csv(request: HttpRequest, token):
 
 @login_required
 @is_creator
-def delete(request: HttpRequest, token):
-    Poll.objects.get(token=token).delete()
+def delete(request: HttpRequest, token: str):
+    poll, questions = get_poll_from_token(token)
+    poll.delete()
     messages.success(request, "Die Umfrage wurde erfolgreich gelöscht!")
     return redirect("polls:index")
 
 
 @login_required
 @is_creator
-def edit(request: HttpRequest, token):
+def edit(request: HttpRequest, token: str):
     return redirect("polls:index")
-    poll = Poll.objects.get(token=token)

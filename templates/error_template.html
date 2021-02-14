@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Ein Fehler ist aufgetreten{% endblock %}
+{% block banrd_url %}{{ block.super }}{% endblock %}
+{% block brand %}Ein Fehler ist aufgetreten{% endblock %}
+{% block nav_item %}{% endblock %}
+{% block content %}
+    <div class="card my-4 shadow-sm">
+    {% block error_content %}{% endblock %}
+    </div>
+{% endblock content %}

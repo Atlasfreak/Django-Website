@@ -1,22 +1,20 @@
-{% extends "base.html" %}
+{% extends 'error_template.html' %}
 
 {% block title %}Fehlende Berechtigungen{% endblock %}
 {% block brand %}Fehlende Berechtigungen{% endblock %}
-{% block content %}
-    <div class="card my-4 shadow-sm">
-        <div class="card-header h2">
-            <b>403 HTTP Forbidden</b>
-        </div>
-        <div class="card-body">
-            <p>Du hast keine Berechtigungen diese Seite zu sehen.</p>
-            Probieren Sie eine der folgenden Lösungen:
-            <ul>
-                <li>Bitte überprüfe ob du angemeldet bist.</li>
-                <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
-            </ul>
-        </div>
-        <div class="card-footer">
-            <a href="{% url 'home' %}">Zur Startseite</a>
-        </div>
+{% block error_content %}
+    <div class="card-header h2">
+        <b>403 HTTP Forbidden</b>
     </div>
-{% endblock content %}
+    <div class="card-body">
+        <p>Du hast keine Berechtigungen diese Seite zu sehen.</p>
+        Probieren Sie eine der folgenden Lösungen:
+        <ul>
+            <li>Bitte überprüfe ob du angemeldet bist.</li>
+            <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
+        </ul>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}">Zur Startseite</a>
+    </div>
+{% endblock error_content %}

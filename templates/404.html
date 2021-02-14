@@ -1,21 +1,19 @@
-{% extends "base.html" %}
+{% extends 'error_template.html' %}
 
 {% block title %}Seite nicht gefunden{% endblock %}
 {% block brand %}Seite nicht gefunden{% endblock %}
-{% block content %}
-    <div class="card my-4 shadow-sm">
-        <div class="card-header h2">
-            <b>404 Page not found</b>
-        </div>
-        <div class="card-body">
-            <p>Die gesuchte Seite konnte nicht gefunden werden.</p>
-            Probieren Sie eine der folgenden Lösungen
-            <ul>
-                <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
-            </ul>
-        </div>
-        <div class="card-footer">
-            <a href="{% url 'home' %}">Zur Startseite</a>
-        </div>
+{% block error_content %}
+    <div class="card-header h2">
+        <b>404 Page not found</b>
     </div>
-{% endblock content %}
+    <div class="card-body">
+        <p>Die gesuchte Seite konnte nicht gefunden werden.</p>
+        Probieren Sie eine der folgenden Lösungen:
+        <ul>
+            <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
+        </ul>
+    </div>
+    <div class="card-footer">
+        <a href="{% url 'home' %}">Zur Startseite</a>
+    </div>
+{% endblock error_content %}

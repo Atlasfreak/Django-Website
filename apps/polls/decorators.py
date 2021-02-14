@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 
 from .models import Poll
 
@@ -7,7 +7,7 @@ from .models import Poll
 def is_creator(function=None, error_template_name=None, redirect_url="polls:index"):
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs):
-            poll = Poll.objects.get(token=kwargs["token"])
+            poll = get_object_or_404(Poll.objects.all(), token=kwargs["token"])
             if not poll.creator == request.user:
                 message = "Du bist nicht der Ersteller dieser Umfrage"
                 if error_template_name:

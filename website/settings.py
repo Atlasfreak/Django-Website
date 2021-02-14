@@ -27,7 +27,6 @@ with open(
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config.get("SECRET_KEY")
-# "kjua*i%is72#)qb4yk+#jb7@hqd#75bac%wqcoy^qg+vtrl@)d"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get("DEBUG", False)
@@ -53,6 +52,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "django.contrib.flatpages",
+    "django.contrib.humanize",
 ]
 
 MIDDLEWARE = [
@@ -152,6 +154,9 @@ LOGIN_REDIRECT_URL = "home"
 LOGIN_URL = "login"
 
 LOGOUT_REDIRECT_URL = "home"
+
+# Site config
+SITE_ID = 1
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

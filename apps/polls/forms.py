@@ -1,3 +1,4 @@
+from apps.polls.fields import CustomModelChoiceField
 import inspect
 
 from crispy_forms.helper import FormHelper
@@ -58,22 +59,27 @@ class QuestionTypeParamCreateForm(forms.ModelForm):
 
 
 def get_QuestionTypeParamForm(
-    q_type_param: QuestionTypeParam, prefix: str = None, replace: str = None, **kwargs
+    q_type_param: QuestionTypeParam,
+    prefix: str = None,
+    replace: str = None,
+    *,
+    data=None
 ):
     param_dict = q_type_param.get_param_dict()
     field_name = param_dict["name"]
+    field: forms.Field = param_dict["field"]
 
     Form: forms.Form = type(
         "QuestionTypeParam_" + field_name + "_Form",
         (forms.Form,),
-        {field_name: param_dict["field"](label=q_type_param.verbose_name)},
+        {field_name: field(label=q_type_param.verbose_name, required=False)},
     )
     initial = {field_name: param_dict["default"]}
     if prefix is None:
         prefix = "__prefix__"
     if replace is not None:
         prefix = prefix.replace("__prefix__", replace)
-    return Form(initial=initial, prefix=prefix, **kwargs)
+    return Form(initial=initial, prefix=prefix, data=data)
 
 
 def get_AnswerModelForm(self, question: Question, **kwargs):

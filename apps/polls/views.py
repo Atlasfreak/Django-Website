@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .decorators import is_creator
 from .forms import *
-from .formset import AnswerModelFormset
+from .formset import AnswerModelFormset, ChoiceFormset
 from .models import *
 
 # Create your views here.
@@ -38,15 +38,34 @@ def index_view(request: HttpRequest):
     return render(request, "polls/polls_index.html", context)
 
 
-def _construct_choice_formset(
-    q_form: forms.Form, c_formset: forms.BaseFormSet, data=None, **kwargs
+def construct_choice_formset(
+    q_form: forms.Form,
+    c_formset: ChoiceFormset,
+    data=None,
+    instance=None,
+    queryset=None,
+    question_query=None,
+    prefix_to_id=None,
+    initial=None,
 ):
+    if queryset is None:
+        queryset = Choice.objects.none()
+    if question_query is None:
+        question_query = Question.objects.none()
     prefix = f"{q_form.prefix}-choice"
-    choice_formset = c_formset(data, prefix=prefix, **kwargs)
+    choice_formset = c_formset(
+        data,
+        prefix=prefix,
+        instance=instance,
+        queryset=queryset,
+        initial=initial,
+        question_queryset=question_query,
+        prefix_to_id=prefix_to_id,
+    )
     return choice_formset
 
 
-def _get_question_type(form: forms.ModelForm):
+def get_question_type(form: forms.ModelForm):
     if hasattr(form, "cleaned_data") and (
         q_type := form.cleaned_data.get("type", False)
     ):
@@ -54,44 +73,47 @@ def _get_question_type(form: forms.ModelForm):
     return None
 
 
-def _construct_choice_formset_list(
-    q_formset: forms.BaseInlineFormSet, base_c_formset: forms.BaseFormSet, data=None
+def construct_choice_formset_list(
+    q_formset: forms.BaseInlineFormSet,
+    base_c_formset: ChoiceFormset,
+    data=None,
+    queryset=None,
 ):
     valid = True
     c_formset_list = []
     for form in q_formset:
-        formset_args = [form, base_c_formset]
         formset_kwargs = {}
 
-        if data:
-            formset_kwargs["data"] = data
-
-        q_type = _get_question_type(form)
+        q_type = get_question_type(form)
 
         if q_type and q_type.enable_choices:
             form_saved = form.save(commit=False)
             formset_kwargs["instance"] = form_saved
 
-        c_formset = _construct_choice_formset(*formset_args, **formset_kwargs)
+        c_formset = construct_choice_formset(
+            q_form=form,
+            c_formset=base_c_formset,
+            data=data,
+            queryset=queryset,
+            **formset_kwargs,
+        )
         valid &= c_formset.is_valid() if formset_kwargs.get("instance", False) else True
         c_formset_list.append(c_formset)
 
     return (c_formset_list, valid)
 
 
-def _add_extra_params_to_question(
-    request: HttpRequest, q_formset: forms.BaseInlineFormSet
-):
+def add_extra_params_to_question(q_formset: forms.BaseInlineFormSet, data=None):
     errors = []
     for form in q_formset:
-        q_type = _get_question_type(form)
+        q_type = get_question_type(form)
         if not q_type:
             continue
         params = q_type.params.all()
         extra_params = {}
         for param in params:
             param_form = get_QuestionTypeParamForm(
-                param, replace=form.prefix, **{"data": request.POST}
+                param, replace=form.prefix, data=data
             )
             if param_form.is_valid():
                 extra_params.update(param_form.cleaned_data)
@@ -121,11 +143,13 @@ def create(request: HttpRequest):
     ChoiceInlineFormset = inlineformset_factory(
         Question,
         Choice,
-        fields=("text",),
+        formset=ChoiceFormset,
+        fields=("text", "related_question"),
         max_num=100,
         min_num=1,
         extra=0,
         can_delete=False,
+        fk_name="question",
     )
     question_types = QuestionType.objects.all()
     options_deactivated = list(
@@ -150,16 +174,16 @@ def create(request: HttpRequest):
             poll = poll_form.save(commit=False)
             poll.creator = request.user
             question_formset.instance = poll
-            question_formset, param_errors = _add_extra_params_to_question(
-                request, question_formset
+            question_formset, param_errors = add_extra_params_to_question(
+                question_formset, data=request.POST
             )
-            choice_formset_list, choices_valid = _construct_choice_formset_list(
+            choice_formset_list, choices_valid = construct_choice_formset_list(
                 question_formset, ChoiceInlineFormset, data=request.POST
             )
 
             if choices_valid and not param_errors:
                 poll.save()
-                question_formset.save()
+                q_instances = question_formset.save()
                 for formset in choice_formset_list:
                     if formset.instance.pk:
                         formset.save()
@@ -171,7 +195,7 @@ def create(request: HttpRequest):
                 if param_errors:
                     messages.error(request, "".join(param_errors))
         else:
-            choice_formset_list = _construct_choice_formset_list(
+            choice_formset_list = construct_choice_formset_list(
                 question_formset, ChoiceInlineFormset, data=request.POST
             )[0]
     else:
@@ -180,12 +204,12 @@ def create(request: HttpRequest):
         question_formset = QuestionInlineFormset(prefix="question")
 
     if not choice_formset_list:
-        choice_formset_list = _construct_choice_formset_list(
+        choice_formset_list = construct_choice_formset_list(
             question_formset,
             ChoiceInlineFormset,
         )[0]
 
-    empty_choice_formset = _construct_choice_formset(
+    empty_choice_formset = construct_choice_formset(
         question_formset.empty_form, ChoiceInlineFormset
     )
 
@@ -197,6 +221,11 @@ def create(request: HttpRequest):
         "options_deactivated": options_deactivated,
         "type_param_forms": type_param_forms,
         "type_param_ids_to_forms": QuestionType.objects.get_ids_to_params(),
+        "field_ids": {
+            "related_question": "related_question",
+            "question_text": "text",
+            "question_type": "type",
+        },
     }
     return render(request, "polls/polls_create.html", context)
 

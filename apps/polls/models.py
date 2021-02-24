@@ -2,6 +2,7 @@ import secrets
 from datetime import timedelta
 
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -14,7 +15,6 @@ from apps.customUser.models import SiteUser
 from .managers import PollManager, QuestionTypeManager
 from .validators import FormFieldValidator, FormWidgetValidator
 
-# Create your models here.
 __all__ = [
     "Poll",
     "QuestionTypeParam",
@@ -25,19 +25,16 @@ __all__ = [
     "Answer",
 ]
 
+USER_MODEL = settings.AUTH_USER_MODEL
+
 
 def get_default_token():
     return secrets.token_urlsafe(7)
 
 
-def get_past_date():
-    # Stays here until squashed migration is applied
-    return
-
-
 class Poll(models.Model):
     creator = models.ForeignKey(
-        SiteUser,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="polls",
         verbose_name="Ersteller",
@@ -144,9 +141,6 @@ class QuestionTypeParam(models.Model):
         verbose_name = _("QuestionTypeParam")
         verbose_name_plural = _("QuestionTypeParams")
 
-    def __str__(self):
-        return self.verbose_name
-
     def get_converter(self):
         converter = self.STRING_TO_FUNCTION[self.val_type][self.CONVERTER_KEY]
         return converter
@@ -163,6 +157,9 @@ class QuestionTypeParam(models.Model):
         param_dict["default"] = converter(self.default) if self.default else None
         param_dict["name"] = self.name
         return param_dict
+
+    def __str__(self):
+        return self.verbose_name
 
 
 class QuestionType(models.Model):
@@ -271,10 +268,29 @@ class Choice(models.Model):
         verbose_name="zugehörige Frage",
     )
     text = models.CharField(max_length=128, verbose_name="Option")
+    related_question = models.ForeignKey(
+        Question,
+        verbose_name="verknüpfte Fragen",
+        blank=True,
+        null=True,
+        related_name="related_choices",
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         verbose_name = "Choice"
         verbose_name_plural = "Choices"
+
+    def clean(self):
+        if self.related_question and self.question.poll != self.related_question.poll:
+            raise ValidationError(
+                {
+                    "related_question": _(
+                        "Related question does not belong to the same poll as question."
+                    )
+                },
+                code="invalid",
+            )
 
     def __str__(self):
         return f"{self.text}"
@@ -282,7 +298,7 @@ class Choice(models.Model):
 
 class Submission(models.Model):
     user = models.ForeignKey(
-        SiteUser,
+        USER_MODEL,
         verbose_name="Nutzer",
         on_delete=models.CASCADE,
         related_name="submissions",

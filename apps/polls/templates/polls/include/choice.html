@@ -1,12 +1,25 @@
 {% load widget_tweaks %}
+{% load crispy_forms_field %}
+{% load polls_tags %}
+
 <div class="form-row {% if choice_form.non_field_errors %}rounded-lg border border-danger{% endif %}">
-    <div class="form-group col">
-        {% include "base_inputs/input_field.html" with field=field field_with_filters=field_with_filters %}
-    </div>
+    {% for field in form.visible_fields %}
+        <div class="form-group col{% if not forloop.last %}-md{% endif %}" id="{{field.id_for_label|get_field_name}}">
+            {% if not condition %}
+                {{field.label_tag}}
+            {% endif %}
+            {% if field|is_select %}
+                {% include "base_inputs/input_field.html" with field=field field_with_filters=field|add_class:"custom-select" %}
+            {% else %}
+                {% include "base_inputs/input_field.html" with field=field field_with_filters=field %}
+            {% endif %}
+        </div>
+    {% endfor %}
     {% if condition %}
         <div class="col-auto">
-            <button class="btn btn-danger remove_form" type = "button" title="Feld entfernen" id="{{prefix}}" data-target="#options"><i class="fas fa-trash-alt"></i></button>
+            <button class="btn btn-danger remove_form" type = "button" title="Feld entfernen" id="{{prefix}}" data-target=".options"><i class="fas fa-trash-alt"></i></button>
         </div>
     {% endif %}
 </div>
 {% include "polls/include/non_field_errors.html" with form=form %}
+<hr class="mt-0">

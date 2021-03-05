@@ -11,7 +11,7 @@
 {% block title %}{{ block.super }} Erstellen{% endblock %}
 {% block brand %}Umfrage erstellen{% endblock %}
 {% block content %}
-    <div class = "content-sectiion">
+    <div class = "content-section">
         {% if poll_form.non_field_errors %}
             {% for err in poll_form.non_field_errors %}
                 <div class = "my-1 alert alert-danger alert-dismissible fade show" role="alert">
@@ -24,7 +24,7 @@
         {% endif %}
         <form method="POST" autocomplete="off">
             {% csrf_token %}
-            <div class="card shadow my-4">
+            <div class="card my-4">
                 <fieldset>
 
                     <legend class = "card-header">

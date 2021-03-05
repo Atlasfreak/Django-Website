@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block meta %}{{ block.super }}{% endblock meta %}
+{% block sytlesheet %}{{ block.super }}{% endblock sytlesheet %}
+{% block title %}{{ block.super }}{% endblock title %}
+{% block body_extra_context %}{{ block.super }}{% endblock body_extra_context %}
+{% block brand %}{{ block.super }}{% endblock brand %}
+{% block nav_item %}{{ block.super }}{% endblock nav_item %}
+{% block pre_content %}<div class="bg-white shadow">{% endblock pre_content %}
+        {% block content %}{{ block.super }}{% endblock content %}
+{% block post_content %}</div>{% endblock post_content %}
+{% block javascript %}{{ block.super }}{% endblock javascript %}

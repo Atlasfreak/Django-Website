@@ -4,14 +4,12 @@
 {% endblock meta %}
 {% block title %}{{ block.super }} Erstellt{% endblock %}
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4">
-        <p>Die Umfrage wurde erfolgreich erstellt.</p>
-        <p>Sie ist unter diesem Link erreichbar:</p>
-        <p>
-            <a href="{{poll.get_absolute_url}}">{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}</a>
-        </p>
-        <p>
-            <a href="{% url 'polls:index' %}">Zurück zur Übersicht</a>
-        </p>
-    </div>
+    <p>Die Umfrage wurde erfolgreich erstellt.</p>
+    <p>Sie ist unter diesem Link erreichbar:</p>
+    <p>
+        <a href="{{poll.get_absolute_url}}">{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}</a>
+    </p>
+    <p>
+        <a href="{% url 'polls:index' %}">Zurück zur Übersicht</a>
+    </p>
 {% endblock content %}

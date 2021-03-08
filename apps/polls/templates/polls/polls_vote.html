@@ -7,9 +7,9 @@
     <meta property="og:url" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}" />
     <meta name="twitter:card" content="summary" />
 {% endblock meta %}
-{% block sytlesheet %}
+{% block stylesheet %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" type="text/css">
-{% endblock sytlesheet %}
+{% endblock stylesheet %}
 
 {% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
 {% block brand %}{{poll.title}}{% endblock %}

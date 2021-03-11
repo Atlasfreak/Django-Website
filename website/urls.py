@@ -86,6 +86,7 @@ urlpatterns = [
         TemplateView.as_view(template_name="robots.txt", content_type="text/plain"),
     ),
     path("contact/", flat_views.flatpage, {"url": "/contact/"}, name="contact"),
+    path("legal/", flat_views.flatpage, {"url": "/contact/"}, name="legal"),
 ]
 
 if settings.DEBUG:

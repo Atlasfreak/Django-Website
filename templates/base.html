@@ -36,14 +36,14 @@
     <title>{% block title %}Webseite{% endblock title %}</title>
 </head>
 
-<body class = "d-flex flex-column min-vh-100 ministry-teams" {% block body_extra_context %}style="background: #faf7f2;"{% endblock %}>
+<body class = "d-flex flex-column min-vh-100 ministry-teams {% block body_classes %}{% endblock body_classes %}" {% block body_extra_context %}style="background: #faf7f2;"{% endblock %}>
     {% include "cookie-banner.html" %}
     <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="fas fa-angle-up fa-lg"></i> Nach oben</button>
 
     <header class = "sticky-top">
         <nav class="navbar navbar-expand-sm navbar-light shadow-sm" style="background: #75d3df;">
             <div class = "container">
-                <a class="navbar-brand mb-0 h1" href="{% block brand_url %}{% url 'home' %}{% endblock %}">
+                <a class="navbar-brand mb-0 h1 text-wrap" href="{% block brand_url %}{% url 'home' %}{% endblock %}">
                     {% block brand %}{% endblock brand %}
                 </a>
 

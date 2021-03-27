@@ -23,6 +23,20 @@ SESSION_COOKIE_KEY = "has_voted"
 
 
 def index_view(request: HttpRequest):
+    """
+    List all :model:`polls.Poll` for a specific user and all public ones.
+
+    **Context**
+
+    - ``user_polls``
+        All the polls associated with one user.
+    - ``all_polls``
+        All publicly available polls.
+
+    **Template**
+
+    :template:`polls/polls_index.html`
+    """
     user = request.user
     user_polls = []
     if user.is_authenticated:
@@ -48,6 +62,7 @@ def construct_choice_formset(
     prefix_to_id=None,
     initial=None,
 ):
+    """Create a choice formset with prefix and additional data."""
     if queryset is None:
         queryset = Choice.objects.none()
     if question_query is None:
@@ -79,6 +94,7 @@ def construct_choice_formset_list(
     data=None,
     queryset=None,
 ):
+    """Create a list of choice formsets with the correct prefix attached."""
     valid = True
     c_formset_list = []
     for form in q_formset:
@@ -104,6 +120,7 @@ def construct_choice_formset_list(
 
 
 def add_extra_params_to_question(q_formset: forms.BaseInlineFormSet, data=None):
+    """Add question type parameters to the question."""
     errors = []
     for form in q_formset:
         q_type = get_question_type(form)
@@ -126,6 +143,38 @@ def add_extra_params_to_question(q_formset: forms.BaseInlineFormSet, data=None):
 
 @login_required
 def create(request: HttpRequest):
+    """
+    Create a new :model:`polls.Poll`.
+
+    **Context**
+
+    - ``poll_form``
+        The form for the :model:`polls.Poll`.
+    - ``question_formset``
+        The formset for the different :model:`polls.Question`.
+    - ``choice_formset_list``
+        A list of formsets for the different :model:`polls.Choice`
+        every :model:`polls.Question` has one corresponding formset.
+    - ``empty_choice_formset``
+        A empty :model:`polls.Choice` formset to dynamically add more choices.
+    - ``options_deactivated``
+        A list of :model:`polls.QuestionType` ids which do not have choices enabled.
+    - ``type_param_forms``
+        A list of forms to display the input fields for the :model:`polls.QuestionTypeParam`
+    - ``type_param_ids_to_forms``
+        A dictionary which maps the :model:`polls.QuestionType` ids to their
+        :model:`polls.QuestionTypeParam` if there are any. Used in template to display
+        respective input fields to user.
+    - ``field_ids``
+        Dictionary which maps a specific key to a field name. Useful to easily identify fields
+        with JavaScript.
+
+    **Template**
+
+    - :template:`polls/polls_create.html` Main Template.
+    - :template:`polls/polls_create_complete.html` Template displayed when creation was successful.
+
+    """
     QuestionInlineFormset = inlineformset_factory(
         Poll,
         Question,
@@ -155,6 +204,8 @@ def create(request: HttpRequest):
     options_deactivated = list(
         question_types.filter(enable_choices=False).values_list("id", flat=True)
     )
+
+    # Create a list of forms for the different parameters to later display the correct inputs
 
     type_params = QuestionTypeParam.objects.all()
     type_param_forms = []
@@ -203,6 +254,7 @@ def create(request: HttpRequest):
 
         question_formset = QuestionInlineFormset(prefix="question")
 
+    # ensure that there is a correct list for choice formsets
     if not choice_formset_list:
         choice_formset_list = construct_choice_formset_list(
             question_formset,
@@ -240,8 +292,8 @@ def get_poll_from_token(token: str):
         token (str): The token of the poll
 
     Returns:
-        poll: Poll Object
-        questions: List of Question objects for the Poll
+        poll: :model:`polls.Poll` Object
+        questions: List of :model:`polls.Question` objects for the Poll
     """
     poll = get_object_or_404(Poll.objects.all(), token=token)
     questions = poll.questions.all()
@@ -249,6 +301,22 @@ def get_poll_from_token(token: str):
 
 
 def vote(request: HttpRequest, token: str):
+    """
+    Page to vote for a poll.
+
+    **Context**
+
+    - ``poll``
+        The poll to vote for.
+    - ``formset``
+        The formset with all Answerforms.
+    - ``helper``
+        Crispy forms helper to better style the forms.
+
+    **Template**
+
+    :template:`polls/polls_vote.html`
+    """
     poll, questions = get_poll_from_token(token)
     ip_adress = request.META.get("REMOTE_ADDR")
     cookie_salt = poll.start_date.strftime("%d.%m%m.%Y %H:%M:%S:%f %z %Z %j")

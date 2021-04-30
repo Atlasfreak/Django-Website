@@ -41,14 +41,19 @@ class PollAdmin(admin.ModelAdmin):
             "Generelle Informationen:",
             {
                 "fields": ["title", "info_text", "multiple_votes", "is_public"],
-                "classes": ["collapse"],
             },
         ),
-        ("Daten:", {"fields": ["start_date", "end_date"], "classes": ["collapse"]}),
+        ("Daten:", {"fields": ["start_date", "end_date"]}),
     ]
     form = PollCreationForm
     inlines = [QuestionInline]
     search_fields = ["title"]
+
+
+@admin.register(Choice)
+class ChoiceAdmin(admin.ModelAdmin):
+    list_display = ("text", "question")
+    list_filter = ("question",)
 
 
 @admin.register(QuestionType)

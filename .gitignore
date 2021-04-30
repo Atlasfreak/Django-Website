@@ -255,3 +255,4 @@ SQL
 log
 pyproject.toml
 static/icons/
+.VSCodeCounter/

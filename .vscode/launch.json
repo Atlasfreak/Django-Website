@@ -46,7 +46,8 @@
             "configurations": [
                 "Django Server",
                 "Client"
-            ]
+            ],
+            "stopAll": true
         }
     ]
 }

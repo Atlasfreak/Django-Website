@@ -4,7 +4,7 @@ import inspect
 from crispy_forms.helper import FormHelper
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.html import escape
+from django.utils.html import escape, urlize
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
@@ -89,7 +89,10 @@ def get_AnswerModelForm(self, question: Question, **kwargs):
 
             field_class = question.type.get_field_with_widget()
 
-            params = {"label": escape(question.text), "required": question.required}
+            params = {
+                "label": urlize(escape(question.text), autoescape=True, nofollow=True),
+                "required": question.required,
+            }
             if question.extra_params:
                 params.update(question.extra_params)
             if hasattr(field_class, "queryset"):

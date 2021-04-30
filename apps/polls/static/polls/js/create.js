@@ -27,6 +27,7 @@ function addForm(btn) {
         $("#id_" + form_id + "-TOTAL_FORMS").val(form_total + 1);
         if (update_questions) {
             updateQuestionJSON(prefix);
+            updateRelatedQuestions(".options");
         }
     }
     else {
@@ -61,7 +62,12 @@ function removeForm(btn) {
             $(child).find("*").each(function () {
                 updateInput(this, replacement, id_regex);
             });
-            updateQuestionJSON(replacement);
+            if (update_questions) {
+                updateQuestionJSON(replacement);
+            }
+        }
+        if (update_questions) {
+            updateRelatedQuestions(".options", true);
         }
         $("#id_" + form_id + "-TOTAL_FORMS").val(form_total - 1);
     }
@@ -76,7 +82,7 @@ function changeAvailableParams(target, options, val) {
     options.prevUntil(".card-body").remove();
     if (val in ids_to_params) {
         let params = ids_to_params[val];
-        params.forEach(param => {
+        params.forEach((param) => {
             let input = params_div.find("input[name=__prefix__-" + param + "]");
             let copy_div = input.parents(".form-group");
             if (!options.prevAll("div." + param).length) {
@@ -93,13 +99,13 @@ function changeAvailableOptions(origin, parent, options_id, values, message) {
     const class_name = "options_unavailable";
     const html_tag = "h5";
     let target = $(origin);
-    let val = Number(target.val());
+    let val = parseInt(origin.value);
     let options = target.parents(parent).find(options_id);
     changeAvailableParams(target, options, val);
     if (values.includes(val) || isNaN(val)) {
         options.attr("hidden", "true");
         if (!options.prevAll(html_tag + "." + class_name).length) {
-            options.before("<" + html_tag + " class='" + class_name + "'>" + message + "</" + html_tag + ">");
+            options.before(`<${html_tag} class="${class_name}">${message}</${html_tag}>`);
         }
     }
     else {
@@ -133,6 +139,9 @@ function getValueAndIDFromQuestion(prefix) {
     return [value, current_questions];
 }
 function updateQuestionJSON(prefix) {
+    if (!/\S+-\d+/.test(prefix)) {
+        return;
+    }
     let [value, current_questions] = getValueAndIDFromQuestion(prefix);
     if (current_questions !== null) {
         current_questions[prefix] = value;
@@ -143,40 +152,73 @@ function generateQuestionText(question, text) {
     const question_number = Number(question.replace("question-", "")) + 1;
     return "Frage " + question_number + ": " + text;
 }
-function updateRelatedQuestions(options_selector, question_selector) {
+function getCurrentQuestion(el) {
+    const question_regex = RegExp("question-\\d+");
+    const question_match = question_regex.exec(el.id);
+    const question = (question_match !== null) ? question_match[0] : "";
+    return question;
+}
+function initUpdateFunctions(select_el, json_questions) {
+    const options = select_el.options;
+    const questions = $.extend({}, json_questions);
+    const question = getCurrentQuestion(select_el);
+    return { options, questions, question };
+}
+function loopOptions(options, ifFunction) {
+    $.each(options, function (option_index) {
+        let option = options[option_index];
+        let value = option.value;
+        if (value !== "") {
+            ifFunction(option, value, option_index);
+        }
+    });
+}
+function updateOrAddRelatedQuestion(select_el, json_questions) {
+    let { options, questions, question } = initUpdateFunctions(select_el, json_questions);
+    delete questions[question];
+    let options_removed = [];
+    let ifFunc = (option, value, ...rest) => {
+        if (value in questions) {
+            option.text = generateQuestionText(value, questions[value]);
+            delete questions[value];
+        }
+        else {
+            options_removed.push(option);
+        }
+    };
+    loopOptions(options, ifFunc);
+    options_removed.forEach(function (option) {
+        option.remove();
+    });
+    for (const key in questions) {
+        let text = generateQuestionText(key, questions[key]);
+        options[options.length] = new Option(text, key);
+    }
+}
+function renumberRelatedQuestions(select_el, json_questions) {
+    let { options, questions, question } = initUpdateFunctions(select_el, json_questions);
+    const n_question_regex = /\d+/.exec(question);
+    const question_number = (n_question_regex !== null) ? Number(n_question_regex[0]) : NaN;
+    let ifFunc = (option, value, index) => {
+        if (value.replace("question-", "") == String(question_number)) {
+            option.remove();
+            return;
+        }
+        if (index >= question_number) {
+            index++;
+        }
+        option.value.replace(/\d+/, String(index));
+        option.text = generateQuestionText(value, questions[value]);
+    };
+    loopOptions(options, ifFunc);
+}
+function updateRelatedQuestions(options_selector, removed = false) {
     let dom_options = $(options_selector);
     const related_question_id = "[id=" + JSON.parse($("#field_ids").text())["related_question"] + "]";
     let json_questions = getStoredQuestions();
+    let updateFunction = updateOrAddRelatedQuestion;
     dom_options.each(function () {
-        $(this).find(related_question_id + " > select").each(function () {
-            let options = this.options;
-            let questions = $.extend({}, json_questions);
-            const question_regex = RegExp("question-\\d+");
-            const question_match = question_regex.exec(this.id);
-            const question = (question_match != null) ? question_match[0] : "";
-            delete questions[question];
-            let options_removed = [];
-            $.each(options, function (option_index) {
-                let option = options[option_index];
-                let value = option.value;
-                if (value !== "") {
-                    if (value in questions) {
-                        option.text = generateQuestionText(value, questions[value]);
-                        delete questions[value];
-                    }
-                    else {
-                        options_removed.push(option);
-                    }
-                }
-            });
-            options_removed.forEach(function (option) {
-                option.remove();
-            });
-            for (const key in questions) {
-                let text = generateQuestionText(key, questions[key]);
-                options[options.length] = new Option(text, key);
-            }
-        });
+        $(this).find(related_question_id + " > select").each(function () { updateFunction(this, json_questions); });
     });
 }
 $(document).ready(function () {
@@ -187,6 +229,9 @@ $(document).ready(function () {
     resetQuestionsStorage();
     $(question_type_selector).each(function () {
         changeAvailableOptions(this, ".card", ".options", options_deactivated, "Dieser Fragetyp lässt keine Auswahlmöglichkeiten zu.");
+        let prefix = this.name.replace("-" + field_ids["question_type"], "");
+        updateQuestionJSON(prefix);
+        updateRelatedQuestions(".options");
     });
     $("form").on("click", ".add_form", function () {
         addForm(this);
@@ -203,7 +248,7 @@ $(document).ready(function () {
         let prefix = this.name.replace("-" + field_ids["question_text"], "");
         question_timeout = setTimeout(function () {
             updateQuestionJSON(prefix);
-            updateRelatedQuestions(".options", "yeeet");
+            updateRelatedQuestions(".options");
         }, 500);
     });
 });

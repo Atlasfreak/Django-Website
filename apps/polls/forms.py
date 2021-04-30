@@ -1,4 +1,3 @@
-from apps.polls.fields import CustomModelChoiceField
 import inspect
 
 from crispy_forms.helper import FormHelper

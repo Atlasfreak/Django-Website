@@ -268,29 +268,10 @@ class Choice(models.Model):
         verbose_name="zugehörige Frage",
     )
     text = models.CharField(max_length=128, verbose_name="Option")
-    related_question = models.ForeignKey(
-        Question,
-        verbose_name="verknüpfte Fragen",
-        blank=True,
-        null=True,
-        related_name="related_choices",
-        on_delete=models.SET_NULL,
-    )
 
     class Meta:
         verbose_name = "Choice"
         verbose_name_plural = "Choices"
-
-    def clean(self):
-        if self.related_question and self.question.poll != self.related_question.poll:
-            raise ValidationError(
-                {
-                    "related_question": _(
-                        "Related question does not belong to the same poll as question."
-                    )
-                },
-                code="invalid",
-            )
 
     def __str__(self):
         return f"{self.text}"

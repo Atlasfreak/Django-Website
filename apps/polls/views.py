@@ -14,7 +14,7 @@ from django.utils.translation import gettext_lazy as _
 
 from .decorators import is_creator
 from .forms import *
-from .formset import AnswerModelFormset, ChoiceFormset
+from .formset import AnswerModelFormset
 from .models import *
 
 # Create your views here.
@@ -54,19 +54,15 @@ def index_view(request: HttpRequest):
 
 def construct_choice_formset(
     q_form: forms.Form,
-    c_formset: ChoiceFormset,
+    c_formset: forms.BaseInlineFormSet,
     data=None,
     instance=None,
     queryset=None,
-    question_query=None,
-    prefix_to_id=None,
     initial=None,
 ):
     """Create a choice formset with prefix and additional data."""
     if queryset is None:
         queryset = Choice.objects.none()
-    if question_query is None:
-        question_query = Question.objects.none()
     prefix = f"{q_form.prefix}-choice"
     choice_formset = c_formset(
         data,
@@ -74,8 +70,6 @@ def construct_choice_formset(
         instance=instance,
         queryset=queryset,
         initial=initial,
-        question_queryset=question_query,
-        prefix_to_id=prefix_to_id,
     )
     return choice_formset
 
@@ -90,7 +84,7 @@ def get_question_type(form: forms.ModelForm):
 
 def construct_choice_formset_list(
     q_formset: forms.BaseInlineFormSet,
-    base_c_formset: ChoiceFormset,
+    base_c_formset: forms.BaseInlineFormSet,
     data=None,
     queryset=None,
 ):
@@ -192,8 +186,7 @@ def create(request: HttpRequest):
     ChoiceInlineFormset = inlineformset_factory(
         Question,
         Choice,
-        formset=ChoiceFormset,
-        fields=("text", "related_question"),
+        fields=("text",),
         max_num=100,
         min_num=1,
         extra=0,
@@ -234,7 +227,7 @@ def create(request: HttpRequest):
 
             if choices_valid and not param_errors:
                 poll.save()
-                q_instances = question_formset.save()
+                question_formset.save()
                 for formset in choice_formset_list:
                     if formset.instance.pk:
                         formset.save()
@@ -274,7 +267,6 @@ def create(request: HttpRequest):
         "type_param_forms": type_param_forms,
         "type_param_ids_to_forms": QuestionType.objects.get_ids_to_params(),
         "field_ids": {
-            "related_question": "related_question",
             "question_text": "text",
             "question_type": "type",
         },

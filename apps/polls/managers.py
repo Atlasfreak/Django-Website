@@ -10,6 +10,7 @@ class PollManager(models.Manager):
 
 class QuestionTypeManager(models.Manager):
     def get_ids_to_params(self):
+        """Maps all ids of a query set to their parameter names."""
         queryset = self.get_queryset()
         dict = {}
         for query in queryset:

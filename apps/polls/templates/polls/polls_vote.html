@@ -7,14 +7,15 @@
     <meta property="og:url" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}" />
     <meta name="twitter:card" content="summary" />
 {% endblock meta %}
-{% block sytlesheet %}
+{% block stylesheet %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" type="text/css">
-{% endblock sytlesheet %}
+{% endblock stylesheet %}
 
 {% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
 {% block brand %}{{poll.title}}{% endblock %}
+{% block pre_content %}{% endblock pre_content %}
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4">
+    <div class="bg-white shadow p-3">
         <div class="d-flex">
             <div class="h1">{{poll.title}}</div>
             <div class="ml-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
@@ -25,7 +26,7 @@
         </section>
         <p>* Erforderliche Felder</p>
     </div>
-    <div class="rounded-lg p-3 bg-white shadow my-4">
+    <div class="bg-white shadow p-3 mt-3">
         <form method="POST">
             {% csrf_token %}
             {{formset.management_form}}
@@ -37,10 +38,16 @@
                 <button class = "btn btn-outline-success" type = "submit">
                     Einsenden
                 </button>
+                <p>Mit dem Einsenden deiner Antwort bist du mit unserer <a href="{% url 'legal' %}">Datenschutzerklärung</a> einverstanden.<br>
+                {% if not poll.multiple_votes %}
+                Da bei dieser Umfrage nur einmal abgestimmt werden kann wird deine IP-Adresse gespeichert.
+                {% endif %}
+                </p>
             </div>
         </form>
     </div>
 {% endblock content %}
+{% block post_content %}{% endblock post_content %}
 {% block javascript %}
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>

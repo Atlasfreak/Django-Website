@@ -16,6 +16,7 @@ from .decorators import is_creator
 from .forms import *
 from .formset import AnswerModelFormset
 from .models import *
+from .utils import *
 
 # Create your views here.
 COOKIE_KEY = "voted_{id}"
@@ -23,6 +24,20 @@ SESSION_COOKIE_KEY = "has_voted"
 
 
 def index_view(request: HttpRequest):
+    """
+    List all :model:`polls.Poll` for a specific user and all public ones.
+
+    **Context**
+
+    - ``user_polls``
+        All the polls associated with one user.
+    - ``all_polls``
+        All publicly available polls.
+
+    **Template**
+
+    :template:`polls/polls_index.html`
+    """
     user = request.user
     user_polls = []
     if user.is_authenticated:
@@ -38,15 +53,29 @@ def index_view(request: HttpRequest):
     return render(request, "polls/polls_index.html", context)
 
 
-def _construct_choice_formset(
-    q_form: forms.Form, c_formset: forms.BaseFormSet, data=None, **kwargs
+def construct_choice_formset(
+    q_form: forms.Form,
+    c_formset: forms.BaseInlineFormSet,
+    data=None,
+    instance=None,
+    queryset=None,
+    initial=None,
 ):
+    """Create a choice formset with prefix and additional data."""
+    if queryset is None:
+        queryset = Choice.objects.none()
     prefix = f"{q_form.prefix}-choice"
-    choice_formset = c_formset(data, prefix=prefix, **kwargs)
+    choice_formset = c_formset(
+        data,
+        prefix=prefix,
+        instance=instance,
+        queryset=queryset,
+        initial=initial,
+    )
     return choice_formset
 
 
-def _get_question_type(form: forms.ModelForm):
+def get_question_type(form: forms.ModelForm):
     if hasattr(form, "cleaned_data") and (
         q_type := form.cleaned_data.get("type", False)
     ):
@@ -54,44 +83,49 @@ def _get_question_type(form: forms.ModelForm):
     return None
 
 
-def _construct_choice_formset_list(
-    q_formset: forms.BaseInlineFormSet, base_c_formset: forms.BaseFormSet, data=None
+def construct_choice_formset_list(
+    q_formset: forms.BaseInlineFormSet,
+    base_c_formset: forms.BaseInlineFormSet,
+    data=None,
+    queryset=None,
 ):
+    """Create a list of choice formsets with the correct prefix attached."""
     valid = True
     c_formset_list = []
     for form in q_formset:
-        formset_args = [form, base_c_formset]
         formset_kwargs = {}
 
-        if data:
-            formset_kwargs["data"] = data
-
-        q_type = _get_question_type(form)
+        q_type = get_question_type(form)
 
         if q_type and q_type.enable_choices:
             form_saved = form.save(commit=False)
             formset_kwargs["instance"] = form_saved
 
-        c_formset = _construct_choice_formset(*formset_args, **formset_kwargs)
+        c_formset = construct_choice_formset(
+            q_form=form,
+            c_formset=base_c_formset,
+            data=data,
+            queryset=queryset,
+            **formset_kwargs,
+        )
         valid &= c_formset.is_valid() if formset_kwargs.get("instance", False) else True
         c_formset_list.append(c_formset)
 
     return (c_formset_list, valid)
 
 
-def _add_extra_params_to_question(
-    request: HttpRequest, q_formset: forms.BaseInlineFormSet
-):
+def add_extra_params_to_question(q_formset: forms.BaseInlineFormSet, data=None):
+    """Add question type parameters to the question."""
     errors = []
     for form in q_formset:
-        q_type = _get_question_type(form)
+        q_type = get_question_type(form)
         if not q_type:
             continue
         params = q_type.params.all()
         extra_params = {}
         for param in params:
             param_form = get_QuestionTypeParamForm(
-                param, replace=form.prefix, **{"data": request.POST}
+                param, replace=form.prefix, data=data
             )
             if param_form.is_valid():
                 extra_params.update(param_form.cleaned_data)
@@ -104,6 +138,38 @@ def _add_extra_params_to_question(
 
 @login_required
 def create(request: HttpRequest):
+    """
+    Create a new :model:`polls.Poll`.
+
+    **Context**
+
+    - ``poll_form``
+        The form for the :model:`polls.Poll`.
+    - ``question_formset``
+        The formset for the different :model:`polls.Question`.
+    - ``choice_formset_list``
+        A list of formsets for the different :model:`polls.Choice`
+        every :model:`polls.Question` has one corresponding formset.
+    - ``empty_choice_formset``
+        A empty :model:`polls.Choice` formset to dynamically add more choices.
+    - ``options_deactivated``
+        A list of :model:`polls.QuestionType` ids which do not have choices enabled.
+    - ``type_param_forms``
+        A list of forms to display the input fields for the :model:`polls.QuestionTypeParam`
+    - ``type_param_ids_to_forms``
+        A dictionary which maps the :model:`polls.QuestionType` ids to their
+        :model:`polls.QuestionTypeParam` if there are any. Used in template to display
+        respective input fields to user.
+    - ``field_ids``
+        Dictionary which maps a specific key to a field name. Useful to easily identify fields
+        with JavaScript.
+
+    **Template**
+
+    - :template:`polls/polls_create.html` Main Template.
+    - :template:`polls/polls_create_complete.html` Template displayed when creation was successful.
+
+    """
     QuestionInlineFormset = inlineformset_factory(
         Poll,
         Question,
@@ -126,11 +192,14 @@ def create(request: HttpRequest):
         min_num=1,
         extra=0,
         can_delete=False,
+        fk_name="question",
     )
     question_types = QuestionType.objects.all()
     options_deactivated = list(
         question_types.filter(enable_choices=False).values_list("id", flat=True)
     )
+
+    # Create a list of forms for the different parameters to later display the correct inputs
 
     type_params = QuestionTypeParam.objects.all()
     type_param_forms = []
@@ -150,10 +219,10 @@ def create(request: HttpRequest):
             poll = poll_form.save(commit=False)
             poll.creator = request.user
             question_formset.instance = poll
-            question_formset, param_errors = _add_extra_params_to_question(
-                request, question_formset
+            question_formset, param_errors = add_extra_params_to_question(
+                question_formset, data=request.POST
             )
-            choice_formset_list, choices_valid = _construct_choice_formset_list(
+            choice_formset_list, choices_valid = construct_choice_formset_list(
                 question_formset, ChoiceInlineFormset, data=request.POST
             )
 
@@ -171,7 +240,7 @@ def create(request: HttpRequest):
                 if param_errors:
                     messages.error(request, "".join(param_errors))
         else:
-            choice_formset_list = _construct_choice_formset_list(
+            choice_formset_list = construct_choice_formset_list(
                 question_formset, ChoiceInlineFormset, data=request.POST
             )[0]
     else:
@@ -179,13 +248,14 @@ def create(request: HttpRequest):
 
         question_formset = QuestionInlineFormset(prefix="question")
 
+    # ensure that there is a correct list for choice formsets
     if not choice_formset_list:
-        choice_formset_list = _construct_choice_formset_list(
+        choice_formset_list = construct_choice_formset_list(
             question_formset,
             ChoiceInlineFormset,
         )[0]
 
-    empty_choice_formset = _construct_choice_formset(
+    empty_choice_formset = construct_choice_formset(
         question_formset.empty_form, ChoiceInlineFormset
     )
 
@@ -197,29 +267,31 @@ def create(request: HttpRequest):
         "options_deactivated": options_deactivated,
         "type_param_forms": type_param_forms,
         "type_param_ids_to_forms": QuestionType.objects.get_ids_to_params(),
+        "field_ids": {
+            "question_text": "text",
+            "question_type": "type",
+        },
     }
     return render(request, "polls/polls_create.html", context)
 
 
-def get_poll_from_token(token: str):
-    """
-    get_poll_from_token
-    Returns the poll with the specified token.
-    Also gets the questions for the poll.
-
-    Args:
-        token (str): The token of the poll
-
-    Returns:
-        poll: Poll Object
-        questions: List of Question objects for the Poll
-    """
-    poll = get_object_or_404(Poll.objects.all(), token=token)
-    questions = poll.questions.all()
-    return poll, questions
-
-
 def vote(request: HttpRequest, token: str):
+    """
+    Page to vote for a poll.
+
+    **Context**
+
+    - ``poll``
+        The poll to vote for.
+    - ``formset``
+        The formset with all Answerforms.
+    - ``helper``
+        Crispy forms helper to better style the forms.
+
+    **Template**
+
+    :template:`polls/polls_vote.html`
+    """
     poll, questions = get_poll_from_token(token)
     ip_adress = request.META.get("REMOTE_ADDR")
     cookie_salt = poll.start_date.strftime("%d.%m%m.%Y %H:%M:%S:%f %z %Z %j")
@@ -347,31 +419,7 @@ def get_csv(request: HttpRequest, token: str):
     filename = poll.title.replace(" ", "_")
     response["Content-Disposition"] = f'attachment; filename="{filename}.csv"'
 
-    fieldnames = [
-        "Einsendedatum",
-    ]
-    for question in questions:
-        fieldnames.append(question.text)
-
-    writer = csv.DictWriter(response, fieldnames=fieldnames)
-
-    writer.writeheader()
-    for submission in poll.submissions.all():
-        write_dict = {}
-        write_dict["Einsendedatum"] = submission.submission_date.strftime(
-            "%d.%m.%Y %H:%M:%S"
-        )
-        for answer in submission.answers.all():
-            answer_text = ""
-            if answer.question.type.enable_choices:
-                choice_list = []
-                for choice in answer.choices.all():
-                    choice_list.append(choice.text)
-                answer_text = "; ".join(choice_list)
-            else:
-                answer_text = answer.value
-            write_dict[answer.question.text] = textwrap.fill(answer_text, width=100)
-        writer.writerow(write_dict)
+    response = poll_create_csv(response, poll, questions)
 
     return response
 

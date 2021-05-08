@@ -3,7 +3,7 @@ import inspect
 from crispy_forms.helper import FormHelper
 from django import forms
 from django.core.exceptions import ValidationError
-from django.utils.html import escape
+from django.utils.html import escape, urlize
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
 
@@ -58,22 +58,27 @@ class QuestionTypeParamCreateForm(forms.ModelForm):
 
 
 def get_QuestionTypeParamForm(
-    q_type_param: QuestionTypeParam, prefix: str = None, replace: str = None, **kwargs
+    q_type_param: QuestionTypeParam,
+    prefix: str = None,
+    replace: str = None,
+    *,
+    data=None
 ):
     param_dict = q_type_param.get_param_dict()
     field_name = param_dict["name"]
+    field: forms.Field = param_dict["field"]
 
     Form: forms.Form = type(
         "QuestionTypeParam_" + field_name + "_Form",
         (forms.Form,),
-        {field_name: param_dict["field"](label=q_type_param.verbose_name)},
+        {field_name: field(label=q_type_param.verbose_name, required=False)},
     )
     initial = {field_name: param_dict["default"]}
     if prefix is None:
         prefix = "__prefix__"
     if replace is not None:
         prefix = prefix.replace("__prefix__", replace)
-    return Form(initial=initial, prefix=prefix, **kwargs)
+    return Form(initial=initial, prefix=prefix, data=data)
 
 
 def get_AnswerModelForm(self, question: Question, **kwargs):
@@ -83,7 +88,10 @@ def get_AnswerModelForm(self, question: Question, **kwargs):
 
             field_class = question.type.get_field_with_widget()
 
-            params = {"label": escape(question.text), "required": question.required}
+            params = {
+                "label": urlize(escape(question.text), autoescape=True, nofollow=True),
+                "required": question.required,
+            }
             if question.extra_params:
                 params.update(question.extra_params)
             if hasattr(field_class, "queryset"):

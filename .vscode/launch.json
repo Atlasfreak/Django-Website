@@ -12,7 +12,8 @@
             "args": [
                 "runserver"
             ],
-            "django": true
+            "django": true,
+            "preLaunchTask": "${defaultBuildTask}"
         },
         {
             "type": "firefox",
@@ -27,6 +28,8 @@
                     "path": "${workspaceFolder}/apps/polls/static/polls"
                 }
             ],
+            "profile": "django-website-debugging",
+            "keepProfileChanges": true,
             "reloadOnChange": {
                 "watch": [
                     "${workspaceFolder}/**/*.js"
@@ -43,7 +46,8 @@
             "configurations": [
                 "Django Server",
                 "Client"
-            ]
+            ],
+            "stopAll": true
         }
     ]
 }

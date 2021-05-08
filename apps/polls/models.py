@@ -2,6 +2,7 @@ import secrets
 from datetime import timedelta
 
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
@@ -14,7 +15,6 @@ from apps.customUser.models import SiteUser
 from .managers import PollManager, QuestionTypeManager
 from .validators import FormFieldValidator, FormWidgetValidator
 
-# Create your models here.
 __all__ = [
     "Poll",
     "QuestionTypeParam",
@@ -25,19 +25,22 @@ __all__ = [
     "Answer",
 ]
 
+USER_MODEL = settings.AUTH_USER_MODEL
+
 
 def get_default_token():
     return secrets.token_urlsafe(7)
 
 
-def get_past_date():
-    # Stays here until squashed migration is applied
-    return
-
-
 class Poll(models.Model):
+    """
+    Stores a poll that is related to a :model:`customUser.SiteUser`.
+    For each poll there is an unique random base64 encoded 7 byte string token
+    it is used to identify a poll from an URL.
+    """
+
     creator = models.ForeignKey(
-        SiteUser,
+        USER_MODEL,
         on_delete=models.CASCADE,
         related_name="polls",
         verbose_name="Ersteller",
@@ -52,7 +55,7 @@ class Poll(models.Model):
     title = models.CharField(max_length=150, verbose_name="Titel")
     info_text = models.CharField(verbose_name="Beschreibung", max_length=2048)
     token = models.CharField(
-        "Token für url", max_length=32, unique=True, default=get_default_token
+        "Token für URL", max_length=32, unique=True, default=get_default_token
     )
     multiple_votes = models.BooleanField("Mehrmals Abstimmen")
     is_public = models.BooleanField("Öffentlich zugänglich")
@@ -101,6 +104,24 @@ class Poll(models.Model):
 
 
 class QuestionTypeParam(models.Model):
+    """
+    Connects a parameter of a form field to a :model:`polls.QuestionType` and
+    adds the ability to change it for each question.
+    Additionally it specifies how to convert the input into python types and
+    which field should be displayed for that type.
+
+    Vars:
+        -   "TYPE_CHOICES" are the choices for the val_type
+        -   "STRING_TO_FUNCTION" maps the different string representations of types
+            to their respective python types and form fields
+        -   "name" is the exact name of the parameter for the form field of the
+            :model:`polls.QuestionType`
+        -   "verbose_name" is a human readable name that is displayed when creating a poll
+        -   "question_type" is the connected :model:`polls.QuestionType`
+        -   "default" is the default value that should be used for that parameter
+        -   "val_type" specifies how to convert the input to a python type
+    """
+
     TYPE_STRING = "str"
     TYPE_INT = "int"
     TYPE_FLOAT = "float"
@@ -144,9 +165,6 @@ class QuestionTypeParam(models.Model):
         verbose_name = _("QuestionTypeParam")
         verbose_name_plural = _("QuestionTypeParams")
 
-    def __str__(self):
-        return self.verbose_name
-
     def get_converter(self):
         converter = self.STRING_TO_FUNCTION[self.val_type][self.CONVERTER_KEY]
         return converter
@@ -155,7 +173,8 @@ class QuestionTypeParam(models.Model):
         field: forms.Field = self.STRING_TO_FUNCTION[self.val_type][self.FIELD_KEY]
         return field
 
-    def get_param_dict(self):
+    def get_param_dict(self):  # deprecated
+        """Returns all necessary variables for a form. Should be deleted..."""
         param_dict = {}
         converter = self.get_converter()
         param_dict["converter"] = converter
@@ -164,25 +183,25 @@ class QuestionTypeParam(models.Model):
         param_dict["name"] = self.name
         return param_dict
 
+    def __str__(self):
+        return self.verbose_name
+
 
 class QuestionType(models.Model):
     """
-    Describes the different types of :model:`polls.Question` and declares their represantation in forms when a poll is answered.
+    Describes the different types of :model:`polls.Question` and declares their representation in forms when a poll is answered.
 
-    Variable details:
+    Vars:
 
-        -   verbose_name is a human_readable name that is displayed when creating a new poll.
+        -   "verbose_name" is a human_readable name that is displayed when creating a new poll.
 
-        -   enable_choices specifys wether there should be choices available to this type,
+        -   "enable_choices" specifies whether there should be choices available to this type,
             for example when the user should be able to select from a range of choices.
             If choices are enabled at least one choice needs to be given to a question.
 
-        -   form_widget is the django form widget to use, if blank it is the default for the field.
+        -   "form_widget" is the Django form widget to use, if blank it is the default for the field.
 
-        -   form_field is the django form field to use.
-
-    If you want to implement a field were you can specify different parameters for the field,
-    remeber to change the code of the AnswerForm to actually use them.
+        -   "form_field" is the Django form field to use.
     """
 
     form_widget_validator = FormWidgetValidator()
@@ -231,6 +250,7 @@ class QuestionType(models.Model):
         return field
 
     def get_id_to_param(self):
+        """Returns a dict which maps the question type id to the names of its parameters."""
         id = self.pk
         params = list(self.params.values_list("name", flat=True))
         if not params:
@@ -242,6 +262,11 @@ class QuestionType(models.Model):
 
 
 class Question(models.Model):
+    """
+    Stores a question that is related to a :model:`polls.Poll` and
+    a :model:`polls.QuestionType`.
+    """
+
     poll = models.ForeignKey(
         Poll,
         on_delete=models.CASCADE,
@@ -264,6 +289,10 @@ class Question(models.Model):
 
 
 class Choice(models.Model):
+    """
+    Stores a choice related to :model:`polls.Question`
+    """
+
     question = models.ForeignKey(
         Question,
         on_delete=models.CASCADE,
@@ -281,8 +310,13 @@ class Choice(models.Model):
 
 
 class Submission(models.Model):
+    """
+    Stores a submission for a :model:`polls.Poll` from a :model:`customUser.SiteUser`.
+    Ip adresses should only be stored if a poll does not allow multiple votes.
+    """
+
     user = models.ForeignKey(
-        SiteUser,
+        USER_MODEL,
         verbose_name="Nutzer",
         on_delete=models.CASCADE,
         related_name="submissions",
@@ -315,6 +349,14 @@ class Submission(models.Model):
 
 
 class Answer(models.Model):
+    """
+    Stores a answer to a :model:`polls.Question` that belongs to
+    a :model:`polls.Submission`.
+    There is a m2m relationship to :model:`polls.Choice` as there
+    can be multiple choice questions and this simplifies the database.
+    Choices are optional.
+    """
+
     submission = models.ForeignKey(
         Submission,
         verbose_name="Einsendung",

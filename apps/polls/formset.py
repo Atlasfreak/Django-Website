@@ -1,7 +1,7 @@
-from django.forms.models import BaseModelFormSet
+from django import forms
 
 
-class AnswerModelFormset(BaseModelFormSet):
+class AnswerModelFormset(forms.BaseModelFormSet):
     def get_form_kwargs(self, index):
         kwargs = super().get_form_kwargs(index)
         question = kwargs["questions"][index]

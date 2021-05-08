@@ -1,0 +1,37 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "problemMatcher": [
+                "$tsc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "label": "tsc: build - tsconfig.json"
+        },
+        {
+            "type": "typescript",
+            "tsconfig": "tsconfig.json",
+            "option": "watch",
+            "problemMatcher": [
+                "$tsc-watch"
+            ],
+            "group": "build",
+            "label": "tsc: watch - tsconfig.json"
+        },
+        {
+            "label": "Start Dev mail server",
+            "type": "shell",
+            "windows": {
+                "command": "python -m smtpd -n -c DebuggingServer localhost:1025"
+            },
+            "linux": {
+                "command": "python3 -m smtpd -n -c DebuggingServer localhost:1025"
+            }
+        }
+    ]
+}

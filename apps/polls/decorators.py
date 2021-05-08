@@ -5,6 +5,11 @@ from .models import Poll
 
 
 def is_creator(function=None, error_template_name=None, redirect_url="polls:index"):
+    """
+    Checks if a user is the original creator of a poll.
+    Displays a messages when user is not the creator.
+    """
+
     def decorator(view_func):
         def wrapper_func(request, *args, **kwargs):
             poll = get_object_or_404(Poll.objects.all(), token=kwargs["token"])

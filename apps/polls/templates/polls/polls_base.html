@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base_content.html' %}
 {% block meta %}{% endblock %}
 {% block stylesheet %}{% endblock %}
 
@@ -12,8 +12,15 @@ Umfragen -
 <a href="{% url 'polls:index' %}" class="nav-link">Übersicht</a>
 {{ block.super }}
 {% endblock nav_item %}
-
+{% block pre_content %}
+{{ block.super }}
+<div class="p-3">
+{% endblock pre_content %}
 {% block content %}
 {% endblock content %}
+{% block post_content %}
+</div>
+{{ block.super }}
+{% endblock post_content %}
 
 {% block javascript %}{% endblock %}

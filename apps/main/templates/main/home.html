@@ -1,9 +1,9 @@
-{% extends "base.html" %}
+{% extends "base_content.html" %}
 
 {% load static %}
 
-{% block sytlesheet %}
-{% endblock sytlesheet %}
+{% block stylesheet %}
+{% endblock stylesheet %}
 
 {% block title %}Home{% endblock %}
 {% block brand %}Home{% endblock brand %}
@@ -14,10 +14,11 @@
 {% endblock nav_item %}
 
 {% block content %}
-    <div class="rounded-lg p-3 bg-white shadow my-4">
+    <div class="p-3">
         <h1>Willkommen auf meiner Webseite!</h1>
         <p>Hier findest du aktuell nicht viel aber das wird sich vielleicht bald ändern.</p>
         <p>Es folgt etwas zufälliger Text um die Seite zu füllen ;D</p>
+        <hr>
         {% lorem 7 p random %}
     </div>
 {% endblock content %}

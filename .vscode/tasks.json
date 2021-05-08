@@ -22,6 +22,16 @@
             ],
             "group": "build",
             "label": "tsc: watch - tsconfig.json"
+        },
+        {
+            "label": "Start Dev mail server",
+            "type": "shell",
+            "windows": {
+                "command": "python -m smtpd -n -c DebuggingServer localhost:1025"
+            },
+            "linux": {
+                "command": "python3 -m smtpd -n -c DebuggingServer localhost:1025"
+            }
         }
     ]
 }

@@ -13,14 +13,14 @@ function updateInput(el: HTMLInputElement, replacement: string, id_regex: RegExp
 function addForm(btn: string) {
     let button = $(btn);
     let form_id = button.attr("id");
-    let form_total = Number($("#id_" + form_id + "-TOTAL_FORMS").val());
-    let max_forms = Number($("#id_" + form_id + "-MAX_NUM_FORMS").val());
+    let form_total = Number($(`#id_${form_id}-TOTAL_FORMS`).val());
+    let max_forms = Number($(`#id_${form_id}-MAX_NUM_FORMS`).val());
 
     if (form_total < max_forms) {
-        let regex = new RegExp(form_id + "-__prefix__", "g");
-        let prefix = form_id + "-" + form_total;
-        button.before($("#" + form_id + "-empty").html().replaceAll(regex, prefix));
-        $("#id_" + form_id + "-TOTAL_FORMS").val(form_total + 1);
+        let regex = new RegExp(`${form_id}-__prefix__`, "g");
+        let prefix = `${form_id}-form_total`;
+        button.before($(`#${form_id}-empty`).html().replaceAll(regex, prefix));
+        $(`#id_${form_id}-TOTAL_FORMS`).val(form_total + 1);
     } else {
         button.popover({
             content: "<span class='text-danger'>Du hast die maximale Anzahl an Feldern erreicht!</span>",
@@ -35,26 +35,26 @@ function removeForm(btn: string) {
     let button = $(btn);
     let form_id = button.attr("id");
     let data_target = button.data("target");
-    let form_total = Number($("#id_" + form_id + "-TOTAL_FORMS").val());
-    let min_forms = Number($("#id_" + form_id + "-MIN_NUM_FORMS").val());
+    let form_total = Number($(`#id_${form_id}-TOTAL_FORMS`).val());
+    let min_forms = Number($(`#id_${form_id}-MIN_NUM_FORMS`).val());
     let btn_parent = button.parents(data_target);
 
-    $("#" + form_id + ".add_form").popover("dispose");
+    $(`#${form_id}.add_form`).popover("dispose");
 
     if (form_total > min_forms) {
         button.parentsUntil(data_target).remove();
         let children = btn_parent.children();
-        const id_regex = new RegExp(form_id + "-\\d+", "g");
+        const id_regex = new RegExp(`${form_id}-\\d+`, "g");
         for (let i = 0, len = children.length; i < len; i++) {
             let child = children.get(i)
-            let replacement = form_id + "-" + i;
+            let replacement = `${form_id}-i`;
             updateInput(child, replacement, id_regex)
             $(child).find("*").each(function (this: HTMLInputElement) {
                 updateInput(this, replacement, id_regex)
             });
         }
 
-        $("#id_" + form_id + "-TOTAL_FORMS").val(form_total - 1);
+        $(`#id_${form_id}-TOTAL_FORMS`).val(form_total - 1);
     }
 }
 
@@ -67,15 +67,14 @@ function changeAvailableParams(target: JQuery, options: JQuery, val: number) {
     let params_div = $("#question_type_params");
 
     options.prevUntil(".card-body").remove();
-
     if (val in ids_to_params) {
         let params = ids_to_params[val];
         params.forEach(param => {
-            let input = params_div.find("input[name=__prefix__-" + param + "]");
+            let input = params_div.find(`input[name=__prefix__-${param}]`);
             let copy_div = input.parents(".form-group");
 
-            if (!options.prevAll("div." + param).length) {
-                let copied = copy_div.clone().prependTo(options.parents(".card-body")).wrap("<div class=" + param + "></div>");
+            if (!options.prevAll(`div.${param}`).length) {
+                let copied = copy_div.clone().prependTo(options.parents(".card-body")).wrap(`<div class=${param}></div>`);
                 if (params.indexOf(param) == 0) {
                     copied.append("<hr>");
                 }
@@ -96,12 +95,12 @@ function changeAvailableOptions(origin: HTMLInputElement, parent: string, option
     changeAvailableParams(target, options, val);
     if (values.includes(val) || isNaN(val)) {
         options.attr("hidden", "true");
-        if (!options.prevAll(html_tag + "." + class_name).length) {
-            options.before("<" + html_tag + " class='" + class_name + "'>" + message + "</" + html_tag + ">")
+        if (!options.prevAll(`${html_tag}.${class_name}`).length) {
+            options.before(`<${html_tag} class='${class_name}'>${message}</${html_tag}>`)
         }
     } else {
-        if (options.prevAll(html_tag + "." + class_name)) {
-            options.prevAll(html_tag + "." + class_name).remove();
+        if (options.prevAll(`${html_tag}.${class_name}`)) {
+            options.prevAll(`${html_tag}.${class_name}`).remove();
         }
         options.removeAttr("hidden");
     }
@@ -110,7 +109,7 @@ function changeAvailableOptions(origin: HTMLInputElement, parent: string, option
 $(document).ready(function () {
     const options_deactivated: number[] = JSON.parse($("#options_deactivated").text())
     const field_ids: Object = JSON.parse($("#field_ids").text())
-    const question_type_selector = "#" + field_ids["question_type"] + " > select";
+    const question_type_selector = `#${field_ids["question_type"]} > select`;
 
     $(question_type_selector).each(function (this: HTMLInputElement) {
         changeAvailableOptions(this, ".card", ".options", options_deactivated, "Dieser Fragetyp lässt keine Auswahlmöglichkeiten zu.");

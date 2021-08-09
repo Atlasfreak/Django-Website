@@ -13,7 +13,8 @@
                 "runserver"
             ],
             "django": true,
-            "preLaunchTask": "${defaultBuildTask}"
+            "preLaunchTask": "${defaultBuildTask}",
+            "subProcess": true
         },
         {
             "type": "firefox",

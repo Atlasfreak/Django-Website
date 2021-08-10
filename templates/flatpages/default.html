@@ -1,19 +1,18 @@
 {% extends 'base_content.html' %}
 {% load admin_urls %}
-{% block title %}
-{{ flatpage.title }}
-{% endblock title %}
+
+{% block title %}{{ flatpage.title }}{% endblock title %}
 {% block body_classes %}text-break{% endblock body_classes %}
 {% block brand %}{{ flatpage.title }}{% endblock %}
 {% block nav_item %}
-<a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
-{{ block.super }}
+    <a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
+    {{ block.super }}
 {% endblock nav_item %}
 {% block content %}
-<div class="p-3 text-wrap">
-    {% if user.is_superuser %}
-        <a href="{% url 'admin:flatpages_flatpage_change' flatpage.id %}"><i class="fas fa-pencil-alt"></i> Bearbeiten</a>
-    {% endif %}
-    {{ flatpage.content }}
-</div>
+    <div class="p-3 text-wrap">
+        {% if user.is_superuser %}
+            <a href="{% url 'admin:flatpages_flatpage_change' flatpage.id %}"><i class="fas fa-pencil-alt"></i> Bearbeiten</a>
+        {% endif %}
+        {{ flatpage.content }}
+    </div>
 {% endblock content %}

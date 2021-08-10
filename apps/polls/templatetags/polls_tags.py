@@ -17,6 +17,10 @@ def index(indexable, i):
 @register.filter
 @stringfilter
 def charwrap(value, width):
+    """
+    Wraps lines at `arg` length.
+    Only words longer than `arg` will be split.
+    """
     textwrapper = textwrap.TextWrapper(
         width=width, break_long_words=True, replace_whitespace=False
     )

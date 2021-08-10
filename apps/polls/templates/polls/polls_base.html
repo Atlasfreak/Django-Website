@@ -7,20 +7,22 @@ Umfragen -
 {% endblock title %}
 {% block brand_url %}{% url 'polls:index' %}{% endblock %}
 {% block brand %}Umfragen{% endblock %}
+
 {% block nav_item %}
-<a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
-<a href="{% url 'polls:index' %}" class="nav-link">Übersicht</a>
-{{ block.super }}
+    <a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
+    <a href="{% url 'polls:index' %}" class="nav-link">Übersicht</a>
+    {{ block.super }}
 {% endblock nav_item %}
+
 {% block pre_content %}
-{{ block.super }}
-<div class="p-3">
+    {{ block.super }}
+    <div class="p-3">
 {% endblock pre_content %}
-{% block content %}
-{% endblock content %}
+    {% block content %}
+    {% endblock content %}
 {% block post_content %}
-</div>
-{{ block.super }}
+    </div>
+    {{ block.super }}
 {% endblock post_content %}
 
 {% block javascript %}{% endblock %}

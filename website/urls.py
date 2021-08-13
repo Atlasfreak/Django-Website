@@ -89,5 +89,10 @@ urlpatterns = [
     path("legal/", flat_views.flatpage, {"url": "/contact/"}, name="legal"),
 ]
 
+handler404 = "website.error_handlers.handler404"
+handler403 = "website.error_handlers.handler403"
+handler400 = "website.error_handlers.handler400"
+handler500 = "website.error_handlers.handler500"
+
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

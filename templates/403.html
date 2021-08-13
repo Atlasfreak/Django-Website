@@ -1,20 +1,12 @@
 {% extends 'error_template.html' %}
+{% load site_tags %}
 
-{% block title %}Fehlende Berechtigungen{% endblock %}
-{% block brand %}Fehlende Berechtigungen{% endblock %}
+{% block error_title %}403 HTTP Forbidden{% endblock %}
 {% block error_content %}
-    <div class="card-header h2">
-        <b>403 HTTP Forbidden</b>
-    </div>
-    <div class="card-body">
-        <p>Du hast keine Berechtigungen diese Seite zu sehen.</p>
-        Probieren Sie eine der folgenden Lösungen:
-        <ul>
-            <li>Bitte überprüfe ob du angemeldet bist.</li>
-            <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
-        </ul>
-    </div>
-    <div class="card-footer">
-        <a href="{% url 'home' %}">Zur Startseite</a>
-    </div>
+    <p>Du hast keine Berechtigungen diese Seite zu sehen.</p>
+    Probieren Sie eine der folgenden Lösungen:
+    <ul>
+        <li>Bitte überprüfe ob du angemeldet bist.</li>
+        <li>Bitte überprüfe ob du die Adresse richtig geschrieben hast.</li>
+    </ul>
 {% endblock error_content %}

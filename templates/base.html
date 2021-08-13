@@ -105,13 +105,20 @@
             {% block post_content %}{% endblock post_content %}
         </div>
     </main>
-    <footer class="footer text-center py-3" >
+    <footer class="footer">
         <div class="container">
-            <span class="text-muted" >
-                    {% now "Y" as current_year %}
-                    Copyright ©{{ current_year }} Per Göttlicher
-                    <a class = "text-muted ml-5" href = "https://github.com/Atlasfreak/Django-Website"><i class="fab fa-github fa-lg"></i> Github</a>
-            </span>
+            <div class="py-3 border-top text-muted d-flex justify-content-between align-items-center flex-wrap">
+                <span class="col-sm-5 text-reset d-flex justify-content-center justify-content-sm-start">
+                        {% now "Y" as current_year %}
+                        ©{{ current_year }} Per Göttlicher
+                </span>
+                <span class="col-sm-3 text-reset d-flex justify-content-center">
+                    <a href="{% url 'contact' %}" class="text-reset">Impressum</a>
+                </span>
+                <span class="col-sm-4 text-reset d-flex justify-content-center justify-content-sm-end">
+                    <a class="text-reset" href = "https://github.com/Atlasfreak/Django-Website"><i class="fab fa-github fa-lg"></i></a>
+                </span>
+            </div>
         </div>
     </footer>
 

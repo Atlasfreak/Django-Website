@@ -1,11 +1,46 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Ein Fehler ist aufgetreten{% endblock %}
+{% block title %}
+    {% if exception %}
+        {{exception}}
+    {% else %}
+        {{err_title}}
+    {% endif %}
+{% endblock %}
+
+{% block body_extra_context %}
+    style = "height: device-height; background-image: url({% static 'img/background_2.jpg' %});  background-repeat: no-repeat;  background-size: cover;"
+{% endblock body_extra_context %}
+
 {% block banrd_url %}{{ block.super }}{% endblock %}
-{% block brand %}Ein Fehler ist aufgetreten{% endblock %}
-{% block nav_item %}{% endblock %}
+{% block brand %}
+    {% if exception %}
+        {{exception}}
+    {% else %}
+        {{err_title}}
+    {% endif %}
+{% endblock %}
+
+{% block nav_item %}{{ block.super }}{% endblock %}
 {% block content %}
-    <div class="card my-4 shadow-sm">
-    {% block error_content %}{% endblock %}
+    <div class="card my-auto shadow rounded-0">
+        <div class="card-header h2">
+            <b>
+                {% block error_title %}
+                    {% if exception %}
+                        {{exception}}
+                    {% else %}
+                        {{err_title}}
+                    {% endif %}
+                {% endblock %}
+            </b>
+        </div>
+        <div class="card-body">
+            {% block error_content %}{% endblock %}
+        </div>
+        <div class="card-footer">
+            {% block error_footer %}<a href="{% url 'home' %}"><i class="fas fa-home"></i> Zur Startseite</a>{% endblock %}
+        </div>
     </div>
 {% endblock content %}

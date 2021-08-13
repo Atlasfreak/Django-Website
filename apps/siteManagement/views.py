@@ -6,5 +6,8 @@ from .models import Maintenance
 
 
 def maintenance_mode(request, maintenance_instance: Maintenance):
-    context = {"expected_end": maintenance_instance.expected_end}
+    context = {
+        "expected_end": maintenance_instance.expected_end,
+        "err_title": "Wartung",
+    }
     return render(request, "503.html", context=context, status=503)

@@ -1,16 +1,10 @@
 {% extends 'error_template.html' %}
 
-{% block title %}Wartung{% endblock %}
 {% block banrd_url %}{% endblock %}
-{% block brand %}Wartung{% endblock %}
+{% block nav_item %}{% endblock %}
+
 {% block error_content %}
-    <div class="card-header h2">
-        <b>Wartung</b>
-    </div>
-    <div class="card-body">
-        <p>Der Server befindet sich im Warungsmodus.</p>
-        <p>Vorraussichtliches Ende: {{expected_end|date:"j. F Y H:i"}} </p>
-    </div>
-    <div class="card-footer">
-    </div>
+    <p>Es tut uns Leid der Server befindet sich im Wartungsmodus und ist daher nicht erreichbar.</p>
+    <p>Vorraussichtliches Ende: {{expected_end|date:"j. F Y H:i"}}</p>
 {% endblock error_content %}
+{% block error_footer %}<a href="" on-click="window.location.reload()"><i class="fas fa-redo-alt"></i> Neuladen</a>{% endblock %}

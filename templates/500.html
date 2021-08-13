@@ -1,20 +1,11 @@
 {% extends 'error_template.html' %}
 
-{% block title %}Interner Fehler{% endblock %}
-{% block brand %}Interner Fehler{% endblock %}
+{% block error_title %}500 server error{% endblock %}
 {% block error_content %}
-    <div class="card-header h2">
-        <b>500 server error</b>
-    </div>
-    <div class="card-body">
-        <p>Es gab einen Fehler beim Bearbeiten deiner Anfrage, wir bitten dies zu entschuldigen.</p>
-        Probieren Sie eine der folgenden Lösungen:
-        <ul>
-            <li>Versuche die Seite neuzuladen und die Anfrage erneut zu senden.</li>
-            <li>Sollte das Problem weiterhin bestehen nehme mit uns Kontakt auf.</li>
-        </ul>
-    </div>
-    <div class="card-footer">
-        <a href="{% url 'home' %}">Zur Startseite</a>
-    </div>
+    <p>Es gab einen Fehler beim Bearbeiten deiner Anfrage, wir bitten dies zu entschuldigen.</p>
+    Probieren Sie eine der folgenden Lösungen:
+    <ul>
+        <li>Versuche die Seite neuzuladen und die Anfrage erneut zu senden.</li>
+        <li>Sollte das Problem weiterhin bestehen nehme mit uns Kontakt auf.</li>
+    </ul>
 {% endblock error_content %}

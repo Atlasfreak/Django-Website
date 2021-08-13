@@ -1,15 +1,6 @@
 {% extends 'error_template.html' %}
 
-{% block title %}Fehlerhafte Anfrage{% endblock %}
-{% block brand %}Fehlerhafte Anfrage{% endblock %}
+{% block error_title %}400 bad request{% endblock %}
 {% block error_content %}
-    <div class="card-header h2">
-        <b>400 bad request</b>
-    </div>
-    <div class="card-body">
-        <p>Deine Anfrage enthält Fehler und kann daher nicht bearbeitet werden.</p>
-    </div>
-    <div class="card-footer">
-        <a href="{% url 'home' %}">Zur Startseite</a>
-    </div>
+    <p>Deine Anfrage enthält Fehler und kann daher nicht bearbeitet werden.</p>
 {% endblock error_content %}

@@ -1,5 +1,6 @@
 from django.contrib import messages
-from django.shortcuts import redirect, render, get_object_or_404
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .models import Poll
 
@@ -17,11 +18,13 @@ def is_creator(function=None, error_template_name=None, redirect_url="polls:inde
                 message = "Du bist nicht der Ersteller dieser Umfrage"
                 if error_template_name:
                     return render(
-                        request, error_template_name, context={"message": message}
+                        request,
+                        error_template_name,
+                        context={"message": message},
+                        status=403,
                     )
                 else:
-                    messages.error(request, message)
-                    return redirect(redirect_url)
+                    raise PermissionDenied(message)
             else:
                 return view_func(request, *args, **kwargs)
 

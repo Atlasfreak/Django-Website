@@ -2,11 +2,7 @@
 {% load static %}
 
 {% block title %}
-    {% if exception %}
-        {{exception}}
-    {% else %}
-        {{err_title}}
-    {% endif %}
+    {{err_title}}
 {% endblock %}
 
 {% block body_extra_context %}
@@ -15,11 +11,7 @@
 
 {% block banrd_url %}{{ block.super }}{% endblock %}
 {% block brand %}
-    {% if exception %}
-        {{exception}}
-    {% else %}
-        {{err_title}}
-    {% endif %}
+    {{err_title}}
 {% endblock %}
 
 {% block nav_item %}{{ block.super }}{% endblock %}

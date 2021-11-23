@@ -19,7 +19,7 @@ def handler404(request: HttpRequest, exception=None):
         "request_path": quote(request.path),
         "err_title": "Seite nicht gefunden",
     }
-    return render(request, context=context, template_name="404.html")
+    return render(request, context=context, template_name="404.html", status=404)
 
 
 def handler403(request: HttpRequest, exception=None):
@@ -27,18 +27,18 @@ def handler403(request: HttpRequest, exception=None):
         "exception": str(exception),
         "err_title": "Fehlende Berechtigung",
     }
-    return render(request, context=context, template_name="403.html")
+    return render(request, context=context, template_name="403.html", status=403)
 
 
 def handler400(request: HttpRequest, exception=None):
     context = {
         "err_title": "Fehlerhafte Anfrage",
     }
-    return render(request, context=context, template_name="400.html")
+    return render(request, context=context, template_name="400.html", status=400)
 
 
 def handler500(request: HttpRequest, exception=None):
     context = {
         "err_title": "Interner Fehler",
     }
-    return render(request, context=context, template_name="500.html")
+    return render(request, context=context, template_name="500.html", status=500)

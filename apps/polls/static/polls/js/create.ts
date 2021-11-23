@@ -18,7 +18,7 @@ function addForm(btn: string) {
 
     if (form_total < max_forms) {
         let regex = new RegExp(`${form_id}-__prefix__`, "g");
-        let prefix = `${form_id}-form_total`;
+        let prefix = `${form_id}-${form_total}`;
         button.before($(`#${form_id}-empty`).html().replaceAll(regex, prefix));
         $(`#id_${form_id}-TOTAL_FORMS`).val(form_total + 1);
     } else {

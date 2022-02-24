@@ -32,6 +32,18 @@
             {{formset.management_form}}
             {% for form in formset %}
                 {% crispy form helper %}
+                {% if poll.results_public %}
+                    <a href="#" class="text-toggle" data-toggle="collapse" data-target="#results-{{form.instance.question.id}}" aria-expanded="false" aria-controls="results-{{form.instance.question.id}}">
+                        <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
+                        <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
+                        Antworten
+                        <span class = "text-collapsed">anzeigen</span>
+                        <span class = "text-expanded">verstecken</span>
+                    </a>
+                    <div class="collapse" id="results-{{form.instance.question.id}}">
+                        {% include "polls/include/question_results_table.html" with question=form.instance.question %}
+                    </div>
+                {% endif %}
                 <hr>
             {% endfor %}
             <div class="form-group">

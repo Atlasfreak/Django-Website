@@ -1,0 +1,35 @@
+{% load polls_tags %}
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Einsendedatum</th>
+                {% for question in poll.questions.all %}
+                    <th scope="col" nowrap>{{question.text|charwrap:40|linebreaksbr}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for submission in poll.submissions.all %}
+                <tr>
+                    <th scope="row">{{submission.submission_date}}</th>
+                    {% for question in poll.questions.all %}
+                        <td nowrap>
+                            {% for answer in question.answers.all %}
+                                {% if answer.submission == submission %}
+                                    {% if question.type.enable_choices %}
+                                        {% for choice in answer.choices.all %}
+                                            {{choice.text|charwrap:40|linebreaksbr}}
+                                        {% endfor %}
+                                    {% else %}
+                                        {{answer.value|charwrap:40|linebreaksbr}}
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

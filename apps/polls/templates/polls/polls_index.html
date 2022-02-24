@@ -32,7 +32,7 @@
                                 {% for poll in user_polls %}
                                 <tr>
                                     <td>{{poll.title}}</td>
-                                    <td nowrap><div class="text-break">{{poll.info_text|charwrap:40|linebreaks}}</div></td>
+                                    <td nowrap><div class="text-break">{{poll.info_text|charwrap:40|truncatewords_html:10|linebreaks}}</div></td>
                                     <td>{{poll.creation_date|date:"d.m.Y H:i"}}</td>
                                     <td>{{poll.end_date|date:"d.m.Y H:i"}}</td>
                                     <td>{{poll.multiple_votes|yesno:"Ja, Nein"}}</td>
@@ -100,7 +100,7 @@
                     {% for poll in all_polls %}
                     <tr>
                         <td>{{poll.title}}</td>
-                        <td nowrap>{{poll.info_text|charwrap:40|linebreaks}}</td>
+                        <td nowrap>{{poll.info_text|charwrap:40|truncatewords_html:15|linebreaks}}</td>
                         <td>
                         {% with creator=poll.creator %}
                             {% if creator.full_name %}

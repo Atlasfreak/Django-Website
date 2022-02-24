@@ -1,3 +1,4 @@
+from email.policy import default
 import secrets
 from datetime import timedelta
 
@@ -59,6 +60,7 @@ class Poll(models.Model):
     )
     multiple_votes = models.BooleanField("Mehrmals Abstimmen")
     is_public = models.BooleanField("Öffentlich zugänglich")
+    results_public = models.BooleanField("Ergebnisse öffentlich zugänglich", default=False)
 
     objects = PollManager()
 

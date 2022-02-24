@@ -34,38 +34,7 @@
                                 <canvas id="chart-{{question.id}}"></canvas>
                             </div>
                         {% endif %}
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-hover">
-                                <thead class="thead-light">
-                                    <tr>
-                                        {% if question.type.enable_choices %}
-                                            <th scope="col">Auswahlmöglichkeit</th>
-                                            <th scope="col">Anzahl der Stimmen</th>
-                                        {% else %}
-                                            <th scope="col">Einsendedatum</th>
-                                            <th scope="col">Antwort</th>
-                                        {% endif %}
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% if question.type.enable_choices %}
-                                        {% for choice in question.choices.all %}
-                                        <tr>
-                                            <th scope="row">{{choice.text|charwrap:40|linebreaksbr}}</th>
-                                            <td>{{choice.answers.all.count}}</td>
-                                        </tr>
-                                        {% endfor %}
-                                    {% else %}
-                                        {% for answer in question.answers.all %}
-                                        <tr>
-                                            <th scope="row">{{answer.submission.submission_date}}</th>
-                                            <td nowrap><div class="text-break">{{answer.value|charwrap:70|linebreaksbr}}</div></td>
-                                        </tr>
-                                        {% endfor %}
-                                    {% endif %}
-                                </tbody>
-                            </table>
-                        </div>
+                        {% include "polls/include/question_results_table.html" with question=question show_submission_date=True %}
                     </div>
                 </div>
             </div>
@@ -79,40 +48,7 @@
         <span class = "text-expanded">verstecken</span>
     </button>
     <div class="collapse mt-3" id="results-table">
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Einsendedatum</th>
-                        {% for question in poll.questions.all %}
-                            <th scope="col" nowrap>{{question.text|charwrap:40|linebreaksbr}}</th>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for submission in poll.submissions.all %}
-                        <tr>
-                            <th scope="row">{{submission.submission_date}}</th>
-                            {% for question in poll.questions.all %}
-                                <td nowrap>
-                                    {% for answer in question.answers.all %}
-                                        {% if answer.submission == submission %}
-                                            {% if question.type.enable_choices %}
-                                                {% for choice in answer.choices.all %}
-                                                    {{choice.text|charwrap:40|linebreaksbr}}
-                                                {% endfor %}
-                                            {% else %}
-                                                {{answer.value|charwrap:40|linebreaksbr}}
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        {% include "polls/include/results_table.html" with poll=poll %}
     </div>
 {% endblock content %}
 {% block javascript %}

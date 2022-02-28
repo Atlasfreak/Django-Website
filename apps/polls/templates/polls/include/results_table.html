@@ -4,16 +4,16 @@
         <thead class="thead-light">
             <tr>
                 <th scope="col">Einsendedatum</th>
-                {% for question in poll.questions.all %}
+                {% for question in questions %}
                     <th scope="col" nowrap>{{question.text|charwrap:40|linebreaksbr}}</th>
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
-            {% for submission in poll.submissions.all %}
+            {% for submission in submissions %}
                 <tr>
                     <th scope="row">{{submission.submission_date}}</th>
-                    {% for question in poll.questions.all %}
+                    {% for question in questions %}
                         <td nowrap>
                             {% for answer in question.answers.all %}
                                 {% if answer.submission == submission %}

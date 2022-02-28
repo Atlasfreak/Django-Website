@@ -1,4 +1,3 @@
-from email.policy import default
 import secrets
 from datetime import timedelta
 
@@ -10,8 +9,6 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext_lazy as _
-
-from apps.customUser.models import SiteUser
 
 from .managers import PollManager, QuestionTypeManager
 from .validators import FormFieldValidator, FormWidgetValidator
@@ -60,7 +57,9 @@ class Poll(models.Model):
     )
     multiple_votes = models.BooleanField("Mehrmals Abstimmen")
     is_public = models.BooleanField("Öffentlich zugänglich")
-    results_public = models.BooleanField("Ergebnisse öffentlich zugänglich", default=False)
+    results_public = models.BooleanField(
+        "Ergebnisse öffentlich zugänglich", default=False
+    )
 
     objects = PollManager()
 

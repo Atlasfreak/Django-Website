@@ -16,7 +16,7 @@ from .decorators import is_creator
 from .forms import *
 from .formset import AnswerModelFormset
 from .models import *
-from .utils import *
+from .utils import get_poll_from_token, poll_create_csv
 
 # Create your views here.
 COOKIE_KEY = "voted_{id}"
@@ -321,16 +321,17 @@ def vote(request: HttpRequest, token: str):
         messages.error(request, message)
         return redirect("polls:index")
 
-    question_list = list(questions)
+    questions_count = poll.questions.count()
 
     Formset = formset_factory(
         get_AnswerModelForm,
         formset=AnswerModelFormset,
         extra=0,
-        min_num=questions.count(),
+        min_num=questions_count,
+        max_num=questions_count,
     )
     Formset.model = Answer
-    formset_params = {"form_kwargs": {"questions": question_list}}
+    formset_params = {"form_kwargs": {"questions": questions}}
 
     if request.method == "POST":
         real_formset = Formset(request.POST, **formset_params)
@@ -405,6 +406,8 @@ def results(request: HttpRequest, token: str):
 
     context = {
         "poll": poll,
+        "questions": questions,
+        "submissions": poll.submissions.all(),
         "chart_list": chart_list,
     }
     return render(request, "polls/polls_results.html", context)

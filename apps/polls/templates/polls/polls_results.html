@@ -16,7 +16,7 @@
     <hr>
     <p><a class="btn btn-info" href={% url 'polls:csv' token=poll.token %} target="_blank" role="button"><i class="fas fa-file-download"></i> CSV herunterladen</a></p>
     <div class="accordion my-4" id="questions">
-        {% for question in poll.questions.all %}
+        {% for question in questions %}
             <div class="card">
                 <div class="card-header position-relative" id="heading{{question.id}}">
                     <h2 class="mb-0">
@@ -48,7 +48,7 @@
         <span class = "text-expanded">verstecken</span>
     </button>
     <div class="collapse mt-3" id="results-table">
-        {% include "polls/include/results_table.html" with poll=poll %}
+        {% include "polls/include/results_table.html" with questions=questions submissions=submissions %}
     </div>
 {% endblock content %}
 {% block javascript %}

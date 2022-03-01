@@ -78,6 +78,7 @@ urlpatterns = [
                         ]
                     ),
                 ),
+                path("change/", user_views.change_password, name="password_change"),
             ]
         ),
     ),
@@ -87,6 +88,7 @@ urlpatterns = [
     ),
     path("contact/", flat_views.flatpage, {"url": "/contact/"}, name="contact"),
     path("legal/", flat_views.flatpage, {"url": "/contact/"}, name="legal"),
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 handler404 = "website.error_handlers.handler404"

@@ -36,7 +36,7 @@
     <title>{% block title %}Webseite{% endblock title %}</title>
 </head>
 
-<body class = "d-flex flex-column min-vh-100 ministry-teams {% block body_classes %}{% endblock body_classes %}" {% block body_extra_context %}style="background: #f4f4f4;"{% endblock %}>
+<body class = "d-flex flex-column min-vh-100 {% block body_classes %}{% endblock body_classes %}" {% block body_extra_context %}style="background: #f4f4f4;"{% endblock %}>
     {% include "cookie-banner.html" %}
     <button  class="btn btn-primary sticky-bottom hidden shadow-sm" type = "button" id = "back-to-top"><i class="fas fa-angle-up fa-lg"></i> Nach oben</button>
 

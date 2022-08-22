@@ -32,7 +32,7 @@
             {{formset.management_form}}
             {% for form in formset %}
                 {% crispy form helper %}
-                {% if poll.results_public %}
+                {% if form.instance.question.results_public %}
                     <a href="#" class="text-toggle" data-toggle="collapse" data-target="#results-{{form.instance.question.id}}" aria-expanded="false" aria-controls="results-{{form.instance.question.id}}">
                         <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
                         <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>

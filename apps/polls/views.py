@@ -177,6 +177,7 @@ def create(request: HttpRequest):
             "text",
             "type",
             "required",
+            "results_public",
         ),
         max_num=100,
         min_num=1,

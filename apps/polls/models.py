@@ -57,9 +57,6 @@ class Poll(models.Model):
     )
     multiple_votes = models.BooleanField("Mehrmals Abstimmen")
     is_public = models.BooleanField("Öffentlich zugänglich")
-    results_public = models.BooleanField(
-        "Ergebnisse öffentlich zugänglich", default=False
-    )
 
     objects = PollManager()
 
@@ -278,6 +275,9 @@ class Question(models.Model):
     required = models.BooleanField(verbose_name="erforderlich", default=False)
     type = models.ForeignKey(
         QuestionType, verbose_name="Fragetyp", on_delete=models.CASCADE
+    )
+    results_public = models.BooleanField(
+        "Ergebnisse öffentlich zugänglich", default=False
     )
     extra_params = models.JSONField("Extra Parameter für Frage", blank=True, null=True)
 

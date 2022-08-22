@@ -44,14 +44,20 @@
     <div class="card-footer">
         <div class="row">
 
-            <div class="col">
+            <div class="col-sm">
                 <div class="custom-control custom-switch">
                     {% include "base_inputs/input_field.html" with field=question_form.required field_with_filters=question_form.required|attr:"class:custom-control-input" %}
                     <label for="{{question_form.required.id_for_label}}" class="custom-control-label">{{question_form.required.label}}</label>
                 </div>
             </div>
+            <div class="col-sm mb-2 mb-sm-0">
+                <div class="custom-control custom-switch">
+                    {% include "base_inputs/input_field.html" with field=question_form.results_public field_with_filters=question_form.results_public|attr:"class:custom-control-input" %}
+                    <label for="{{question_form.results_public.id_for_label}}" class="custom-control-label">{{question_form.results_public.label}}</label>
+                </div>
+            </div>
 
-            <div class="col-auto">
+            <div class="col-sm-auto">
                 <button class="btn btn-danger remove_form" type="button" id="{{question_formset.prefix}}" data-target=".questions"><i class="fas fa-trash-alt"></i> Frage löschen</button>
             </div>
 

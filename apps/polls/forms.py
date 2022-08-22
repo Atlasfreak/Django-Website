@@ -28,7 +28,6 @@ class PollCreationForm(forms.ModelForm):
             "info_text",
             "multiple_votes",
             "is_public",
-            "results_public",
         )
         widgets = {"info_text": forms.Textarea()}
 

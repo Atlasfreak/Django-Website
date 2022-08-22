@@ -21,14 +21,12 @@ class PollAdmin(admin.ModelAdmin):
         "creation_date",
         "multiple_votes",
         "is_public",
-        "results_public",
     )
     list_filter = (
         "creator",
         "creation_date",
         "multiple_votes",
         "is_public",
-        "results_public",
     )
     fieldsets = [
         (
@@ -47,7 +45,6 @@ class PollAdmin(admin.ModelAdmin):
                     "info_text",
                     "multiple_votes",
                     "is_public",
-                    "results_public",
                 ],
             },
         ),

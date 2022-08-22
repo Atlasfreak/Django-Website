@@ -6,6 +6,8 @@ verify_ssl = true
 [dev-packages]
 black = "*"
 ipython = "*"
+django-debug-toolbar = "*"
+django-debug-toolbar-template-profiler = "*"
 
 [packages]
 django-crispy-forms = "*"

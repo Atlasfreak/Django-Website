@@ -10,13 +10,13 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_post_parameters
 
-from apps.customUser.forms import UserCreationForm
+from apps.customUser.forms import CustomUserCreationForm
 
 
 @sensitive_post_parameters()
 def register(request: HttpRequest):
     if request.method == "POST":
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             username = form.cleaned_data.get("username")
@@ -24,7 +24,7 @@ def register(request: HttpRequest):
             messages.success(request, f"Account für {username} erstellt!")
             return redirect("login")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
     context = {"form": form}
     return render(request, "userManagement/register.html", context)
 

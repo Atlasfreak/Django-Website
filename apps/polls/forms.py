@@ -66,9 +66,9 @@ def get_QuestionTypeParamForm(
 ):
     param_dict = q_type_param.get_param_dict()
     field_name = param_dict["name"]
-    field: forms.Field = param_dict["field"]
+    field: type[forms.Field] = param_dict["field"]
 
-    Form: forms.Form = type(
+    Form: type[forms.Form] = type(
         "QuestionTypeParam_" + field_name + "_Form",
         (forms.Form,),
         {field_name: field(label=q_type_param.verbose_name, required=False)},

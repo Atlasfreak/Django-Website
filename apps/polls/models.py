@@ -168,7 +168,7 @@ class QuestionTypeParam(models.Model):
         return converter
 
     def get_field(self):
-        field: forms.Field = self.STRING_TO_FUNCTION[self.val_type][self.FIELD_KEY]
+        field: type[forms.Field] = self.STRING_TO_FUNCTION[self.val_type][self.FIELD_KEY]
         return field
 
     def get_param_dict(self):  # deprecated
@@ -230,20 +230,18 @@ class QuestionType(models.Model):
 
     def get_widget_class(self):
         widget_path = self.form_widget
-        widget: forms.Widget = import_string(widget_path)
+        widget: type[forms.Widget] = import_string(widget_path)
         return widget
 
     def get_field_class(self):
         field_path = self.form_field
-        field: forms.Field = import_string(field_path)
+        field: type[forms.Field] = import_string(field_path)
         return field
 
     def get_field_with_widget(self, **params):
         base_field = self.get_field_class()
         # Create a new field class so I do not override the widget for all fields of that type
-        field: forms.Field = type(
-            "Poll" + base_field.__name__, (base_field,), {**params}
-        )
+        field: type[forms.Field] = type("Poll" + base_field.__name__, (base_field,), {**params})
         field.widget = self.get_widget_class() if self.form_widget else field.widget
         return field
 

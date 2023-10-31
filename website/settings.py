@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "apps.polls.apps.PollsConfig",
     "apps.siteManagement.apps.SitemanagementConfig",
     "crispy_forms",
+    "crispy_bootstrap4",
     "widget_tweaks",
     "django_extensions",
     "django.contrib.admin",
@@ -172,6 +173,8 @@ STATICFILES_DIRS = [
 ]
 
 # Crispy forms config
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 

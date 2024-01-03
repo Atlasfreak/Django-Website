@@ -16,7 +16,7 @@
                 {% if user_polls %}
                     <div class="table-responsive mb-4">
                         <table class="table table-hover table-bordered my-0">
-                            <thead class="thead-light">
+                            <thead>
                                 <tr>
                                     <th scope="col">Titel</th>
                                     <th scope="col">Beschreibung</th>
@@ -42,7 +42,7 @@
                                         <a href="{{poll.get_results_url}}"><i class="fas fa-chart-pie"></i> Ergebnisse</a>
                                     </td>
                                     <td nowrap>
-                                        <button type="button" class="btn btn-danger btn-sm" id="delete" data-toggle="modal" data-target="#confirmDelete" data-url="{% url 'polls:delete' token=poll.token %}">
+                                        <button type="button" class="btn btn-danger btn-sm" id="delete" data-bs-toggle="modal" data-bs-target="#confirmDelete" data-url="{% url 'polls:delete' token=poll.token %}">
                                             <i class="fas fa-trash-alt"></i> Löschen
                                         </button>
                                     </td>
@@ -57,9 +57,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmDeleteLabel">Umfrage löschen</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     Möchtest du diese Umfrage wirklich endgültig löschen?
@@ -86,7 +84,7 @@
         {% if all_polls %}
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
-                <thead class="thead-light">
+                <thead>
                     <tr>
                         <th scope="col">Titel</th>
                         <th scope="col">Beschreibung</th>

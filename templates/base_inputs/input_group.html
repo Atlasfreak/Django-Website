@@ -1,11 +1,9 @@
 {% load widget_tweaks %}
 
-<div class="form-group">
-    {{ field.label_tag }}
-    <div class="input-group {% if field.errors %}is-invalid{% endif %}">
-        <div class="input-group-prepend">
-            <label class="input-group-text" for = "{{ field.id_for_label }}" data-toggle>{{prepend_text}}</label>
-        </div>
+<div class="mb-3">
+    {{ field|add_label_class:"form-label" }}
+    <div class="input-group has-validation {% if field.errors %}is-invalid{% endif %}">
+        <span class="input-group-text" for = "{{ field.id_for_label }}">{{prepend_text}}</span>
         {{ field_with_filters|add_class:"form-control"|add_error_class:"is-invalid" }}
     </div>
     {% include "base_inputs/errors.html" with field=field %}

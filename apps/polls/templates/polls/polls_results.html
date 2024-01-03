@@ -7,7 +7,7 @@
 {% block content %}
     <div class="d-flex">
         <div class="h1">{{poll.title}}</div>
-        <div class="ml-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
+        <div class="ms-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
     </div>
     <hr>
     <section class = "mt-3">
@@ -15,20 +15,16 @@
     </section>
     <hr>
     <p><a class="btn btn-info" href={% url 'polls:csv' token=poll.token %} target="_blank" role="button"><i class="fas fa-file-download"></i> CSV herunterladen</a></p>
-    <div class="accordion my-4" id="questions">
+    <div class="accordion accordion-flush my-4" id="questions">
         {% for question in questions %}
-            <div class="card">
-                <div class="card-header position-relative" id="heading{{question.id}}">
-                    <h2 class="mb-0">
-                        <a class="text-toggle text-decoration-none btn btn-link stretched-link d-flex" role="button" data-toggle="collapse" data-target="#collapse{{question.id}}" aria-expanded="false" aria-controls="collapse{{question.id}}">
-                            {{question.text}}
-                            <span class = "ml-auto text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
-                            <span class = "ml-auto text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
-                        </a>
-                    </h2>
+            <div class="accordion-item">
+                <div class="accordion-header" id="heading{{question.id}}">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{question.id}}" aria-expanded="false" aria-controls="collapse{{question.id}}">
+                        {{question.text}}
+                    </button>
                 </div>
-                <div id="collapse{{question.id}}" class="collapse" aria-labelledby="heading{{question.id}}" data-parent="#questions">
-                    <div class="card-body">
+                <div id="collapse{{question.id}}" class="accordion-collapse collapse" data-bs-parent="#questions">
+                    <div class="accordion-body">
                         {% if question.type.enable_choices %}
                             <div class="chart-{{question.id}}-container mb-4" style="position: relative">
                                 <canvas id="chart-{{question.id}}"></canvas>
@@ -40,7 +36,7 @@
             </div>
         {% endfor %}
     </div>
-    <button class="text-toggle btn btn-outline-info" type="button" data-toggle="collapse" data-target="#results-table" aria-expanded="false" aria-controls="results-table">
+    <button class="text-toggle btn btn-outline-info" type="button" data-bs-toggle="collapse" data-bs-target="#results-table" aria-expanded="false" aria-controls="results-table">
         <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
         <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
         Rohdaten

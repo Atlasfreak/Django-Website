@@ -16,9 +16,7 @@
             {% for err in poll_form.non_field_errors %}
                 <div class = "my-1 alert alert-danger alert-dismissible fade show" role="alert">
                     {{ err }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             {% endfor %}
         {% endif %}
@@ -53,14 +51,14 @@
                             {% include "base_inputs/input_form_group.html" with field=field field_with_filters=field %}
                         {% endwith %}
 
-                        <div class="custom-control custom-switch form-group">
-                            {% render_field poll_form.multiple_votes class+="custom-control-input" %}
-                            <label for="{{ poll_form.multiple_votes.id_for_label }}" class="custom-control-label">{{ poll_form.multiple_votes.label }}</label>
+                        <div class="form-check form-switch mb-3">
+                            {% render_field poll_form.multiple_votes class+="form-check-input" %}
+                            <label for="{{ poll_form.multiple_votes.id_for_label }}" class="form-check-label">{{ poll_form.multiple_votes.label }}</label>
                         </div>
 
-                        <div class="custom-control custom-switch form-group">
-                            {% render_field poll_form.is_public class+="custom-control-input" %}
-                            <label for="{{ poll_form.is_public.id_for_label }}" class="custom-control-label">{{ poll_form.is_public.label }}</label>
+                        <div class="form-check form-switch">
+                            {% render_field poll_form.is_public class+="form-check-input" %}
+                            <label for="{{ poll_form.is_public.id_for_label }}" class="form-check-label">{{ poll_form.is_public.label }}</label>
                         </div>
                     </div>
 
@@ -83,7 +81,7 @@
                 </div>
             </fieldset>
             <hr>
-            <div class="form-group">
+            <div class="mb-3">
                 <button class = "btn btn-outline-success" type = "submit">
                     Erstellen
                 </button>

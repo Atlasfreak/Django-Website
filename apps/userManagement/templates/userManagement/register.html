@@ -10,8 +10,8 @@
 {% block management_content %}
     <form method="POST">
         {% csrf_token %}
-        <fieldset class = "form-group">
-            <legend class = "border-bottom mb-4 card-header">
+        <fieldset>
+            <legend class = "border-bottom card-header">
                 Registrieren
             </legend>
             <div class="card-body">
@@ -24,7 +24,7 @@
 
     </form>
     <div class = "border-top card-footer">
-        <small class = "text-muted">
+        <small class = "text-body-secondary">
             Du hast schon einen Account? <a href = "{%url 'login' %}">Amelden</a>
         </small>
     </div>

@@ -3,14 +3,14 @@
 {% load polls_tags %}
 
 <div>
-    <div class="form-row {% if choice_form.non_field_errors %}rounded-lg border border-danger{% endif %}">
+    <div class="row g-2 mb-3 {% if choice_form.non_field_errors %}rounded-2 border border-danger{% endif %}">
         {% for field in form.visible_fields %}
-            <div class="form-group col{% if not forloop.last %}-md{% endif %}" id="{{field.id_for_label|get_field_name}}">
+            <div class="col{% if not forloop.last %}-md{% endif %}" id="{{field.id_for_label|get_field_name}}">
                 {% if not condition %}
-                    {{field.label_tag}}
+                    {{field|add_label_class:"form-label"}}
                 {% endif %}
                 {% if field|is_select %}
-                    {% include "base_inputs/input_field.html" with field=field field_with_filters=field|add_class:"custom-select" %}
+                    {% include "base_inputs/input_field.html" with field=field field_with_filters=field|add_class:"form-select" %}
                 {% else %}
                     {% include "base_inputs/input_field.html" with field=field field_with_filters=field %}
                 {% endif %}

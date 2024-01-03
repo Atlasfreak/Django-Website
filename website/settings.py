@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os
 import json
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     "apps.polls.apps.PollsConfig",
     "apps.siteManagement.apps.SitemanagementConfig",
     "crispy_forms",
-    "crispy_bootstrap4",
+    "crispy_bootstrap5",
     "widget_tweaks",
     "django_extensions",
     "django.contrib.admin",
@@ -174,9 +174,9 @@ STATICFILES_DIRS = [
 
 # Crispy forms config
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 
-CRISPY_TEMPLATE_PACK = "bootstrap4"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 # Custom message tags
 

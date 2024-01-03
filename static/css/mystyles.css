@@ -4,6 +4,7 @@
 .text-toggle[aria-expanded=false] .text-expanded {
 	display: none;
 }
+
 .text-toggle[aria-expanded=true] .text-collapsed {
 	display: none;
 }
@@ -24,14 +25,7 @@
 .cookie-consent {
 	opacity: 0.90;
 }
+
 .cookie-consent:hover {
 	opacity: 1;
-}
-
-.footer {
-	background-color: #ffffffbb;
-}
-
-.form-control[readonly] {
-	background-color: #ffffff;
 }

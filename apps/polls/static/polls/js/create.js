@@ -64,7 +64,7 @@ function changeAvailableParams(target, options, val) {
         let params = ids_to_params[val];
         params.forEach(param => {
             let input = params_div.find(`input[name=__prefix__-${param}]`);
-            let copy_div = input.parents(".form-group");
+            let copy_div = input.parentsUntil(params_div);
             if (!options.prevAll(`div.${param}`).length) {
                 let copied = copy_div.clone().prependTo(options.parents(".card-body")).wrap(`<div class=${param}></div>`);
                 if (params.indexOf(param) == 0) {

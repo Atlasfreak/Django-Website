@@ -25,10 +25,10 @@
             Bitte Melde dich an
         </legend>
         <div class="card-body">
-            <fieldset class = "form-group">
+            <fieldset class = "mb-3">
                 {{ form|crispy }}
             </fieldset>
-            <div class = "form-group">
+            <div>
                 <button class = "btn btn-info" type = "submit">
                     Anmelden
                 </button>
@@ -36,10 +36,10 @@
         </div>
     </form>
     <div class = "d-flex border-top card-footer">
-        <small class = "text-muted">
+        <small class = "text-body-secondary">
             Du hast noch keinen Account? <a href = "{% url 'register' %}">Registrieren</a>
         </small>
-        <small class = "ml-auto text-muted">
+        <small class = "ms-auto text-body-secondary">
             Du hast dein <a href="{% url 'password_reset' %}">Passwort vergessen?</a>
         </small>
     </div>

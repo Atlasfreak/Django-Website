@@ -1,5 +1,7 @@
 {% extends 'polls/polls_base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
+
 
 {% block meta %}
     <meta property="og:description" content="{{poll.info_text|striptags|truncatewords:20}}" />
@@ -8,7 +10,8 @@
     <meta name="twitter:card" content="summary" />
 {% endblock meta %}
 {% block stylesheet %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" type="text/css">
+    <link rel="stylesheet" href="{% static "polls/css/flatpickr.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "polls/css/flatpickr.dark.css" %}">
 {% endblock stylesheet %}
 
 {% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
@@ -61,8 +64,8 @@
 {% endblock content %}
 {% block post_content %}{% endblock post_content %}
 {% block javascript %}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+    <script src="{% static "polls/js/flatpickr.js" %}"></script>
+    <script src="{% static "polls/js/l10n/flatpickr.de.js" %}"></script>
     <script>
         date_input = $('.dateinput')
         date_input.flatpickr({

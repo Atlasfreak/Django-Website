@@ -5,7 +5,8 @@
 {% load static %}
 
 {% block stylesheet %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" type="text/css">
+    <link rel="stylesheet" href="{% static "polls/css/flatpickr.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "polls/css/flatpickr.dark.css" %}">
 {% endblock stylesheet %}
 
 {% block title %}{{ block.super }} Erstellen{% endblock %}
@@ -96,10 +97,9 @@
 {% endblock content %}
 
 {% block javascript %}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/minMaxTimePlugin.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/rangePlugin.js"></script>
+    <script src="{% static "polls/js/flatpickr.js" %}"></script>
+    <script src="{% static "polls/js/l10n/flatpickr.de.js" %}"></script>
+    <script src="{% static "polls/js/flatpickr.minMaxTimePlugin.js" %}"></script>
     <script>
     $(document).ready(function() {
         flatpickr('#date-time-div', {

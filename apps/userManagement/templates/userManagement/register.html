@@ -1,32 +1,29 @@
 {% extends "userManagement/management_base.html" %}
 {% load crispy_forms_tags %}
-{% block title %}Registrieren{% endblock title %}
-{% block brand %}Registrieren{% endblock %}
+{% block title %}
+    Registrieren
+{% endblock title %}
+{% block brand %}
+    Registrieren
+{% endblock brand %}
 {% block nav_item %}
     {{ block.super }}
-    <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
+    <a class="nav-link" href="{% url 'login' %}">Anmelden</a>
 {% endblock nav_item %}
-
 {% block management_content %}
     <form method="POST">
         {% csrf_token %}
-        <fieldset class = "form-group">
-            <legend class = "border-bottom mb-4 card-header">
-                Registrieren
-            </legend>
+        <fieldset>
+            <legend class="border-bottom card-header">Registrieren</legend>
             <div class="card-body">
-            {{ form|crispy }}
-            <button class = "btn btn-outline-info" type = "submit">
-                Registrieren
-            </button>
+                {{ form|crispy }}
+                <button class="btn btn-outline-info" type="submit">Registrieren</button>
             </div>
         </fieldset>
-
     </form>
-    <div class = "border-top card-footer">
-        <small class = "text-muted">
-            Du hast schon einen Account? <a href = "{%url 'login' %}">Amelden</a>
+    <div class="border-top card-footer">
+        <small class="text-body-secondary">
+            Du hast schon einen Account? <a href="{% url 'login' %}">Amelden</a>
         </small>
     </div>
 {% endblock management_content %}
-

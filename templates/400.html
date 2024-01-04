@@ -1,6 +1,7 @@
-{% extends 'error_template.html' %}
-
-{% block error_title %}400 bad request{% endblock %}
+{% extends "error_template.html" %}
+{% block error_title %}
+    400 bad request
+{% endblock error_title %}
 {% block error_content %}
     <p>Deine Anfrage enthält Fehler und kann daher nicht bearbeitet werden.</p>
 {% endblock error_content %}

@@ -1,37 +1,57 @@
-{% extends 'polls/polls_base.html' %}
+{% extends "polls/polls_base.html" %}
 {% load static %}
 {% load polls_tags %}
-
-{% block title %}{{poll.title}} - Ergebnisse{% endblock %}
-{% block brand %}{{poll.title}} - Ergebnisse{% endblock %}
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static "polls/css/chart.css" %}">
+{% endblock stylesheet %}
+{% block title %}
+    {{ poll.title }} - Ergebnisse
+{% endblock title %}
+{% block brand %}
+    {{ poll.title }} - Ergebnisse
+{% endblock brand %}
 {% block content %}
     <div class="d-flex">
-        <div class="h1">{{poll.title}}</div>
-        <div class="ml-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
+        <div class="h1">{{ poll.title }}</div>
+        <div class="ms-auto align-self-center h4">
+            Ersteller:
+            {% if poll.creator.full_name %}
+                {{ poll.creator.full_name }}
+            {% else %}
+                {{ poll.creator.username }}
+            {% endif %}
+        </div>
     </div>
     <hr>
-    <section class = "mt-3">
-        <p class="text-break">{{poll.info_text|urlize|linebreaksbr}}</p>
+    <section class="mt-3">
+        <p class="text-break">{{ poll.info_text|urlize|linebreaksbr }}</p>
     </section>
     <hr>
-    <p><a class="btn btn-info" href={% url 'polls:csv' token=poll.token %} target="_blank" role="button"><i class="fas fa-file-download"></i> CSV herunterladen</a></p>
-    <div class="accordion my-4" id="questions">
+    <p>
+        <a class="btn btn-info"
+           href="{% url 'polls:csv' token=poll.token %}"
+           target="_blank"
+           role="button"><i class="fas fa-file-download"></i> CSV herunterladen</a>
+    </p>
+    <div class="accordion accordion-flush my-4" id="questions">
         {% for question in questions %}
-            <div class="card">
-                <div class="card-header position-relative" id="heading{{question.id}}">
-                    <h2 class="mb-0">
-                        <a class="text-toggle text-decoration-none btn btn-link stretched-link d-flex" role="button" data-toggle="collapse" data-target="#collapse{{question.id}}" aria-expanded="false" aria-controls="collapse{{question.id}}">
-                            {{question.text}}
-                            <span class = "ml-auto text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
-                            <span class = "ml-auto text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
-                        </a>
-                    </h2>
+            <div class="accordion-item">
+                <div class="accordion-header" id="heading{{ question.id }}">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{ question.id }}"
+                            aria-expanded="false"
+                            aria-controls="collapse{{ question.id }}">{{ question.text }}</button>
                 </div>
-                <div id="collapse{{question.id}}" class="collapse" aria-labelledby="heading{{question.id}}" data-parent="#questions">
-                    <div class="card-body">
+                <div id="collapse{{ question.id }}"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#questions">
+                    <div class="accordion-body">
                         {% if question.type.enable_choices %}
-                            <div class="chart-{{question.id}}-container mb-4" style="position: relative">
-                                <canvas id="chart-{{question.id}}"></canvas>
+                            <div class="m-auto mb-4 chart-container"
+                                 id="chart-{{ question.id }}-container">
+                                <canvas id="chart-{{ question.id }}"></canvas>
                             </div>
                         {% endif %}
                         {% include "polls/include/question_results_table.html" with question=question show_submission_date=True %}
@@ -40,26 +60,25 @@
             </div>
         {% endfor %}
     </div>
-    <button class="text-toggle btn btn-outline-info" type="button" data-toggle="collapse" data-target="#results-table" aria-expanded="false" aria-controls="results-table">
-        <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
-        <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
+    <button class="text-toggle btn btn-outline-info"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#results-table"
+            aria-expanded="false"
+            aria-controls="results-table">
+        <span class="text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
+        <span class="text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
         Rohdaten
-        <span class = "text-collapsed">anzeigen</span>
-        <span class = "text-expanded">verstecken</span>
+        <span class="text-collapsed">anzeigen</span>
+        <span class="text-expanded">verstecken</span>
     </button>
     <div class="collapse mt-3" id="results-table">
         {% include "polls/include/results_table.html" with questions=questions submissions=submissions %}
     </div>
 {% endblock content %}
 {% block javascript %}
-    {{chart_list|json_script:"chart_list"}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.bundle.js" integrity="sha512-zO8oeHCxetPn1Hd9PdDleg5Tw1bAaP0YmNvPY8CwcRyUk7d7/+nyElmFrB6f7vg4f7Fv4sui1mcep8RIEShczg==" crossorigin="anonymous"></script>
-
-    <!-- Import D3 Scale Chromatic via CDN -->
-    <script src="https://d3js.org/d3-color.v1.min.js"></script>
-    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
-    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
-
-    <script src="{% static 'polls/js/utils/colorGenerator.js' %}" type="text/javascript"></script>
-    <script src="{% static 'polls/js/results.js' %}" type="text/javascript"></script>
+    {{ chart_list|json_script:"chart_list" }}
+    <script src="{% static "polls/js/chart.min.js" %}"></script>
+    <script src="{% static "polls/js/chartjs-plugin-autocolors.js" %}"></script>
+    <script src="{% static "polls/js/results.js" %}" type="text/javascript"></script>
 {% endblock javascript %}

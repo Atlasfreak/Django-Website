@@ -1,10 +1,10 @@
 {% load i18n %}
-<div class = "cookie-consent fixed-bottom hidden shadow bg-dark text-white p-2">
-    <div class = "container d-flex">
-        <span class = "my-auto">
+<div class="cookie-consent fixed-bottom hidden shadow bg-dark text-white p-2">
+    <div class="container d-flex">
+        <span class="my-auto">
             {% trans "Diese Webseite verwendet Cookies, um ihnen die bestmögliche Erfahrung zu bieten!" %}
-            <a class = "text-light" href="{% url 'contact' %}">Mehr Infos</a>
+            <a class="text-light" href="{% url 'contact' %}">Mehr Infos</a>
         </span>
-        <button class = "btn btn-warning cookie-consent-accept ml-auto" type="button">{% trans "Verstanden" %}</button>
+        <button class="btn btn-warning cookie-consent-accept ms-auto" type="button">{% trans "Verstanden" %}</button>
     </div>
 </div>

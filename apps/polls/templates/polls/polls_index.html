@@ -1,22 +1,21 @@
-{% extends 'polls/polls_base.html' %}
+{% extends "polls/polls_base.html" %}
 {% load static %}
 {% load polls_tags %}
 {% load humanize %}
-
-{% block title %}Umfragen{% endblock %}
+{% block title %}
+    Umfragen
+{% endblock title %}
 {% block content %}
     <h1>Umfragen</h1>
     <hr>
     {% if user.is_authenticated %}
         <div class="card">
-            <div class="card-header">
-                Deine Umfragen
-            </div>
+            <div class="card-header">Deine Umfragen</div>
             <div class="card-body">
                 {% if user_polls %}
                     <div class="table-responsive mb-4">
                         <table class="table table-hover table-bordered my-0">
-                            <thead class="thead-light">
+                            <thead>
                                 <tr>
                                     <th scope="col">Titel</th>
                                     <th scope="col">Beschreibung</th>
@@ -30,40 +29,51 @@
                             </thead>
                             <tbody>
                                 {% for poll in user_polls %}
-                                <tr>
-                                    <td>{{poll.title}}</td>
-                                    <td nowrap><div class="text-break">{{poll.info_text|charwrap:40|truncatewords_html:10|linebreaks}}</div></td>
-                                    <td>{{poll.creation_date|date:"d.m.Y H:i"}}</td>
-                                    <td>{{poll.end_date|date:"d.m.Y H:i"}}</td>
-                                    <td>{{poll.multiple_votes|yesno:"Ja, Nein"}}</td>
-                                    <td>{{poll.is_public|yesno:"Ja, Nein"}}</td>
-                                    <td nowrap>
-                                        <a href="{{poll.get_absolute_url}}"><i class="fas fa-vote-yea"></i> Abstimmen</a><br>
-                                        <a href="{{poll.get_results_url}}"><i class="fas fa-chart-pie"></i> Ergebnisse</a>
-                                    </td>
-                                    <td nowrap>
-                                        <button type="button" class="btn btn-danger btn-sm" id="delete" data-toggle="modal" data-target="#confirmDelete" data-url="{% url 'polls:delete' token=poll.token %}">
-                                            <i class="fas fa-trash-alt"></i> Löschen
-                                        </button>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td>{{ poll.title }}</td>
+                                        <td nowrap>
+                                            <div class="text-break">{{ poll.info_text|charwrap:40|truncatewords_html:10|linebreaks }}</div>
+                                        </td>
+                                        <td>{{ poll.creation_date|date:"d.m.Y H:i" }}</td>
+                                        <td>{{ poll.end_date|date:"d.m.Y H:i" }}</td>
+                                        <td>{{ poll.multiple_votes|yesno:"Ja, Nein" }}</td>
+                                        <td>{{ poll.is_public|yesno:"Ja, Nein" }}</td>
+                                        <td nowrap>
+                                            <a href="{{ poll.get_absolute_url }}"><i class="fas fa-vote-yea"></i> Abstimmen</a>
+                                            <br>
+                                            <a href="{{ poll.get_results_url }}"><i class="fas fa-chart-pie"></i> Ergebnisse</a>
+                                        </td>
+                                        <td nowrap>
+                                            <button type="button"
+                                                    class="btn btn-danger btn-sm"
+                                                    id="delete"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#confirmDelete"
+                                                    data-url="{% url 'polls:delete' token=poll.token %}">
+                                                <i class="fas fa-trash-alt"></i> Löschen
+                                            </button>
+                                        </td>
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                     </div>
-
-                    <div class="modal fade" id="confirmDelete" tabindex="-1" data-link-id="#modalLink" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                    <div class="modal fade"
+                         id="confirmDelete"
+                         tabindex="-1"
+                         data-link-id="#modalLink"
+                         aria-labelledby="confirmDeleteLabel"
+                         aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="confirmDeleteLabel">Umfrage löschen</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
+                                    <button type="button"
+                                            class="btn-close"
+                                            data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body">
-                                    Möchtest du diese Umfrage wirklich endgültig löschen?
-                                </div>
+                                <div class="modal-body">Möchtest du diese Umfrage wirklich endgültig löschen?</div>
                                 <div class="modal-footer">
                                     <a class="btn btn-danger" role="button" href="" id="modalLink">Endgültig löschen</a>
                                 </div>
@@ -79,49 +89,48 @@
     {% else %}
         <h4>Du bist nicht angemeldet.</h4>
     {% endif %}
-
     <div class="my-4">
         <h2>Öffentliche Umfragen</h2>
         <hr>
         {% if all_polls %}
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">Titel</th>
-                        <th scope="col">Beschreibung</th>
-                        <th scope="col">Ersteller</th>
-                        <th scope="col">Enddatum</th>
-                        <th scope="col">Mehrfach Abstimmen</th>
-                        <th scope="col">Link</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for poll in all_polls %}
-                    <tr>
-                        <td>{{poll.title}}</td>
-                        <td nowrap>{{poll.info_text|charwrap:40|truncatewords_html:15|linebreaks}}</td>
-                        <td>
-                        {% with creator=poll.creator %}
-                            {% if creator.full_name %}
-                                {{creator.full_name}}
-                            {% else %}
-                                {{creator.username}}
-                            {% endif %}
-                        {% endwith %}
-                        </td>
-                        <td title="{{poll.end_date|date:'d.m.Y H:i'}}">{{poll.end_date|naturaltime|capfirst}}</td>
-                        <td>{{poll.multiple_votes|yesno:"Ja, Nein"}}</td>
-                        <td nowrap>
-                            <a href="{{poll.get_absolute_url}}"><i class="fas fa-vote-yea"></i> Abstimmen</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Titel</th>
+                            <th scope="col">Beschreibung</th>
+                            <th scope="col">Ersteller</th>
+                            <th scope="col">Enddatum</th>
+                            <th scope="col">Mehrfach Abstimmen</th>
+                            <th scope="col">Link</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for poll in all_polls %}
+                            <tr>
+                                <td>{{ poll.title }}</td>
+                                <td nowrap>{{ poll.info_text|charwrap:40|truncatewords_html:15|linebreaks }}</td>
+                                <td>
+                                    {% with creator=poll.creator %}
+                                        {% if creator.full_name %}
+                                            {{ creator.full_name }}
+                                        {% else %}
+                                            {{ creator.username }}
+                                        {% endif %}
+                                    {% endwith %}
+                                </td>
+                                <td title="{{ poll.end_date|date:'d.m.Y H:i' }}">{{ poll.end_date|naturaltime|capfirst }}</td>
+                                <td>{{ poll.multiple_votes|yesno:"Ja, Nein" }}</td>
+                                <td nowrap>
+                                    <a href="{{ poll.get_absolute_url }}"><i class="fas fa-vote-yea"></i> Abstimmen</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
-        <h3>Es gibt keine öffentlichen Umfragen.</h3>
+            <h3>Es gibt keine öffentlichen Umfragen.</h3>
         {% endif %}
     </div>
 {% endblock content %}

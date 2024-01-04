@@ -1,15 +1,13 @@
 {% load polls_tags %}
 <div class="table-responsive">
     <table class="table table-bordered table-hover">
-        <thead class="thead-light">
+        <thead>
             <tr>
                 {% if question.type.enable_choices %}
                     <th scope="col">Auswahlmöglichkeit</th>
                     <th scope="col">Anzahl der Stimmen</th>
                 {% else %}
-                    {% if show_submission_date %}
-                        <th scope="col">Einsendedatum</th>
-                    {% endif %}
+                    {% if show_submission_date %}<th scope="col">Einsendedatum</th>{% endif %}
                     <th scope="col">Antwort</th>
                 {% endif %}
             </tr>
@@ -17,19 +15,19 @@
         <tbody>
             {% if question.type.enable_choices %}
                 {% for choice in question.choices.all %}
-                <tr>
-                    <th scope="row">{{choice.text|charwrap:40|linebreaksbr}}</th>
-                    <td>{{choice.answers.all.count}}</td>
-                </tr>
+                    <tr>
+                        <th scope="row">{{ choice.text|charwrap:40|linebreaksbr }}</th>
+                        <td>{{ choice.answers.all.count }}</td>
+                    </tr>
                 {% endfor %}
             {% else %}
                 {% for answer in question.answers.all %}
-                <tr>
-                    {% if show_submission_date %}
-                        <th scope="row">{{answer.submission.submission_date}}</th>
-                    {% endif %}
-                    <td nowrap><div class="text-break">{{answer.value|charwrap:70|linebreaksbr}}</div></td>
-                </tr>
+                    <tr>
+                        {% if show_submission_date %}<th scope="row">{{ answer.submission.submission_date }}</th>{% endif %}
+                        <td nowrap>
+                            <div class="text-break">{{ answer.value|charwrap:70|linebreaksbr }}</div>
+                        </td>
+                    </tr>
                 {% endfor %}
             {% endif %}
         </tbody>

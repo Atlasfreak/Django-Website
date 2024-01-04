@@ -1,21 +1,22 @@
-{% extends 'userManagement/management_base.html' %}
+{% extends "userManagement/management_base.html" %}
 {% load crispy_forms_tags %}
-
 {% block meta %}
     <meta http-equiv="refresh" content="5; url={% url 'home' %}">
 {% endblock meta %}
-
-{% block title %}{{title}}{% endblock title %}
-{% block brand %}{{title}}{% endblock %}
+{% block title %}
+    {{ title }}
+{% endblock title %}
+{% block brand %}
+    {{ title }}
+{% endblock brand %}
 {% block nav_item %}
     {{ block.super }}
-    <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
-    <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
+    <a class="nav-link" href="{% url 'login' %}">Anmelden</a>
+    <a class="nav-link" href="{% url 'register' %}">Registrieren</a>
 {% endblock nav_item %}
-
 {% block management_content %}
     <div class="card-body">
         <p>Dein Passwort wurde erfolgreich zurückgesetzt.</p>
-        <a href="{{login_url}}">Anmelden</a>
+        <a href="{{ login_url }}">Anmelden</a>
     </div>
 {% endblock management_content %}

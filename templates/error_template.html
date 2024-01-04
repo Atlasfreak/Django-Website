@@ -1,38 +1,41 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
-
 {% block title %}
-    {{err_title}}
-{% endblock %}
-
+    {{ err_title }}
+{% endblock title %}
 {% block body_extra_context %}
-    style = "height: device-height; background-image: url({% static 'img/background_2.jpg' %});  background-repeat: no-repeat;  background-size: cover;"
+    style = "height: device-height; background-image: url({% static "img/background_2.jpg" %});  background-repeat: no-repeat;  background-size: cover;"
 {% endblock body_extra_context %}
-
-{% block banrd_url %}{{ block.super }}{% endblock %}
+{% block banrd_url %}
+    {{ block.super }}
+{% endblock banrd_url %}
 {% block brand %}
-    {{err_title}}
-{% endblock %}
-
-{% block nav_item %}{{ block.super }}{% endblock %}
+    {{ err_title }}
+{% endblock brand %}
+{% block nav_item %}
+    {{ block.super }}
+{% endblock nav_item %}
 {% block content %}
     <div class="card my-auto shadow rounded-0">
         <div class="card-header h2">
             <b>
                 {% block error_title %}
                     {% if exception %}
-                        {{exception}}
+                        {{ exception }}
                     {% else %}
-                        {{err_title}}
+                        {{ err_title }}
                     {% endif %}
-                {% endblock %}
+                {% endblock error_title %}
             </b>
         </div>
         <div class="card-body">
-            {% block error_content %}{% endblock %}
+            {% block error_content %}
+            {% endblock error_content %}
         </div>
         <div class="card-footer">
-            {% block error_footer %}<a href="{% url 'home' %}"><i class="fas fa-home"></i> Zur Startseite</a>{% endblock %}
+            {% block error_footer %}
+                <a href="{% url "home" %}"><i class="fas fa-home"></i> Zur Startseite</a>
+            {% endblock error_footer %}
         </div>
     </div>
 {% endblock content %}

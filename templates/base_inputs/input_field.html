@@ -1,9 +1,9 @@
 {% load widget_tweaks %}
-
 {% with help_text_attr="aria-describedby:"|add:field.id_for_label|add:"-help_text" placeholder_attr="placeholder:"|add:field.label %}
     {{ field_with_filters|add_class:"form-control"|add_error_class:"is-invalid"|attr:help_text_attr|attr:placeholder_attr }}
-    <small id="{{ field.id_for_label }}-help_text" class="form-text text-muted">
-        {{field.help_text}}
-    </small>
+    {% if field.help_text %}
+        <small id="{{ field.id_for_label }}-help_text"
+               class="form-text text-body-secondary">{{ field.help_text }}</small>
+    {% endif %}
     {% include "base_inputs/errors.html" with field=field %}
 {% endwith %}

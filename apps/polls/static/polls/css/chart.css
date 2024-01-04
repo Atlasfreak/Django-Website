@@ -1,0 +1,10 @@
+.chart-container {
+    position: relative;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .chart-container {
+        width: 40%;
+    }
+}

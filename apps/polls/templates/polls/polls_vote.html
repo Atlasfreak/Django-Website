@@ -1,70 +1,90 @@
-{% extends 'polls/polls_base.html' %}
+{% extends "polls/polls_base.html" %}
 {% load crispy_forms_tags %}
-
+{% load static %}
 {% block meta %}
-    <meta property="og:description" content="{{poll.info_text|striptags|truncatewords:20}}" />
-    <meta property="og:title" content="{{poll.title|truncatewords:5}}" />
-    <meta property="og:url" content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{poll.get_absolute_url}}" />
+    <meta property="og:description"
+          content="{{ poll.info_text|striptags|truncatewords:20 }}" />
+    <meta property="og:title" content="{{ poll.title|truncatewords:5 }}" />
+    <meta property="og:url"
+          content="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{{ poll.get_absolute_url }}" />
     <meta name="twitter:card" content="summary" />
 {% endblock meta %}
 {% block stylesheet %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" type="text/css">
+    <link rel="stylesheet" href="{% static "polls/css/flatpickr.min.css" %}" type="text/css">
+    <link rel="stylesheet" href="{% static "polls/css/flatpickr.dark.css" %}">
 {% endblock stylesheet %}
-
-{% block title %}{{poll.title|truncatechars:10}} - Abstimmen{% endblock %}
-{% block brand %}{{poll.title}}{% endblock %}
-{% block pre_content %}{% endblock pre_content %}
+{% block title %}
+    {{ poll.title|truncatechars:10 }} - Abstimmen
+{% endblock title %}
+{% block brand %}
+    {{ poll.title }}
+{% endblock brand %}
+{% block pre_content %}
+{% endblock pre_content %}
 {% block content %}
-    <div class="bg-white shadow p-3">
+    <div class="bg-body shadow p-3">
         <div class="d-md-flex">
-            <div class="h1">{{poll.title}}</div>
-            <div class="ml-auto align-self-center h4">Ersteller: {% if poll.creator.full_name %}{{poll.creator.full_name}}{% else %}{{poll.creator.username}}{% endif %}</div>
+            <div class="h1">{{ poll.title }}</div>
+            <div class="ms-auto align-self-center h4">
+                Ersteller:
+                {% if poll.creator.full_name %}
+                    {{ poll.creator.full_name }}
+                {% else %}
+                    {{ poll.creator.username }}
+                {% endif %}
+            </div>
         </div>
         <hr>
-        <section class = "mt-3">
-            <p class="text-break">{{poll.info_text|urlize|linebreaks}}</p>
+        <section class="mt-3">
+            <p class="text-break">{{ poll.info_text|urlize|linebreaks }}</p>
         </section>
         <p>* Erforderliche Felder</p>
     </div>
-    <div class="bg-white shadow p-3 mt-3">
+    <div class="bg-body shadow p-3 mt-3">
         <form method="POST">
             {% csrf_token %}
-            {{formset.management_form}}
+            {{ formset.management_form }}
             {% for form in formset %}
                 {% crispy form helper %}
                 {% if form.instance.question.results_public %}
-                    <a href="#" class="text-toggle" data-toggle="collapse" data-target="#results-{{form.instance.question.id}}" aria-expanded="false" aria-controls="results-{{form.instance.question.id}}">
-                        <span class = "text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
-                        <span class = "text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
+                    <a href="#"
+                       class="text-toggle"
+                       data-bs-toggle="collapse"
+                       data-bs-target="#results-{{ form.instance.question.id }}"
+                       aria-expanded="false"
+                       aria-controls="results-{{ form.instance.question.id }}">
+                        <span class="text-expanded"><i class="fas fa-angle-up fa-lg"></i></span>
+                        <span class="text-collapsed"><i class="fas fa-angle-down fa-lg"></i></span>
                         Antworten
-                        <span class = "text-collapsed">anzeigen</span>
-                        <span class = "text-expanded">verstecken</span>
+                        <span class="text-collapsed">anzeigen</span>
+                        <span class="text-expanded">verstecken</span>
                     </a>
-                    <div class="collapse" id="results-{{form.instance.question.id}}">
+                    <div class="collapse" id="results-{{ form.instance.question.id }}">
                         {% include "polls/include/question_results_table.html" with question=form.instance.question %}
                     </div>
                 {% endif %}
                 <hr>
             {% endfor %}
-            <div class="form-group">
-                <button class = "btn btn-outline-success" type = "submit">
-                    Einsenden
-                </button>
-                <p>Mit dem Einsenden deiner Antwort bist du mit unserer <a href="{% url 'legal' %}">Datenschutzerklärung</a> einverstanden.<br>
-                {% if not poll.multiple_votes %}
-                Da bei dieser Umfrage nur einmal abgestimmt werden kann wird deine IP-Adresse gespeichert.
-                {% endif %}
+            <div>
+                <button class="btn btn-outline-success" type="submit">Einsenden</button>
+                <p>
+                    Mit dem Einsenden deiner Antwort bist du mit unserer <a href="{% url 'legal' %}">Datenschutzerklärung</a> einverstanden.
+                    <br>
+                    {% if not poll.multiple_votes %}
+                        Da bei dieser Umfrage nur einmal abgestimmt werden kann wird deine IP-Adresse gespeichert.
+                    {% endif %}
                 </p>
             </div>
         </form>
     </div>
 {% endblock content %}
-{% block post_content %}{% endblock post_content %}
+{% block post_content %}
+{% endblock post_content %}
 {% block javascript %}
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/de.js"></script>
+    <script src="{% static "polls/js/flatpickr.js" %}"></script>
+    <script src="{% static "polls/js/l10n/flatpickr.de.js" %}"></script>
     <script>
-        date_input = $('.dateinput')
+        date_input = $(".dateinput")
         date_input.flatpickr({
             altInput: true,
             time_24hr: true,

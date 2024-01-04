@@ -1,47 +1,45 @@
-{% extends 'userManagement/management_base.html' %}
+{% extends "userManagement/management_base.html" %}
 {% load crispy_forms_tags %}
-
-{% block title %}Anmelden{% endblock title %}
-{% block brand %}Anmelden{% endblock %}
+{% block title %}
+    Anmelden
+{% endblock title %}
+{% block brand %}
+    Anmelden
+{% endblock brand %}
 {% block nav_item %}
     {{ block.super }}
-    <a class="nav-link" href="{%url 'register' %}">Registrieren</a>
+    <a class="nav-link" href="{% url 'register' %}">Registrieren</a>
 {% endblock nav_item %}
-
 {% block management_alerts %}
     {% if next %}
         {% if user.is_authenticated %}
-            <div class="alert alert-warning">Du hast keinen Zugriff auf diese Seite. Bitte logge dich mit einem anderen Account ein.</div>
+            <div class="alert alert-warning">
+                Du hast keinen Zugriff auf diese Seite. Bitte logge dich mit einem anderen Account ein.
+            </div>
         {% else %}
             <div class="alert alert-danger">Bitte logge dich ein um diese Seite zu sehen.</div>
         {% endif %}
     {% endif %}
 {% endblock management_alerts %}
-
 {% block management_content %}
     <form method="POST">
         {% csrf_token %}
-        <legend class = "card-header">
-            Bitte Melde dich an
-        </legend>
+        <legend class="card-header">Bitte Melde dich an</legend>
         <div class="card-body">
-            <fieldset class = "mb-3">
+            <fieldset class="mb-3">
                 {{ form|crispy }}
             </fieldset>
             <div>
-                <button class = "btn btn-info" type = "submit">
-                    Anmelden
-                </button>
+                <button class="btn btn-info" type="submit">Anmelden</button>
             </div>
         </div>
     </form>
-    <div class = "d-flex border-top card-footer">
-        <small class = "text-body-secondary">
-            Du hast noch keinen Account? <a href = "{% url 'register' %}">Registrieren</a>
+    <div class="d-flex border-top card-footer">
+        <small class="text-body-secondary">
+            Du hast noch keinen Account? <a href="{% url 'register' %}">Registrieren</a>
         </small>
-        <small class = "ms-auto text-body-secondary">
+        <small class="ms-auto text-body-secondary">
             Du hast dein <a href="{% url 'password_reset' %}">Passwort vergessen?</a>
         </small>
     </div>
 {% endblock management_content %}
-

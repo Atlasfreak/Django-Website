@@ -1,30 +1,28 @@
 {% load widget_tweaks %}
 {% load polls_tags %}
-
-<div class="card mb-4 {% if question_form.non_field_errors %}border-danger{% endif %}">
-
+<div class="card mb-4
+            {% if question_form.non_field_errors %}border-danger{% endif %}">
     <div class="card-header">
         <div class="row my-0 question">
-
-            <div class="col-md" id="{{question_form.text.id_for_label|get_field_name}}">
+            <div class="col-md"
+                 id="{{ question_form.text.id_for_label|get_field_name }}">
                 {% include "base_inputs/input_field.html" with field=question_form.text field_with_filters=question_form.text %}
             </div>
-
             <div class="col-md-auto">
                 <div class="row">
-                    <label for="{{question_form.type.id_for_label}}" class = "col-md-auto col-form-label form-label">{{question_form.type.label}}</label>
-                    <div class="col-md-auto" id="{{question_form.type.id_for_label|get_field_name}}">
+                    <label for="{{ question_form.type.id_for_label }}"
+                           class="col-md-auto col-form-label form-label">{{ question_form.type.label }}</label>
+                    <div class="col-md-auto"
+                         id="{{ question_form.type.id_for_label|get_field_name }}">
                         {% include "base_inputs/input_field.html" with field=question_form.type field_with_filters=question_form.type|add_class:"form-select" %}
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
-    {{choice_formset.management_form}}
-
-    <div class="card-body {% if choice_formset.non_field_errors %}border border-danger{% endif %}">
+    {{ choice_formset.management_form }}
+    <div class="card-body
+                {% if choice_formset.non_field_errors %}border border-danger{% endif %}">
         {% include "polls/include/non_field_errors.html" with form=choice_formset %}
         <div class="options" hidden="">
             {% for choice_form in choice_formset %}
@@ -34,35 +32,40 @@
                     {% include "polls/include/choice.html" with prefix=choice_formset.prefix condition=False form=choice_form %}
                 {% endif %}
             {% endfor %}
-
-            <button class="btn btn-success add_form" type="button" id="{{choice_formset.prefix}}"><i class="fas fa-plus"></i> Option hinzufügen</button>
-
-            <div hidden="" id="{{choice_formset.prefix}}-empty">
+            <button class="btn btn-success add_form"
+                    type="button"
+                    id="{{ choice_formset.prefix }}">
+                <i class="fas fa-plus"></i> Option hinzufügen
+            </button>
+            <div hidden="" id="{{ choice_formset.prefix }}-empty">
                 {% include "polls/include/choice.html" with field=choice_formset.empty_form.text field_with_filters=choice_formset.empty_form.text prefix=choice_formset.prefix condition=True form=choice_formset.empty_form %}
             </div>
         </div>
     </div>
-
     <div class="card-footer">
         <div class="row">
-
             <div class="col-md">
                 <div class="form-check form-switch">
                     {% include "base_inputs/input_field.html" with field=question_form.required field_with_filters=question_form.required|attr:"class:form-check-input" %}
-                    <label for="{{question_form.required.id_for_label}}" class="form-check-label">{{question_form.required.label}}</label>
+                    <label for="{{ question_form.required.id_for_label }}"
+                           class="form-check-label">{{ question_form.required.label }}</label>
                 </div>
             </div>
             <div class="col-md mb-2 mb-md-0">
                 <div class="form-check form-switch">
                     {% include "base_inputs/input_field.html" with field=question_form.results_public field_with_filters=question_form.results_public|attr:"class:form-check-input" %}
-                    <label for="{{question_form.results_public.id_for_label}}" class="form-check-label">{{question_form.results_public.label}}</label>
+                    <label for="{{ question_form.results_public.id_for_label }}"
+                           class="form-check-label">{{ question_form.results_public.label }}</label>
                 </div>
             </div>
-
             <div class="col-md-auto">
-                <button class="btn btn-danger remove_form" type="button" id="{{question_formset.prefix}}" data-target=".questions"><i class="fas fa-trash-alt"></i> Frage löschen</button>
+                <button class="btn btn-danger remove_form"
+                        type="button"
+                        id="{{ question_formset.prefix }}"
+                        data-target=".questions">
+                    <i class="fas fa-trash-alt"></i> Frage löschen
+                </button>
             </div>
-
         </div>
     </div>
 </div>

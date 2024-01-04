@@ -1,10 +1,12 @@
-{% extends 'error_template.html' %}
-
-{% block banrd_url %}{% endblock %}
-{% block nav_item %}{% endblock %}
-
+{% extends "error_template.html" %}
+{% block banrd_url %}
+{% endblock banrd_url %}
+{% block nav_item %}
+{% endblock nav_item %}
 {% block error_content %}
     <p>Es tut uns Leid der Server befindet sich im Wartungsmodus und ist daher nicht erreichbar.</p>
-    <p>Vorraussichtliches Ende: {{expected_end|date:"j. F Y H:i"}}</p>
+    <p>Vorraussichtliches Ende: {{ expected_end|date:"j. F Y H:i" }}</p>
 {% endblock error_content %}
-{% block error_footer %}<a href="" on-click="window.location.reload()"><i class="fas fa-redo-alt"></i> Neuladen</a>{% endblock %}
+{% block error_footer %}
+    <a href="" on-click="window.location.reload()"><i class="fas fa-redo-alt"></i> Neuladen</a>
+{% endblock error_footer %}

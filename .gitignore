@@ -10,7 +10,7 @@ private/
 *.pyc
 __pycache__/
 local_settings.py
-db.sqlite3
+*.sqlite3
 db.sqlite3-journal
 media
 
@@ -254,6 +254,5 @@ dist
 
 SQL
 log
-pyproject.toml
 static/icons/
 .VSCodeCounter/

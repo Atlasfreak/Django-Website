@@ -4,25 +4,21 @@
         <thead>
             <tr>
                 <th scope="col">Einsendedatum</th>
-                {% for question in questions %}
-                    <th scope="col" nowrap>{{question.text|charwrap:40|linebreaksbr}}</th>
-                {% endfor %}
+                {% for question in questions %}<th scope="col" nowrap>{{ question.text|charwrap:40|linebreaksbr }}</th>{% endfor %}
             </tr>
         </thead>
         <tbody>
             {% for submission in submissions %}
                 <tr>
-                    <th scope="row">{{submission.submission_date}}</th>
+                    <th scope="row">{{ submission.submission_date }}</th>
                     {% for question in questions %}
                         <td nowrap>
                             {% for answer in question.answers.all %}
                                 {% if answer.submission == submission %}
                                     {% if question.type.enable_choices %}
-                                        {% for choice in answer.choices.all %}
-                                            {{choice.text|charwrap:40|linebreaksbr}}
-                                        {% endfor %}
+                                        {% for choice in answer.choices.all %}{{ choice.text|charwrap:40|linebreaksbr }}{% endfor %}
                                     {% else %}
-                                        {{answer.value|charwrap:40|linebreaksbr}}
+                                        {{ answer.value|charwrap:40|linebreaksbr }}
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}

@@ -1,18 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Abgemeldet{% endblock title %}
+{% block title %}
+    Abgemeldet
+{% endblock title %}
 <!-- Diese Seite sollte eigentlich nie angezeigt werden -->
 <!-- This site should never be displayed -->
 {% block nav_item %}
-    <a class="nav-link" href="{%url 'login' %}">Anmelden</a>
+    <a class="nav-link" href="{% url 'login' %}">Anmelden</a>
 {% endblock nav_item %}
-
 {% block content %}
-    <div class = "content-sectiion">
-        <div class = "border-top pt-3">
-            <small class = "text-body-secondary">
-                <a href = "{% url 'login' %}">Anmelden</a>
+    <div class="content-sectiion">
+        <div class="border-top pt-3">
+            <small class="text-body-secondary">
+                <a href="{% url 'login' %}">Anmelden</a>
             </small>
         </div>
     </div>
 {% endblock content %}
-

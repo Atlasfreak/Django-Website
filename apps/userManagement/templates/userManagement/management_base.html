@@ -1,20 +1,22 @@
-{% extends 'base.html' %}
-
+{% extends "base.html" %}
 {% load static %}
-
-{% block title %}{% endblock %}
+{% block title %}
+{% endblock title %}
 {% block body_extra_context %}
-    style = "height: device-height; background-image: url({% static 'img/background.jpg' %});  background-repeat: no-repeat;  background-size: cover;"
+    style = "height: device-height; background-image: url({% static "img/background.jpg" %});  background-repeat: no-repeat;  background-size: cover;"
 {% endblock body_extra_context %}
-{% block brand %}{% endblock %}
+{% block brand %}
+{% endblock brand %}
 {% block nav_item %}
-    <a class="nav-link" href="{%url 'home' %}">Hauptseite</a>
+    <a class="nav-link" href="{% url 'home' %}">Hauptseite</a>
 {% endblock nav_item %}
 {% block content %}
     <div class="my-3">
-        {% block management_alerts %}{% endblock %}
+        {% block management_alerts %}
+        {% endblock management_alerts %}
     </div>
     <div class="card my-4 shadow-sm">
-    {% block management_content %}{% endblock %}
+        {% block management_content %}
+        {% endblock management_content %}
     </div>
 {% endblock content %}

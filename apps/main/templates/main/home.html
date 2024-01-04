@@ -1,25 +1,26 @@
 {% extends "base_content.html" %}
-
 {% load static %}
-
 {% block stylesheet %}
 {% endblock stylesheet %}
-
-{% block title %}Home{% endblock %}
-{% block brand %}Home{% endblock brand %}
-
+{% block title %}
+    Home
+{% endblock title %}
+{% block brand %}
+    Home
+{% endblock brand %}
 {% block nav_item %}
     <a href="{% url 'polls:index' %}" class="nav-link">Umfragen</a>
     {{ block.super }}
 {% endblock nav_item %}
-
 {% block content %}
     <div class="p-3">
         <h1>Willkommen auf meiner Webseite!</h1>
         <p>Projekte von mir die man hier aktuell finden kann:</p>
         <p>
             <ul>
-                <li><a href="{% url "polls:index" %}">Umfragetool</a></li>
+                <li>
+                    <a href="{% url "polls:index" %}">Umfragetool</a>
+                </li>
             </ul>
         </p>
         <p>
@@ -27,6 +28,5 @@
         </p>
     </div>
 {% endblock content %}
-
 {% block javascript %}
 {% endblock javascript %}

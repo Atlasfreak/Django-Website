@@ -38,12 +38,16 @@
                         {% endwith %}
                         {% with field=poll_form.start_date %}
                             <div id="date-time-div">
-                                {% include "base_inputs/input_group.html" with field=field prepend_text="<i class="far fa-calendar-alt fa-lg"></i>" field_with_filters=field|set_data:"input" %}
+                                {# djlint:off #}
+                                {% include "base_inputs/input_group.html" with field=field prepend_text="<i class='far fa-calendar-alt fa-lg'></i>" field_with_filters=field|set_data:"input" %}
+                                {# djlint:on #}
                             </div>
                         {% endwith %}
                         {% with field=poll_form.end_date %}
                             <div id="date-time-div">
-                                {% include "base_inputs/input_group.html" with field=field prepend_text="<i class="far fa-calendar-alt fa-lg"></i>" field_with_filters=field|set_data:"input" %}
+                                {# djlint:off #}
+                                {% include "base_inputs/input_group.html" with field=field prepend_text="<i class='far fa-calendar-alt fa-lg'></i>" field_with_filters=field|set_data:"input" %}
+                                {# djlint:on #}
                             </div>
                         {% endwith %}
                         {% with field=poll_form.info_text %}

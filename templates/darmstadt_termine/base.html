@@ -1,0 +1,31 @@
+{% extends "base_content.html" %}
+{% block meta %}
+{% endblock meta %}
+{% block stylesheet %}
+{% endblock stylesheet %}
+{% block title %}
+    Darmstadt Terminetracker
+{% endblock title %}
+{% block brand_url %}
+    {% url "darmstadt_termine:index" %}
+{% endblock brand_url %}
+{% block brand %}
+    Darmstadt Terminetracker
+{% endblock brand %}
+{% block nav_item %}
+    <a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
+    <a href="{% url 'darmstadt_termine:index' %}" class="nav-link">Termine</a>
+    {{ block.super }}
+{% endblock nav_item %}
+{% block pre_content %}
+    {{ block.super }}
+    <div class="p-3">
+    {% endblock pre_content %}
+    {% block content %}
+    {% endblock content %}
+    {% block post_content %}
+    </div>
+    {{ block.super }}
+{% endblock post_content %}
+{% block javascript %}
+{% endblock javascript %}

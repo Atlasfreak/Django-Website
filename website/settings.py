@@ -188,7 +188,9 @@ MESSAGE_TAGS = {message_constants.ERROR: "danger"}
 # E-Mail settings
 # Use "python -m smtpd -n -c DebuggingServer localhost:1025" for development
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = config.get(
+    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
+)
 
 EMAIL_HOST = config.get("EMAIL_HOST", "localhost")
 EMAIL_PORT = config.get("EMAIL_PORT", 25)

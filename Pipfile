@@ -20,7 +20,7 @@ django = {extras = ["argon2"],version = "~=4.2"}
 darmstadt-termine = {git = "git+https://github.com/Atlasfreak/darmstadt-termine.git"}
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"
 
 [pipenv]
 allow_prereleases = true

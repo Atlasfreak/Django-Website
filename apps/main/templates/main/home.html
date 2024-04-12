@@ -10,6 +10,7 @@
 {% endblock brand %}
 {% block nav_item %}
     <a href="{% url 'polls:index' %}" class="nav-link">Umfragen</a>
+    <a href="{% url 'darmstadt_termine:index' %}" class="nav-link">Darmstadt Terminetracker</a>
     {{ block.super }}
 {% endblock nav_item %}
 {% block content %}
@@ -20,6 +21,10 @@
             <ul>
                 <li>
                     <a href="{% url "polls:index" %}">Umfragetool</a>
+                </li>
+                <li>
+                    <a href="{% url "darmstadt_termine:index" %}">Darmstadt Terminetracker</a>
+                    Ein Tool um Benachrichtigungen für verfügbare Termine beim Darmstädter Bürgerbüro zu erhalten.
                 </li>
             </ul>
         </p>

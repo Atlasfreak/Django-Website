@@ -4,17 +4,17 @@
 {% block stylesheet %}
 {% endblock stylesheet %}
 {% block title %}
-    Umfragen -
+    Darmstadt Terminetracker
 {% endblock title %}
 {% block brand_url %}
-    {% url "polls:index" %}
+    {% url "darmstadt_termine:index" %}
 {% endblock brand_url %}
 {% block brand %}
-    Umfragen
+    Darmstadt Terminetracker
 {% endblock brand %}
 {% block nav_item %}
     <a href="{% url 'home' %}" class="nav-link">Hauptseite</a>
-    <a href="{% url 'polls:index' %}" class="nav-link">Übersicht</a>
+    <a href="{% url 'darmstadt_termine:index' %}" class="nav-link">Termine</a>
     {{ block.super }}
 {% endblock nav_item %}
 {% block pre_content %}

@@ -66,7 +66,10 @@
             {% endblock title %}
         </title>
     </head>
-    <body class="d-flex flex-column min-vh-100 {% block body_classes %}bg-body-tertiary{% endblock body_classes %}"
+    <body class="d-flex flex-column min-vh-100
+                 {% block body_classes %}
+                     bg-body-tertiary
+                 {% endblock body_classes %}"
           {% block body_extra_context %}
           {% endblock body_extra_context %}
           data-bs-theme="dark">
@@ -96,7 +99,7 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse" id="navbarNav">
-                        <div class="ms-auto navbar-nav">
+                        <div class="ms-auto navbar-nav nav-underline">
                             {% block nav_item %}
                                 {% if user.is_authenticated %}
                                     <div class="dropdown">
